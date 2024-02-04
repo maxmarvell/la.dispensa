@@ -1,6 +1,6 @@
 import prisma from "../../utils/prisma";
 import { CreateConnectionInput, CreateUserInput } from "./user.schema";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt-ts";
 
 export async function createUser(input: CreateUserInput) {
 

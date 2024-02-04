@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy } from "./user.service";
 import { CreateUserInput, LoginInput, CreateConnectionInput } from "./user.schema";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt-ts";
 import { server } from "../../app";
 import { addUserPhoto } from "./user.service";
 import cloudImageUpload from "../../utils/aws.s3";
