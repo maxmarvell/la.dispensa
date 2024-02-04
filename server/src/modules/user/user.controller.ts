@@ -56,7 +56,7 @@ export async function loginHandler(
   }
 
   return reply.code(401).send({
-    message: "Invalid email or password",
+    message: "Invalid password",
   });
 };
 
