@@ -23,7 +23,7 @@ import Group from './Group.svg';
 import FileDock from './File_dock_add.svg';
 import UserAdd from './User_add_alt.svg';
 import CheckRing from './Check_ring.svg';
-import CloseRing from './close_ring.svg';
+import CloseRing from './Close_ring.svg';
 import Clock from './Clock.svg';
 import Fire from './Fire.svg';
 import ClockFill from './Clock_fill.svg';
