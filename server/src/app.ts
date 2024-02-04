@@ -3,9 +3,7 @@ import fastifyJwt from '@fastify/jwt';
 import { fastifyMultipart } from '@fastify/multipart';
 import * as Modules from './modules/index'
 
-export const server = require('fastify')()
-
-const multer = require('fastify-multer');
+export const server = require('fastify')();
 
 declare module "fastify" {
   export interface FastifyInstance {
