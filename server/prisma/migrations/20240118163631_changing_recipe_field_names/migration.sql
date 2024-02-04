@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Recipe" ALTER COLUMN "createdOn" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP NOT NULL;

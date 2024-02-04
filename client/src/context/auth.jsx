@@ -1,0 +1,84 @@
+import { createContext, useState } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+
+const AuthContext = createContext();
+export default AuthContext;
+
+
+export const AuthProvider = ({ children }) => {
+
+  let [authToken, setAuthToken] = useState(() =>
+    localStorage.getItem('authToken')
+      ? JSON.parse(localStorage.getItem('authToken'))
+      : null
+  )
+
+  let [user, setUser] = useState(() =>
+    localStorage.getItem('authToken')
+      ? jwtDecode(localStorage.getItem('authToken'))
+      : null
+  )
+
+  let loginUser = async (e) => {
+    e.preventDefault();
+    let { data } = await axios.post(
+      'http://localhost:3001/api/users/login',
+      {
+        email: e.target.email.value,
+        password: e.target.password.value,
+      },
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    );
+
+    if (!data) {
+      throw new Error('User not Found!')
+    }
+
+    setAuthToken(data.accessToken);
+    setUser(jwtDecode(data.accessToken));
+    localStorage.setItem('authToken', JSON.stringify(data.accessToken));
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+  }
+
+  let registerUser = async ({ newUser }) => {
+    let { data } = await axios.post(
+      'http://localhost:3001/api/users/',
+      newUser,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    )
+
+    if (!data) {
+      throw new Error('Unable to register User!')
+    }
+
+    return data;
+  }
+
+  let logoutUser = async () => {
+    setAuthToken(null);
+    setUser(null);
+    localStorage.removeItem('authToken');
+  }
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      authToken,
+      loginUser,
+      logoutUser,
+      setAuthToken,
+      setUser,
+      registerUser
+    }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}

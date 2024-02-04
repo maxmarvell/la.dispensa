@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input, textarea, select {
+  border: 1pt solid grey;
+  padding: 6pt;
+}

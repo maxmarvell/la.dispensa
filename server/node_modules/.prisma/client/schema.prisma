@@ -1,0 +1,227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  username      String          @unique
+  password      String
+  salt          String
+  image         String?
+  recipes       Recipe[]
+  connectedWith Connection[]    @relation("connectedWith")
+  connectedBy   Connection[]    @relation("connectedBy")
+  recipeEditors RecipeEditors[]
+  ratings       Rating[]
+  reviews       Review[]
+}
+
+model Recipe {
+  // Base details
+  id          String    @id @default(uuid())
+  createdOn   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  title       String    @db.VarChar(255)
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  description String?   @db.VarChar(255)
+  image       String?
+
+  // Privacy settings
+  public  Boolean?        @default(false)
+  editors RecipeEditors[]
+
+  // Many to Many fields
+  ingredients   RecipeIngredient[]
+  instructions  Instruction[]
+  components    Component[]        @relation("components")
+  parentRecipes Component[]        @relation("parentRecipes")
+  iterations    Iteration[]
+
+  // Reviews and Ratings
+  ratings Rating[]
+  reviews Review[]
+  tags    Tag[]
+}
+
+model Ingredient {
+  id         String                @id @default(uuid())
+  name       String                @unique
+  recipes    RecipeIngredient[]
+  iterations IngredientIteration[]
+}
+
+model Connection {
+  connectedWith   User    @relation("connectedBy", fields: [connectedWithId], references: [id], onDelete: Cascade)
+  connectedWithId String
+  connectedBy     User    @relation("connectedWith", fields: [connectedById], references: [id], onDelete: Cascade)
+  connectedById   String
+  accepted        Boolean @default(false)
+
+  @@id(name: "ConnectionId", [connectedWithId, connectedById])
+}
+
+// Tag functionality
+
+model Tag {
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+  name     String @db.VarChar(20)
+
+  @@unique([recipeId, name])
+}
+
+// Editor functionality
+
+model RecipeEditors {
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+
+  @@id(name: "EditorId", [recipeId, userId])
+}
+
+// Reviews and Ratings
+
+model Rating {
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  value    Int
+
+  @@id(name: "RatingId", [recipeId, userId])
+}
+
+model Review {
+  recipe    Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId  String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  text      String    @db.VarChar(620)
+  createdOn DateTime? @default(now())
+
+  @@id(name: "ReviewId", [recipeId, userId])
+}
+
+// Instruction functionality
+
+model Instruction {
+  description        String              @db.VarChar(255)
+  recipe             Recipe              @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId           String
+  step               Int
+  timeAndTemperature TimeAndTemperature?
+
+  @@id(name: "InstructionId", [recipeId, step])
+}
+
+model TimeAndTemperature {
+  instruction Instruction      @relation(fields: [recipeId, step], references: [recipeId, step], onDelete: Cascade)
+  recipeId    String
+  step        Int
+  hours       Int?
+  minutes     Int?
+  temperature Int
+  unit        TemperatureUnit? @default(C)
+
+  @@unique([recipeId, step])
+}
+
+enum TemperatureUnit {
+  C
+  K
+}
+
+// Ingredient functionality
+
+model RecipeIngredient {
+  recipe       Recipe          @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient      @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  recipeId     String
+  ingredientId String
+  quantity     Int
+  unit         IngredientUnit?
+
+  @@id(name: "RecipeIngredientId", [recipeId, ingredientId])
+}
+
+enum IngredientUnit {
+  G
+  KG
+  CUP
+  ML
+  L
+  OZ
+}
+
+// Recipe Component functionality
+
+model Component {
+  recipe      Recipe @relation("components", fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId    String
+  component   Recipe @relation("parentRecipes", fields: [componentId], references: [id], onDelete: Cascade)
+  componentId String
+  amount      Float
+
+  @@id(name: "RecipeComponentId", [recipeId, componentId])
+}
+
+// Test kitchen functionality
+
+model Iteration {
+  id           String                 @id @default(uuid())
+  recipe       Recipe                 @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId     String
+  createdOn    DateTime?              @default(now())
+  updatedAt    DateTime?              @updatedAt
+  parent       Iteration?             @relation("IterationHistory", fields: [parentId], references: [id], onDelete: Cascade)
+  children     Iteration[]            @relation("IterationHistory")
+  parentId     String?
+  tag          String?                @db.VarChar(255)
+  ingredients  IngredientIteration[]
+  instructions InstructionIteration[]
+}
+
+model IngredientIteration {
+  recipe       Iteration       @relation(fields: [iterationId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient      @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  iterationId  String
+  ingredientId String
+  quantity     Int
+  unit         IngredientUnit?
+
+  @@id(name: "RecipeIngredientId", [iterationId, ingredientId])
+}
+
+model InstructionIteration {
+  description        String                       @db.VarChar(255)
+  recipe             Iteration                    @relation(fields: [iterationId], references: [id], onDelete: Cascade)
+  iterationId        String
+  step               Int
+  timeAndTemperature TimeAndTemperatureIteration?
+
+  @@id(name: "InstructionId", [iterationId, step])
+}
+
+model TimeAndTemperatureIteration {
+  instruction     InstructionIteration @relation(fields: [iterationId, instructionStep], references: [iterationId, step], onDelete: Cascade)
+  iterationId     String
+  instructionStep Int
+  hours           Int?
+  minutes         Int?
+  temperature     Int
+  unit            TemperatureUnit?     @default(C)
+
+  @@unique([iterationId, instructionStep])
+}
