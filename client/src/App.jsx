@@ -10,7 +10,7 @@ import Profile from './routes/Profile';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Logout from './routes/auth/Logout';
 import Recipes from './routes/Recipes';
-import RecipeRoutes from './routes/recipes/router';
+import RecipeRoutes from './routes/recipes/Router';
 import Register from './routes/auth/Register';
 import './App.css';
 import TestKitchen from './routes/recipes/TestKitchen';
