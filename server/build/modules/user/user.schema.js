@@ -38,12 +38,19 @@ const connectionResponseSchema = zod_1.z.object({
     connectedById: zod_1.z.string(),
     accepted: zod_1.z.boolean(),
 });
+const changePasswordSchema = zod_1.z.object({
+    password: zod_1.z.string({
+        required_error: 'Password is required',
+        invalid_type_error: 'Password must be a string',
+    })
+});
 _a = (0, fastify_zod_1.buildJsonSchemas)({
     createUserSchema,
     createUserResponseSchema,
     loginSchema,
     loginResponseSchema,
     connectionRequestSchema,
-    connectionResponseSchema
+    connectionResponseSchema,
+    changePasswordSchema
 }, { $id: "UserSchema" }), exports.userSchemas = _a.schemas, exports.$ref = _a.$ref;
 //# sourceMappingURL=user.schema.js.map

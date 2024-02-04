@@ -207,7 +207,7 @@ export async function changeUserPassword(input : { id: string, password: string}
 
   const { hash, salt } = hashPassword(password);
   
-  return prisma.user.update({
+  const user = await prisma.user.update({
     where: {
       id
     },
@@ -215,7 +215,8 @@ export async function changeUserPassword(input : { id: string, password: string}
       salt,
       password: hash
     }
-  })
+  });
 
+  return user;
 }
 

@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findGalleryRecipesHandler = exports.acceptConnectionHandler = exports.getConnectedByHandler = exports.getConnectionsHandler = exports.connectDeleteHandler = exports.connectHandler = exports.uploadPhotoHandler = exports.getUserHandler = exports.getUsersHandler = exports.loginHandler = exports.registerUserHandler = void 0;
+exports.findGalleryRecipesHandler = exports.acceptConnectionHandler = exports.getConnectedByHandler = exports.getConnectionsHandler = exports.connectDeleteHandler = exports.connectHandler = exports.uploadPhotoHandler = exports.getUserHandler = exports.getUsersHandler = exports.changeUserPasswordHandler = exports.loginHandler = exports.registerUserHandler = void 0;
 const user_service_1 = require("./user.service");
 const user_service_2 = require("./user.service");
 const aws_s3_1 = __importDefault(require("../../utils/aws.s3"));
@@ -64,11 +64,30 @@ function loginHandler(request, reply) {
             return { accessToken: request.jwt.sign(rest) };
         }
         return reply.code(401).send({
-            message: "Invalid email or password",
+            message: "Invalid password",
         });
     });
 }
 exports.loginHandler = loginHandler;
+;
+function changeUserPasswordHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { password } = request.body;
+        const { userId: id } = request.params;
+        try {
+            yield (0, user_service_1.changeUserPassword)({
+                id, password
+            });
+            return reply.code(204);
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+        ;
+    });
+}
+exports.changeUserPasswordHandler = changeUserPasswordHandler;
 ;
 function getUsersHandler(request) {
     return __awaiter(this, void 0, void 0, function* () {

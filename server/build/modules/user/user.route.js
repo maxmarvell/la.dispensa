@@ -54,6 +54,13 @@ function userRoutes(server) {
         }, user_controller_1.acceptConnectionHandler);
         // Gallery
         server.get('/:userId/gallery', user_controller_1.findGalleryRecipesHandler);
+        // User setting services
+        server.patch('/:userId/updatePassword/', {
+            schema: {
+                body: (0, user_schema_1.$ref)('changePasswordSchema')
+            },
+            // onRequest: [server.authenticate]
+        }, user_controller_1.changeUserPasswordHandler);
     });
 }
 exports.default = userRoutes;

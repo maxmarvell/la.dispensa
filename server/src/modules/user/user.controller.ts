@@ -78,10 +78,12 @@ export async function changeUserPasswordHandler(
     await changeUserPassword({
       id, password
     });
-    return reply.code(204);
+    return reply.code(204).send();
   } catch (error) {
     console.log(error);
-    return reply.code(404);
+    return reply.code(404).send({
+      message: "Unable to Change Password"
+    });
   };
 };
 

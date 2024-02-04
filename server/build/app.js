@@ -83,9 +83,11 @@ function main() {
         exports.server.register(Modules.ingredientRoutes, { prefix: "api/ingredients" });
         exports.server.register(Modules.iterationRoutes, { prefix: "api/iterations" });
         exports.server.register(Modules.tagRoutes, { prefix: "api/tags" });
+        const port = process.env.PORT || 3000;
+        const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
         try {
-            yield exports.server.listen(process.env.PORT || 3001, "0.0.0.0");
-            console.log(`Server ready at http://localhost:${process.env.PORT || 3001}`);
+            yield exports.server.listen({ host: host, port: port });
+            console.log(`Server ready at http://${host}:${port}`);
         }
         catch (e) {
             console.error(e);
