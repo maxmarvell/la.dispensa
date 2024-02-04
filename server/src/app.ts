@@ -79,8 +79,11 @@ async function main() {
 
   server.register(Modules.tagRoutes, { prefix: "api/tags" })
 
+  const port = process.env.PORT || 3000;
+  const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
+
   try {
-    await server.listen(process.env.PORT || 3001, "0.0.0.0");
+    await server.listen({ host: host, port: port });
     console.log(`Server ready at http://localhost:${process.env.PORT || 3001}`);
   } catch (e) {
     console.error(e);
