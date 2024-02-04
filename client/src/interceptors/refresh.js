@@ -9,7 +9,7 @@ let authToken = (
 )
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://la-dispensa-api.onrender.com',
   headers: { Authorization: `Bearer ${authToken}` }
 });
 
