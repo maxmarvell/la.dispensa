@@ -29,7 +29,8 @@
   },
   "scripts": {
     "dev": "tsnd --respawn --transpile-only --exit-child src/app.ts",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "start": "node index.js"
   },
   "devDependencies": {
     "@types/fastify-jwt": "^0.8.1",
