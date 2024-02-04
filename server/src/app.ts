@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import fastifyJwt from '@fastify/jwt';
+import fastifyJwt, { JWT } from '@fastify/jwt';
 import { fastifyMultipart } from '@fastify/multipart';
 import * as Modules from './modules/index'
 
@@ -8,6 +8,9 @@ export const server = require('fastify')();
 declare module "fastify" {
   export interface FastifyInstance {
     authenticate: any;
+  }
+  interface FastifyRequest {
+    jwt: JWT;
   }
 }
 

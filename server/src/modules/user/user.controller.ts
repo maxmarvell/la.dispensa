@@ -1,56 +1,62 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy } from "./user.service";
 import { CreateUserInput, LoginInput, CreateConnectionInput } from "./user.schema";
-import * as bcrypt from "bcrypt-ts";
 import { server } from "../../app";
 import { addUserPhoto } from "./user.service";
 import cloudImageUpload from "../../utils/aws.s3";
+import { verifyPassword } from "../../utils/hash";
 
 
 
 export async function registerUserHandler(
   request: FastifyRequest<{
-    Body: CreateUserInput
+    Body: CreateUserInput;
+  }>,
+  reply: FastifyReply
+) {
+  const body = request.body;
+  try {
+    const user = await createUser(body);
+    return reply.code(201).send(user);
+  } catch (e) {
+    console.log(e);
+    return reply.code(500).send(e);
+  }
+}
+
+
+export async function loginHandler(
+  request: FastifyRequest<{
+    Body: LoginInput;
   }>,
   reply: FastifyReply
 ) {
   const body = request.body;
 
-  try {
-    const user = await createUser(body)
-    return reply.code(201).send(user)
-  } catch (e) {
-    console.log(e)
-    return reply.code(500)
-  }
-};
-
-
-export async function loginHandler(
-  request: FastifyRequest<{
-    Body: LoginInput
-  }>,
-  reply: FastifyReply
-) {
-  const body = request.body
-
+  // find a user by email
   const user = await findUserByEmail(body.email);
 
   if (!user) {
     return reply.code(401).send({
-      message: "invalid email or password",
+      message: "Invalid email or password",
     });
   }
 
-  const correctPassword = await bcrypt.compare(body.password, user.password);
+  // verify password
+  const correctPassword = verifyPassword({
+    candidatePassword: body.password,
+    salt: user.salt,
+    hash: user.password,
+  });
 
   if (correctPassword) {
-    const { password, salt, ...rest } = user
-    return { accessToken: server.jwt.sign(rest) };
+    const { password, salt, ...rest } = user;
+    // generate access token
+    return { accessToken: request.jwt.sign(rest) };
   }
 
   return reply.code(401).send({
-    message: "invalid email or password",
+    message: "Invalid email or password",
   });
 };
 
