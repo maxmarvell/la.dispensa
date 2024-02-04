@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -48,10 +25,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findGalleryRecipesHandler = exports.acceptConnectionHandler = exports.getConnectedByHandler = exports.getConnectionsHandler = exports.connectDeleteHandler = exports.connectHandler = exports.uploadPhotoHandler = exports.getUserHandler = exports.getUsersHandler = exports.loginHandler = exports.registerUserHandler = void 0;
 const user_service_1 = require("./user.service");
-const bcrypt = __importStar(require("bcrypt"));
-const app_1 = require("../../app");
 const user_service_2 = require("./user.service");
 const aws_s3_1 = __importDefault(require("../../utils/aws.s3"));
+const hash_1 = require("../../utils/hash");
 function registerUserHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
@@ -61,28 +37,34 @@ function registerUserHandler(request, reply) {
         }
         catch (e) {
             console.log(e);
-            return reply.code(500);
+            return reply.code(500).send(e);
         }
     });
 }
 exports.registerUserHandler = registerUserHandler;
-;
 function loginHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
+        // find a user by email
         const user = yield (0, user_service_1.findUserByEmail)(body.email);
         if (!user) {
             return reply.code(401).send({
-                message: "invalid email or password",
+                message: "Invalid email or password",
             });
         }
-        const correctPassword = yield bcrypt.compare(body.password, user.password);
+        // verify password
+        const correctPassword = (0, hash_1.verifyPassword)({
+            candidatePassword: body.password,
+            salt: user.salt,
+            hash: user.password,
+        });
         if (correctPassword) {
             const { password, salt } = user, rest = __rest(user, ["password", "salt"]);
-            return { accessToken: app_1.server.jwt.sign(rest) };
+            // generate access token
+            return { accessToken: request.jwt.sign(rest) };
         }
         return reply.code(401).send({
-            message: "invalid email or password",
+            message: "Invalid email or password",
         });
     });
 }
