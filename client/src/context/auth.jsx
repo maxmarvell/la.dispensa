@@ -5,6 +5,8 @@ import { jwtDecode } from "jwt-decode";
 const AuthContext = createContext();
 export default AuthContext;
 
+const BASEURL = "https://la-dispensa-api.onrender.com"
+
 
 export const AuthProvider = ({ children }) => {
 
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   let loginUser = async (e) => {
     e.preventDefault();
     let { data } = await axios.post(
-      'http://localhost:3001/api/users/login',
+      `${BASEURL}/api/users/login`,
       {
         email: e.target.email.value,
         password: e.target.password.value,
@@ -47,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   let registerUser = async ({ newUser }) => {
     let { data } = await axios.post(
-      'http://localhost:3001/api/users/',
+      `${BASEURL}/api/users/`,
       newUser,
       {
         headers: { 'Content-Type': 'application/json' }
