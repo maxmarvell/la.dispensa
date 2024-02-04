@@ -83,8 +83,8 @@ async function main() {
   const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
 
   try {
-    await server.listen({ host: host, port: port });
-    console.log(`Server ready at http://localhost:${process.env.PORT || 3001}`);
+    await server.listen({host: host, port: port });
+    console.log(`Server ready at http://${host}:${port}`);
   } catch (e) {
     console.error(e);
     process.exit(1);
