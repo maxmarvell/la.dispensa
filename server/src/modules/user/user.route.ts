@@ -9,7 +9,8 @@ import {
   getConnectionsHandler,
   acceptConnectionHandler,
   findGalleryRecipesHandler,
-  getConnectedByHandler
+  getConnectedByHandler,
+  changeUserPasswordHandler
 } from "./user.controller";
 import { FastifyInstance, } from "fastify";
 import { $ref } from "./user.schema";
@@ -72,6 +73,16 @@ async function userRoutes(server: FastifyInstance) {
   // Gallery
 
   server.get('/:userId/gallery', findGalleryRecipesHandler)
+
+
+  // User setting services
+
+  server.patch('/updatePassword/', {
+    schema: {
+      body: $ref('changePasswordSchema')
+    }, 
+    onRequest: [server.authenticate]
+  }, changeUserPasswordHandler)
 
 }
 

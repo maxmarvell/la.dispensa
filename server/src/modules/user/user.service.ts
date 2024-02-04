@@ -1,6 +1,6 @@
 import prisma from "../../utils/prisma";
 import { CreateConnectionInput, CreateUserInput } from "./user.schema";
-import {hashPassword} from "../../utils/hash";
+import { hashPassword } from "../../utils/hash";
 
 export async function createUser(input: CreateUserInput) {
   const { password, ...rest } = input;
@@ -198,4 +198,24 @@ export async function findGalleryRecipes({ userId }: { userId: string }) {
   // Adding the average rating field to return typr of recipes
   return rated.map(({ _avg, recipeId }) => ({ averageRating: _avg.value, ...recipes.find(({ id }) => id === recipeId) }));
 };
+
+
+// Account services
+
+export async function changeUserPassword(input : { id: string, password: string}) {
+  const { password, id } = input;
+
+  const { hash, salt } = hashPassword(password);
+  
+  return prisma.user.update({
+    where: {
+      id
+    },
+    data: {
+      salt,
+      password: hash
+    }
+  })
+
+}
 

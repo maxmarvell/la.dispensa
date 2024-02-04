@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy } from "./user.service";
+import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy, changeUserPassword } from "./user.service";
 import { CreateUserInput, LoginInput, CreateConnectionInput } from "./user.schema";
 import { server } from "../../app";
 import { addUserPhoto } from "./user.service";
@@ -58,6 +58,28 @@ export async function loginHandler(
   return reply.code(401).send({
     message: "Invalid password",
   });
+};
+
+export async function changeUserPasswordHandler(
+  request: FastifyRequest<{
+    Body: {
+      password: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { password } = request.body;
+  const { id } = request.user;
+
+  try {
+    await changeUserPassword({
+      id, password
+    });
+    return reply.code(204);
+  } catch (error) {
+    console.log(error);
+    return reply.code(404);
+  };
 };
 
 
