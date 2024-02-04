@@ -77,11 +77,11 @@ async function userRoutes(server: FastifyInstance) {
 
   // User setting services
 
-  server.patch('/updatePassword/', {
+  server.patch('/:userId/updatePassword/', {
     schema: {
       body: $ref('changePasswordSchema')
     }, 
-    onRequest: [server.authenticate]
+    // onRequest: [server.authenticate]
   }, changeUserPasswordHandler)
 
 }

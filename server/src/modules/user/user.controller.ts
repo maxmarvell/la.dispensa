@@ -64,12 +64,15 @@ export async function changeUserPasswordHandler(
   request: FastifyRequest<{
     Body: {
       password: string
+    },
+    Params: {
+      userId: string
     }
   }>,
   reply: FastifyReply
 ) {
   const { password } = request.body;
-  const { id } = request.user;
+  const { userId: id } = request.params;
 
   try {
     await changeUserPassword({

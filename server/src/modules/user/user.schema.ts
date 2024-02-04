@@ -52,10 +52,10 @@ const connectionResponseSchema = z.object({
 })
 
 const changePasswordSchema = z.object({
-   password: z.string({
+  password: z.string({
     required_error: 'Password is required',
     invalid_type_error: 'Password must be a string',
-   }),
+  })
 })
 
 
