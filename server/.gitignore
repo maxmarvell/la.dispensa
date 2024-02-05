@@ -1,4 +1,4 @@
 .env
-.vscode
+.vscode/
 .yarnclean
 node_modules/

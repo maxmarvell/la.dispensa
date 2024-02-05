@@ -1,9 +1,10 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import fastifyJwt, { JWT } from '@fastify/jwt';
-import { fastifyMultipart } from '@fastify/multipart';
+import { JWT } from '@fastify/jwt';
+import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import * as Modules from './modules/index'
 
-export const server = require('fastify')();
+export const server = fastify({
+  logger: true
+});
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -11,6 +12,7 @@ declare module "fastify" {
   }
   interface FastifyRequest {
     jwt: JWT;
+    file: any;
   }
 }
 
@@ -26,11 +28,9 @@ declare module "@fastify/jwt" {
 
 type FastifyRequestVerify<T> = Partial<T> & { jwtVerify: any }
 
-server.register(fastifyJwt, {
+server.register(require('@fastify/jwt'), {
   secret: "bigsecretbigsecretbigsecretbigsecret"
 })
-
-// server.register(multer.contentParser);
 
 server.register(require('@fastify/cors'), {
   origin: true,
@@ -38,7 +38,7 @@ server.register(require('@fastify/cors'), {
   methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE']
 })
 
-server.register(fastifyMultipart, {
+server.register(require('@fastify/multipart'), {
   addToBody: true,
   limits: {
     fileSize: 4 * 1024 * 1024,
@@ -57,13 +57,10 @@ server.get('/healthcheck', async function () {
   return { status: 'ok' };
 });
 
-// server.addHook("preHandler", (req, reply, next) => {
-//   req.jwt = server.jwt;
-//   return next();
-// });
-
-
-
+server.addHook("preHandler", (req, reply, next) => {
+  req.jwt = server.jwt;
+  return next();
+});
 
 
 async function main() {
@@ -86,16 +83,16 @@ async function main() {
 
   server.register(Modules.tagRoutes, { prefix: "api/tags" })
 
-  const port = process.env.PORT || 3000;
+  const port = Number(process.env.PORT) || 3000;
   const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
 
-  try {
-    await server.listen({host: host, port: port });
-    console.log(`Server ready at http://${host}:${port}`);
-  } catch (e) {
-    console.error(e);
-    process.exit(1);
-  };
+  server.listen({ port: port, host: host }, function (err, address) {
+    if (err) {
+      console.error(err);
+      process.exit(1)
+    }
+    console.log(`server listening on ${address}`)
+  })
 }
 
 

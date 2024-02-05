@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy, changeUserPassword } from "./user.service";
 import { CreateUserInput, LoginInput, CreateConnectionInput } from "./user.schema";
-import { server } from "../../app";
 import { addUserPhoto } from "./user.service";
 import cloudImageUpload from "../../utils/aws.s3";
 import { verifyPassword } from "../../utils/hash";
@@ -41,14 +40,14 @@ export async function loginHandler(
       message: "Invalid email or password",
     });
   }
-
+  
   // verify password
   const correctPassword = verifyPassword({
     candidatePassword: body.password,
     salt: user.salt,
     hash: user.password,
   });
-
+  
   if (correctPassword) {
     const { password, salt, ...rest } = user;
     // generate access token
