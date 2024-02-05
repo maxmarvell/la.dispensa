@@ -24,11 +24,10 @@ declare module "@fastify/jwt" {
   }
 }
 
-type FastifyRequestVerify<T> = Partial<T>
-  & { jwtVerify: any }
+type FastifyRequestVerify<T> = Partial<T> & { jwtVerify: any }
 
 server.register(fastifyJwt, {
-  secret: "nrEBgy!ug6Ls2Vy"
+  secret: "bigsecretbigsecretbigsecretbigsecret"
 })
 
 // server.register(multer.contentParser);
@@ -52,11 +51,19 @@ server.decorate("authenticate", async function (request: FastifyRequestVerify<Fa
   } catch (err) {
     reply.send(err)
   }
-})
+});
 
 server.get('/healthcheck', async function () {
   return { status: 'ok' };
 });
+
+// server.addHook("preHandler", (req, reply, next) => {
+//   req.jwt = server.jwt;
+//   return next();
+// });
+
+
+
 
 
 async function main() {

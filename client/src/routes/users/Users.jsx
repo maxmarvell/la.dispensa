@@ -73,6 +73,8 @@ export default function Users() {
     queryFn: () => getUsers({ userId })
   });
 
+  console.log(users)
+
   if (isLoading) {
     return (
       <div></div>
