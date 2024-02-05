@@ -8,11 +8,8 @@ let authToken = (
   null
 )
 
-// const SERVER="https://la-dispensa-api.onrender.com"
-const SERVER="http://localhost:3000"
-
 const axiosInstance = axios.create({
-  baseURL: SERVER,
+  baseURL: import.meta.env.SERVER,
   headers: { Authorization: `Bearer ${authToken}` }
 });
 
