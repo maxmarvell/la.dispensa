@@ -7,7 +7,13 @@ const userCore = {
     required_error: 'Email is required',
     invalid_type_error: 'Email must be a string',
   }).email(),
-  username: z.string(),
+  username: z.string({
+    required_error: 'Username is required',
+  }).min(8, {
+    message: "Username mist be at least 8 Characters"
+  }).max(20, {
+    message: "Username mist be at most 20 Characters"
+  }),
 }
 
 const createUserSchema = z.object({
@@ -15,6 +21,10 @@ const createUserSchema = z.object({
   password: z.string({
     required_error: 'Password is required',
     invalid_type_error: 'Password must be a string',
+  }).min(8, {
+    message: "Username mist be at least 8 Characters"
+  }).max(20, {
+    message: "Username mist be at most 20 Characters"
   }),
 });
 

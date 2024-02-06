@@ -2,9 +2,7 @@ import { JWT } from '@fastify/jwt';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import * as Modules from './modules/index'
 
-export const server = fastify({
-  logger: true
-});
+export const server = fastify();
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -26,8 +24,6 @@ declare module "@fastify/jwt" {
   }
 }
 
-type FastifyRequestVerify<T> = Partial<T> & { jwtVerify: any }
-
 server.register(require('@fastify/jwt'), {
   secret: "bigsecretbigsecretbigsecretbigsecret"
 })
@@ -45,7 +41,7 @@ server.register(require('@fastify/multipart'), {
   }
 }).after(() => { });
 
-server.decorate("authenticate", async function (request: FastifyRequestVerify<FastifyRequest>, reply: FastifyReply) {
+server.decorate("authenticate", async function (request: FastifyRequest, reply: FastifyReply) {
   try {
     await request.jwtVerify();
   } catch (err) {

@@ -17,7 +17,6 @@ interface CloudImageUploadFile {
 
 
 export default async function cloudImageUpload(file: CloudImageUploadFile) {
-  console.log(file)
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: file.filename,

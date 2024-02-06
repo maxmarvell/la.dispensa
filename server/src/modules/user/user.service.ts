@@ -24,7 +24,6 @@ export async function findUserByEmail(email: string) {
 
 
 export async function findUsers(userId?: string) {
-  console.log(userId)
   return prisma.user.findMany({
     where: {
       NOT: {

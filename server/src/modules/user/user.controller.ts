@@ -14,6 +14,7 @@ export async function registerUserHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
+  console.log(body)
   try {
     const user = await createUser(body);
     return reply.code(201).send(user);
@@ -55,7 +56,7 @@ export async function loginHandler(
   }
 
   return reply.code(401).send({
-    message: "Invalid password",
+    message: "Invalid username or password",
   });
 };
 
@@ -183,7 +184,6 @@ export async function connectDeleteHandler(
   reply: FastifyReply
 ) {
   const { connectedWithId, connectedById } = request.params;
-  console.log(connectedWithId, connectedById)
   try {
     const result = await deleteConnection(connectedWithId, connectedById);
     return reply.code(200).send(result);
@@ -204,7 +204,6 @@ export async function getConnectionsHandler(
   try {
     const { userId } = request.params;
     const users = await getConnections(userId);
-    console.log(users)
     return users;
   } catch (error) {
     console.log(error);
