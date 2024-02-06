@@ -1,4 +1,4 @@
-import axiosInstance from "../interceptors/refresh"
+import axiosInstance from "./refresh"
 
 export async function getRecipe({ recipeId }) {
   try {
@@ -36,7 +36,7 @@ export async function createRecipe({ title }) {
         headers: { 'Content-Type': 'application/json' }
       },
       { withCredentials: true }
-    )
+    );
     return data;
   } catch (e) {
     console.error(e);

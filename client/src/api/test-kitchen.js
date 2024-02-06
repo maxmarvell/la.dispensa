@@ -1,4 +1,4 @@
-import axiosInstance from "../interceptors/refresh";
+import axiosInstance from "./refresh";
 import { stratify, tree } from "d3-hierarchy";
 import { getRecipe } from "./recipe";
 

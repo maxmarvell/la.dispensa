@@ -1,4 +1,4 @@
-import axiosInstance from "../interceptors/refresh";
+import axiosInstance from "./refresh";
 
 export async function searchTags({ name, excludeTags }) {
   try {

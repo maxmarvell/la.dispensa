@@ -1,5 +1,5 @@
-import { Handle, Position } from 'reactflow';
-import { AddFill, ArrowRight, EditFill, RemoveFill } from '../../assets/icons';
+import { Handle, Position } from "reactflow";
+import * as dark from "../../assets/icons/dark";
 
 export default function iterationNode({ data, selected }) {
 
@@ -37,7 +37,7 @@ export default function iterationNode({ data, selected }) {
           <ul>
             {added.map((el, index) =>
               <li key={index} className='flex items-center space-x-1'>
-                <img src={AddFill} width={13} height={13} />
+                <img src={dark.AddFill} width={13} height={13} />
                 <div className='text-ellipsis truncate'>
                   <span>{el.quantity}{el.unit}</span>
                   <span className='capitalize'> {el.ingredient.name}</span>
@@ -48,7 +48,7 @@ export default function iterationNode({ data, selected }) {
           <ul>
             {removed.map((el, index) => (
               <li key={index} className='flex items-center space-x-1'>
-                <img src={RemoveFill} width={13} height={13} />
+                <img src={dark.RemoveFill} width={13} height={13} />
                 <div className='text-ellipsis truncate'>
                   <span>{el.quantity}{el.unit}</span>
                   <span className='capitalize'> {el.ingredient.name}</span>
@@ -60,12 +60,12 @@ export default function iterationNode({ data, selected }) {
           {changed.map((el, index) =>
           (
             <li key={index} className='flex items-center space-x-1'>
-              <img src={EditFill} width={15} height={15} />
+              <img src={dark.EditFill} width={15} height={15} />
               <div className='text-ellipsis truncate'>
                 <span>{el.parent.quantity}{el.parent.unit}</span>
                 <span className='capitalize'> {el.parent.ingredient.name}</span>
               </div>
-              <img src={ArrowRight} width={15} height={15} />
+              <img src={dark.ArrowRight} width={15} height={15} />
               <div className='text-ellipsis truncate'>
                 <span>{el.child.quantity}{el.child.unit}</span>
                 <span className='capitalize'> {el.parent.ingredient.name}</span>

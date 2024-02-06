@@ -3,7 +3,6 @@ import { getRecipe } from "../../api/recipe";
 import { useParams } from "react-router-dom";
 import * as dark from "../../assets/icons/dark"
 import { useRef, useState } from "react";
-import { Save, SaveFill } from "../../assets/icons";
 import { editRecipe } from "../../api/recipe";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,7 +12,7 @@ const Description = () => {
 
   const { recipeId } = useParams();
 
-  const { isLoading, isError, data: recipe, error } = useQuery({
+  const { isLoading, isError, data: recipe } = useQuery({
     queryKey: ['recipe', recipeId],
     queryFn: () => getRecipe({ recipeId })
   });
@@ -79,7 +78,7 @@ const Description = () => {
             onClick={handleEdit}
           >
             <img
-              src={SaveFill} alt="save-fill"
+              src={dark.SaveFill} alt="save-fill"
               className={`border-2 ${(description !== recipe?.description) ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
             />
           </button>

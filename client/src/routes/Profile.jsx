@@ -1,4 +1,3 @@
-import { User, Add } from "../assets/icons"
 import { useParams } from "react-router-dom";
 import { get as getUser, uploadPhoto } from "../api/user";
 import { useQuery } from "@tanstack/react-query";
@@ -55,7 +54,7 @@ export default function Profile() {
           className="relative mx-1 aspect-square items-center flex overflow-hidden pb-2"
         >
           <img
-            src={user?.image ? user.image : User}
+            src={user?.image ? user.image : dark.User}
             className="object-cover h-full w-full"
           />
           {editing && (

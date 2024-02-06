@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { updateIterationInstruction } from "../../api/test-kitchen"
-import { ClockFill, FireFill, Save } from "../../assets/icons"
+import * as dark from "../../assets/icons/dark";
 import { useMutation } from "@tanstack/react-query"
 
 const InstructionField = ({ instruction, setNodes }) => {
@@ -39,7 +39,7 @@ const InstructionField = ({ instruction, setNodes }) => {
       <div className="text-sm font-bold uppercase text-center">Step {step}</div>
       <div className="text-center">{instruction.description}</div>
       <div className="flex space-x-2 justify-center">
-        <img className="h-5 w-5 my-auto" src={ClockFill} alt="add-time-field" />
+        <img className="h-5 w-5 my-auto" src={dark.ClockFill} alt="add-time-field" />
         <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2 focus-within:outline-none">
           <input
             type="number"
@@ -65,12 +65,12 @@ const InstructionField = ({ instruction, setNodes }) => {
             className="absolute top-2 right-3 h-5 w-5"
             onClick={handleUpdate}
           >
-            <img src={Save} alt="save instruction changes" />
+            <img src={dark.Save} alt="save instruction changes" />
           </button>
         </div>
       </div>
       <div className="flex space-x-2 justify-center">
-        <img className="h-5 w-5 my-auto" src={FireFill} alt="add-temperature-field" />
+        <img className="h-5 w-5 my-auto" src={dark.FireFill} alt="add-temperature-field" />
         <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2 focus-within:outline-none">
           <input type="number" value={updatedInstruction.temperature?.temperature || ""}
             onChange={e => setUpdates(({ temperature, ...rest }) => (e.target.value ? { ...rest, temperature: { ...temperature, temperature: e.target.value } } : rest))}

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react"
-import { Save, Add, Edit, Remove } from "../../assets/icons"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 import { get as getIngredients, create as createIngredients, remove as removeIngredient, update as updateIngredient } from "../../api/ingredients"
 import { getComponents, getRecipe } from "../../api/recipe"
 import AuthContext from "../../context/auth"
+import * as dark from "../../assets/icons/dark"
 
 const measureSelections = [
   { name: 'g', value: 'G' },
@@ -119,21 +119,21 @@ const IngredientField = ({ ingredient }) => {
               onClick={handleSave}
               className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
             >
-              <img src={Save} alt="save-icon" />
+              <img src={dark.Save} alt="save-icon" />
             </button>
           ) : (
             <button
               onClick={() => removeMutation({ ingredientId, recipeId })}
               className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
             >
-              <img src={Remove} alt="remove-icon" />
+              <img src={dark.Remove} alt="remove-icon" />
             </button>
           )}
           <button
             onClick={() => setEditing(!editing)}
             className={`border-2 ${editing ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
           >
-            <img src={Edit} alt="edit-icon" />
+            <img src={dark.Edit} alt="edit-icon" />
           </button>
         </div>
       </div >
@@ -313,7 +313,7 @@ export default function Ingredients() {
               onClick={handleAddIngredient}
               className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
             >
-              <img src={Add} alt="add-icon" />
+              <img src={dark.Add} alt="add-icon" />
             </button>
             <button
               onClick={() => {
@@ -321,7 +321,7 @@ export default function Ingredients() {
               }}
               className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
             >
-              <img src={Save} alt="save-icon" />
+              <img src={dark.Save} alt="save-icon" />
             </button>
           </div>
         </div>
@@ -348,7 +348,7 @@ export default function Ingredients() {
             onClick={handleAddIngredient}
             className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
           >
-            <img src={Add} alt="add-icon" />
+            <img src={dark.Add} alt="add-icon" />
           </button>
           <button
             onClick={() => {
@@ -356,7 +356,7 @@ export default function Ingredients() {
             }}
             className={`border-2 ${false ? "border-orange-300 bg-orange-300" : "border-slate-950"}`}
           >
-            <img src={Save} alt="save-icon" />
+            <img src={dark.Save} alt="save-icon" />
           </button>
         </div>
       </div>

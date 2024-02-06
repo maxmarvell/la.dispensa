@@ -1,7 +1,10 @@
-import { useQuery } from "@tanstack/react-query"
-import { getConnections } from "../../api/user"
-import { Link, useParams } from "react-router-dom"
-import { User } from "../../assets/icons"
+import { useQuery } from "@tanstack/react-query";
+import { getConnections } from "../../api/user";
+import { Link, useParams } from "react-router-dom";
+import * as dark from "../../assets/icons/dark";
+
+
+
 
 const UserCard = ({ user }) => {
 
@@ -17,7 +20,7 @@ const UserCard = ({ user }) => {
           src={(user.image) ? (
             user.image
           ) : (
-            User
+            dark.User
           )}
           className="object-cover h-full w-full"
         />

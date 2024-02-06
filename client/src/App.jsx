@@ -10,70 +10,70 @@ import Profile from './routes/Profile';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Logout from './routes/auth/Logout';
 import Recipes from './routes/Recipes';
-import RecipeRoutes from './routes/recipes/Router';
 import Register from './routes/auth/Register';
+import TestKitchen from './routes/test-kitchen/TestKitchen';
+import TestKitchenContainer from './routes/test-kitchen/Index';
+
+import TestKitchenRoutes from "./routes/test-kitchen/Router"
+import RecipeRoutes from './routes/recipe/Router';
+
 import './App.css';
-import TestKitchen from './routes/recipes/TestKitchen';
-import TestKitchenContainer from './routes/TestKitchen';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
       path='/'
-      element={<Root />}
-      errorElement={<ErrorPage />}
     >
       <Route
+        path='/login'
+        element={<Login />}
+      />
+      <Route
+        path='/register'
+        element={<Register />}
+      />
+      <Route
+        path='/'
+        element={<Root />}
         errorElement={<ErrorPage />}
       >
-        <Route index element={<Dashboard />}></Route>
-        <Route
-          path='/login'
-          element={<Login />}
-        />
-        <Route
-          path='/register'
-          element={<Register />}
-        />
-        <Route
-          path='/users'
-          element={<Users />}
-        >
+        <Route errorElement={<ErrorPage />}>
+          <Route index element={<Dashboard />}></Route>
           <Route
-            path='/users/:userId'
-            element={<Profile />}
-          />
-        </Route>
-        <Route
-          element={<ProtectedRoutes />}
-        >
-          <Route
-            path='/logout'
-            element={<Logout />}
-          />
-          <Route
-            path='/profile/:userId'
-            element={<Profile />}
-          />
-          <Route
-            path='/recipes/*'
-            element={<RecipeRoutes />}
-          />
-          <Route
-            path='/test-kitchen'
-            element={<TestKitchenContainer />}
+            path='/users'
+            element={<Users />}
           >
             <Route
-              path='/test-kitchen/:recipeId'
-              element={<TestKitchen />}
+              path='/users/:userId'
+              element={<Profile />}
             />
           </Route>
-          <Route
-            path='/recipes'
-            element={<Recipes />}
-          />
+          <Route element={<ProtectedRoutes />}>
+            <Route
+              path='/logout'
+              element={<Logout />}
+            />
+            <Route
+              path='/profile/:userId'
+              element={<Profile />}
+            />
+            <Route
+              path='/recipes/*'
+              element={<RecipeRoutes />}
+            />
+            
+            <Route
+              path='/test-kitchen/*'
+              element={<TestKitchenRoutes />}
+            />
+            <Route
+              path='/recipes'
+              element={<Recipes />}
+            />
+          </Route>
         </Route>
       </Route>
+
     </Route>
   )
 )

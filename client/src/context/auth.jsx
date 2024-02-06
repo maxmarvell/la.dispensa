@@ -11,61 +11,73 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem('authToken')
       ? JSON.parse(localStorage.getItem('authToken'))
       : null
-  )
+  );
 
   let [user, setUser] = useState(() =>
     localStorage.getItem('authToken')
       ? jwtDecode(localStorage.getItem('authToken'))
       : null
-  )
+  );
 
   let loginUser = async (e) => {
     e.preventDefault();
-    let { data } = await axios.post(
-      `${import.meta.env.SERVER}/api/users/login`,
-      {
-        email: e.target.email.value,
-        password: e.target.password.value,
-      },
-      {
-        headers: { 'Content-Type': 'application/json' }
-      },
-      { withCredentials: true }
-    );
+    try {
+      let { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER}/api/users/login`,
+        {
+          email: e.target.email.value,
+          password: e.target.password.value,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        },
+        { withCredentials: true }
+      );
 
-    if (!data) {
-      throw new Error('User not Found!')
-    }
+      if (!data) {
+        throw new Error('User not Found!')
+      }
 
-    setAuthToken(data.accessToken);
-    setUser(jwtDecode(data.accessToken));
-    localStorage.setItem('authToken', JSON.stringify(data.accessToken));
+      setAuthToken(data.accessToken);
+      setUser(jwtDecode(data.accessToken));
+      localStorage.setItem('authToken', JSON.stringify(data.accessToken));
 
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-  }
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    };
+  };
 
   let registerUser = async ({ newUser }) => {
-    let { data } = await axios.post(
-      `${import.meta.env.SERVER}/api/users/`,
-      newUser,
-      {
-        headers: { 'Content-Type': 'application/json' }
-      },
-      { withCredentials: true }
-    )
+    try {
+      // Try to register the new user with service
+      let { data } = await axios.post(`${import.meta.env.VITE_SERVER}/api/users/`,
+        newUser,
+        {
+          headers: { 'Content-Type': 'application/json' }
+        },
+        { withCredentials: true }
+      )
 
-    if (!data) {
-      throw new Error('Unable to register User!')
+      if (!data) {
+        throw new Error('Unable to register User!')
+      }
+
+      // Return the created user
+      return data;
+
+    } catch (error) {
+      throw new Error(error.response.data.message);
     }
-
-    return data;
-  }
+  };
 
   let logoutUser = async () => {
+    // Remove auth tokens and user from context
     setAuthToken(null);
     setUser(null);
     localStorage.removeItem('authToken');
-  }
+  };
 
   return (
     <AuthContext.Provider value={{

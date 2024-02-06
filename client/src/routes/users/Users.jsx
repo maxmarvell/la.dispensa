@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import AuthContext from "../../context/auth";
-import { User, UserAdd, ArrowRight } from "../../assets/icons";
+import * as dark from "../../assets/icons/dark"
 import { NavLink, Outlet } from "react-router-dom";
 import { getMany as getUsers } from "../../api/user";
 import { useQuery } from "@tanstack/react-query";
@@ -34,7 +34,7 @@ const UserCard = ({ user }) => {
       <div
         className="aspect-square items-center flex overflow-hidden"
       >
-        <img src={user.image ? user.image : User}
+        <img src={user.image ? user.image : dark.User}
           className="object-cover rounded-full h-full w-full"
         />
       </div>
@@ -44,7 +44,7 @@ const UserCard = ({ user }) => {
           <button type="button" onClick={() => clickHandler()}
             className={`${connectionType && (connectionType.accepted ? "ring ring-green-300" : "ring ring-slate-400")} border rounded-full p-1`}
           >
-            <img src={UserAdd} alt="add-user" />
+            <img src={dark.UserAdd} alt="add-user" />
           </button>
         ) : null}
         <NavLink to={`/users/${user.id}`}
@@ -56,7 +56,7 @@ const UserCard = ({ user }) => {
                 : "border rounded-full p-1"
           }
         >
-          <img src={ArrowRight} alt="go" />
+          <img src={dark.ArrowRight} alt="go" />
         </NavLink>
       </div>
     </div>
@@ -72,8 +72,6 @@ export default function Users() {
     queryKey: ['users', userId],
     queryFn: () => getUsers({ userId })
   });
-
-  console.log(users)
 
   if (isLoading) {
     return (
