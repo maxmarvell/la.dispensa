@@ -164,6 +164,7 @@ export async function connectHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
+  console.log(body)
   try {
     const connection = await createConnection(body);
     return reply.code(201).send(connection);

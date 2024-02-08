@@ -18,7 +18,6 @@ export default function Profile() {
 
   const { isLoading, isError, data: user, error } = useQuery({ queryKey: ['user', userId], queryFn: () => getUser({ userId }) })
 
-
   const queryClient = useQueryClient();
 
   const { mutateAsync: uploadPhotoMutation } = useMutation({
@@ -28,7 +27,7 @@ export default function Profile() {
     }
   });
 
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(false);
 
   // Handle Image Upload
   const [file, setFile] = useState(null);
@@ -48,10 +47,10 @@ export default function Profile() {
   }
 
   return (
-    <div className="grow divide-x p-10 pr-20 flex h-full">
-      <div className="flex flex-col w-3/12 max-w-72 pr-3 divide-y">
-        <div
-          className="relative mx-1 aspect-square items-center flex overflow-hidden pb-2"
+    <div className="grow divide-y pb-0 p-10 pr-20 flex flex-col h-full overflow-y-scroll">
+      <div className="flex divide-x mb-2">
+        <section
+          className="relative aspect-square w-1/4 items-center flex overflow-hidden mr-3"
         >
           <img
             src={user?.image ? user.image : dark.User}
@@ -76,29 +75,20 @@ export default function Profile() {
           >
             <img src={editing ? dark.Edit : light.Edit} alt="edit this page" />
           </button>
-        </div>
-        <div className="text-lg font-bold py-2">{user?.username}</div>
-      </div>
-      <div className="w-9/12 space-y-5 pl-5 lg:pr-32 pr-12 min-h-full flex flex-col justify-around overflow-auto">
-        <section className="">
-          <div className="flex justify-center mb-2">
-            <p className="text-xl uppercase px-10 border-b text-center">Gallery</p>
-          </div>
-          <RecipeGallery />
         </section>
-        <section>
-          <div className="flex justify-center mb-2">
-            <p className="text-xl uppercase px-10 border-b text-center">Connected With</p>
-          </div>
-          <Connections />
-        </section>
-        <section>
-          <div className="flex justify-center mb-2">
-            <p className="text-xl uppercase px-10 border-b text-center">Connected By</p>
-          </div>
-          <ConnectedBy />
+        <section
+          className="pl-5 grow divide-y"
+        >
+          <div className="text-lg font-bold pb-1">{user?.username}</div>
+          <div className="py-1">where does he work</div>
+          <div className="py-1">what does he do</div>
+          <div className="py-1">how many connections does he have</div>
+
         </section>
       </div>
+      <section className="mb-10 pt-2">
+        <RecipeGallery />
+      </section>
     </div>
   )
 }

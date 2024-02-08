@@ -87,20 +87,8 @@ export async function findUniqueRecipe(RecipeId: string) {
     include: {
       tags: true,
       author: true,
-      ingredients: {
-        include: {
-          ingredient: {
-            select: {
-              name: true
-            },
-          },
-        },
-      },
-      instructions: {
-        include: {
-          timeAndTemperature: true
-        }
-      },
+      ingredients: true,
+      instructions: true,
       components: {
         include: {
           component: {
@@ -123,6 +111,7 @@ export async function findUniqueRecipe(RecipeId: string) {
           }
         }
       },
+      editors: true
     }
   })
 }
@@ -381,3 +370,53 @@ export async function updateTags(input: { tags: UpdateTagsInput, recipeId: strin
     data: data
   })
 };
+
+
+// Dashboard
+
+export async function getDashboard({ userId, take, lastCursor }: { userId?: string, take: string, lastCursor?: string }) {
+
+  const results = await prisma.recipe.findMany({
+    take: parseInt(take as string),
+    ...(lastCursor && {
+      skip: 1, // Do not include the cursor itself in the query result.
+      cursor: {
+        id: lastCursor as string,
+      }
+    }),
+    orderBy: {
+      createdOn: "desc",
+    }
+  });
+
+  if (results.length == 0) {
+    return {
+      data: [],
+      metaData: {
+        lastCursor: null,
+        hasNextPage: false,
+      },
+    };
+  }
+
+  const lastPostInResults: any = results[results.length - 1];
+  const cursor: any = lastPostInResults.id;
+
+  const nextPage = await prisma.user.findMany({
+    // Same as before, limit the number of events returned by this query.
+    take: take ? parseInt(take as string) : 7,
+    skip: 1, // Do not include the cursor itself in the query result.
+    cursor: {
+      id: cursor,
+    },
+  });
+
+  const data = {
+    data: results, metaData: {
+      lastCursor: cursor,
+      hasNextPage: nextPage.length > 0,
+    }
+  };
+
+  return data
+}

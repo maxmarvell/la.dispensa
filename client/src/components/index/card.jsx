@@ -43,7 +43,7 @@ const RecipeCard = ({ recipe }) => {
           <p>{recipe.author.username}</p>
           <p>{date}/{month}/{year}</p>
         </div>
-        <div className="text-xl font-bold hover:underline py-2">
+        <div className="text-xl font-bold line-clamp-1 hover:underline my-2">
           {recipe.title}
         </div>
         <div className="text-xs h-8 line-clamp-2 text-slate-600 text-wrap">

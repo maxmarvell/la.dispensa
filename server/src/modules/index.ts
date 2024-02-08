@@ -9,6 +9,7 @@ import { instructionSchemas } from "./instruction/instruction.schema";
 import iterationRoutes from "./test_kitchen/test.kitchen.route";
 import { iterationSchema } from "./test_kitchen/test.kitchen.schema";
 import tagRoutes from "./tags/tags.route";
+import dashboardRoutes from "./dashboard/dashboard.routes";
 
 
 export {
@@ -22,5 +23,6 @@ export {
   instructionSchemas,
   iterationRoutes,
   iterationSchema,
-  tagRoutes
+  tagRoutes,
+  dashboardRoutes
 }

@@ -54,9 +54,10 @@ model Ingredient {
 model Connection {
   connectedWithId String
   connectedById   String
-  accepted        Boolean @default(false)
-  connectedBy     User    @relation("connectedWith", fields: [connectedById], references: [id], onDelete: Cascade)
-  connectedWith   User    @relation("connectedBy", fields: [connectedWithId], references: [id], onDelete: Cascade)
+  accepted        Boolean   @default(false)
+  connectedBy     User      @relation("connectedWith", fields: [connectedById], references: [id], onDelete: Cascade)
+  connectedWith   User      @relation("connectedBy", fields: [connectedWithId], references: [id], onDelete: Cascade)
+  createdOn       DateTime? @default(now())
 
   @@id([connectedWithId, connectedById], name: "ConnectionId")
 }

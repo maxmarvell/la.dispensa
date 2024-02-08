@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Connection" ADD COLUMN     "createdOn" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP;

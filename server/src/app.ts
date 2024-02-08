@@ -79,6 +79,8 @@ async function main() {
 
   server.register(Modules.tagRoutes, { prefix: "api/tags" })
 
+  server.register(Modules.dashboardRoutes, { prefix: "api/dashboard" })
+
   const port = Number(process.env.PORT) || 3000;
   const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
 

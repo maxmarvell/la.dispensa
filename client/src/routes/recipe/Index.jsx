@@ -1,8 +1,8 @@
-import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom"
+import { NavLink, Outlet, useParams } from "react-router-dom"
 import { getRecipe } from "../../api/recipe"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import AuthContext from "../../context/auth"
-import { useContext, useRef, useState } from "react"
+import { useContext, useRef } from "react"
 import Preparations from "../../components/recipe/preparations"
 import Description from "../../components/recipe/description"
 import Ingredients from "../../components/recipe/ingredients"
@@ -62,12 +62,16 @@ export default function Index() {
           </section>
         </div>
       </section>
-      <section
-        className="pl-24 pr-64 py-10 divide-y-2 divide-black"
-      >
-        <Rating />
-        <CreateReview />
-      </section>
+      {isAuthor ? (
+        null
+      ) : (
+        <section
+          className="pl-24 pr-64 py-10 divide-y-2 divide-black"
+        >
+          <Rating />
+          <CreateReview />
+        </section>
+      )}
       <section
         ref={reviewsRef}
         className="pl-24 py-10 min-h-screen pr-64"

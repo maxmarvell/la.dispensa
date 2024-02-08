@@ -28,7 +28,8 @@ const RecipeSearch = ({ title, setTitle }) => {
   return (
     <div
       className="w-1/2 min-w-12 flex justify-between border-0 pb-1
-                 border-b-2 border-slate-950 focus-within:border-orange-300">
+                 border-b-2 border-slate-950 focus-within:border-orange-300"
+    >
       <img src={dark.Search} alt="search" />
       <input
         type="input"

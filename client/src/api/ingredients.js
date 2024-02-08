@@ -11,17 +11,16 @@ export async function get({ recipeId }) {
   }
 }
 
-export async function create({ data }) {
-  console.log(data)
+export async function createIngredients({ data: input }) {
   try {
-    const instructions = await axiosInstance.post(`/api/ingredients/`,
-      data,
+    const { data } = await axiosInstance.post(`/api/ingredients/`,
+      input,
       {
         headers: { 'Content-Type': 'application/json' }
       },
       { withCredentials: true }
-    )
-    return instructions
+    );
+    return data
   } catch (e) {
     console.error(e)
   }
@@ -30,29 +29,28 @@ export async function create({ data }) {
 
 export async function remove({ recipeId, ingredientId }) {
   try {
-    const result = await axiosInstance.delete(`/api/ingredients/${recipeId}/${ingredientId}/`,
+    const { data } = await axiosInstance.delete(`/api/ingredients/${recipeId}/${ingredientId}/`,
       {
         headers: { 'Content-Type': 'application/json' }
       },
       { withCredentials: true }
     )
-    return result;
+    return data;
   } catch (e) {
     console.error(e)
   }
 }
 
-export async function update({ recipeId, ingredientId, data }) {
-  console.log(data)
+export async function update({ recipeId, ingredientId, data: input }) {
   try {
-    const result = await axiosInstance.patch(`/api/ingredients/${recipeId}/${ingredientId}/`,
-      data,
+    const { data } = await axiosInstance.patch(`/api/ingredients/${recipeId}/${ingredientId}/`,
+      input,
       {
         headers: { 'Content-Type': 'application/json' }
       },
       { withCredentials: true }
     )
-    return result;
+    return data;
   } catch (e) {
     console.error(e)
   }

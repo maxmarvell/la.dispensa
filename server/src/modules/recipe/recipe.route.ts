@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./recipe.schema";
-import { addEditorHandler, connectComponentHandler, createRecipeHandler, createReviewHandler, getAvailableComponentsHandler, getComponentsHandler, getEditorsHandler, getRecipeHandler, getRecipesHandler, getReviewsHandler, removeConnectComponentHandler, removeEditorHandler, removeRecipeHandler, updateRecipeHandler, createRatingHandler, getRatingsHandler, getRatingHandler, updateRatingHandler, getReviewHandler, updateReviewHandler, updateTagsHandler, findTestKitchenRecipesHandler } from "./recipe.controller";
+import { addEditorHandler, connectComponentHandler, createRecipeHandler, createReviewHandler, getAvailableComponentsHandler, getComponentsHandler, getEditorsHandler, getRecipeHandler, getRecipesHandler, getReviewsHandler, removeConnectComponentHandler, removeEditorHandler, removeRecipeHandler, updateRecipeHandler, createRatingHandler, getRatingsHandler, getRatingHandler, updateRatingHandler, getReviewHandler, updateReviewHandler, updateTagsHandler, findTestKitchenRecipesHandler, getDashboardHandler } from "./recipe.controller";
 import { uploadPhotoHandler } from "./recipe.controller";
 
 
@@ -112,7 +112,6 @@ async function recipeRoutes(server: FastifyInstance) {
   }, updateReviewHandler)
 
 
-
   // Ratings
 
   server.get('/:recipeId/ratings', {
@@ -153,6 +152,11 @@ async function recipeRoutes(server: FastifyInstance) {
   server.get('/test-kitchen',{
     onRequest: [server.authenticate]
   }, findTestKitchenRecipesHandler)
+
+
+  // Dashboard
+
+  server.get('dashboard', getDashboardHandler)
 
 };
 

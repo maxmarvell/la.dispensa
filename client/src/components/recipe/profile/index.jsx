@@ -1,13 +1,14 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { getRecipe } from "../../../api/recipe";
+import { useContext, useState } from "react";
+import { editRecipe, getRecipe } from "../../../api/recipe";
 import * as dark from "../../../assets/icons/dark/index";
 import * as light from "../../../assets/icons/light/index";
 import { uploadPhoto } from "../../../api/recipe";
 import AggregateRating from "./aggregateRating";
 import Tags from "./tags";
 import { FileUploader } from "react-drag-drop-files";
+import AuthContext from "../../../context/auth";
 
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -57,6 +58,22 @@ const Profile = ({ reviewsRef, recipeRef }) => {
   // auto scroll to main body on button click
   const executeScroll = (ref) => ref.current.scrollIntoView({ behavior: "smooth" })
 
+  // Handle user edit title
+  const [title, setTitle] = useState(recipe?.title);
+  const { mutateAsync: editMutation } = useMutation({
+    mutationFn: editRecipe,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['recipe'])
+    }
+  });
+  const handleEditTitle = async () => {
+    await editMutation({ recipeId, data: { title } });
+  }
+
+  const { user: { id } } = useContext(AuthContext);
+
+  const isAuthor = (id === recipe.authorId);
+  const isEditor = recipe.editors.find(el => el.userId === id);
 
   return (
     <>
@@ -64,9 +81,19 @@ const Profile = ({ reviewsRef, recipeRef }) => {
         <section className="mb-8">
           <Tags editing={editing} />
         </section>
-        <div className="text-5xl capitalize mb-5 px-10 text-center">
-          {recipe?.title}
-        </div>
+        {editing ? (
+          <input
+            className="text-5xl capitalize mb-5 mx-10 bg-transparent text-center "
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            onBlur={handleEditTitle}
+          />
+        ) : (
+          <div className="text-5xl capitalize mb-5 px-10 text-center">
+            {recipe?.title}
+          </div>
+        )}
         <div className="text-xs uppercase mb-1">
           By {recipe?.author.username}
         </div>
@@ -82,15 +109,22 @@ const Profile = ({ reviewsRef, recipeRef }) => {
         >
           Read the Reviews
         </button>
-        <div className="mt-6">
-          <Link
-            className="bg-slate-950 flex text-white text-xs px-2 py-1"
-            to={`/test-kitchen/${recipeId}`}
-          >
-            <div className="my-auto">Test Kitchen</div>
-            <img src={light.ArrowRight} alt="" />
-          </Link>
-        </div>
+        {(isEditor || isAuthor) ? (
+          <div className="mt-6">
+            <Link
+              className="bg-slate-950 border-2 border-slate-950 flex text-white hover:bg-orange-300 
+                       hover:text-slate-950 text-xs px-2 py-1"
+              onMouseEnter={e => e.target.querySelector('img').src = dark.ArrowRight}
+              onMouseLeave={e => e.target.querySelector('img').src = light.ArrowRight}
+              to={`/test-kitchen/${recipeId}`}
+            >
+              <div className="my-auto">Test Kitchen</div>
+              <img src={light.ArrowRight} alt="" />
+            </Link>
+          </div>
+        ) : (
+          null
+        )}
       </div>
       <div className="h-full w-1/2 relative">
         <img
@@ -123,17 +157,35 @@ const Profile = ({ reviewsRef, recipeRef }) => {
       </button>
       <div className="absolute top-2 left-2 space-x-4">
         <button
-          className={`p-1 border-2 ${editing ? "bg-orange-300 border-orange-300" : "bg-slate-950 border-slate-950"}`}
+          className={`p-1 border-2 border-slate-950 bg-slate-950 hover:bg-orange-300`}
           onClick={() => navigate("/recipes/")}
+          onMouseEnter={e => e.target.querySelector('img').src = dark.RefundBack}
+          onMouseLeave={e => e.target.querySelector('img').src = light.RefundBack}
         >
-          <img src={light.RefundBack} alt="go back to recipes" />
+          <img
+            src={light.RefundBack} alt="go back to recipes"
+          />
         </button>
-        <button
-          className={`p-1 border-2 ${editing ? "bg-orange-300 border-orange-300" : "bg-slate-950 border-slate-950"}`}
-          onClick={() => setEditing(!editing)}
-        >
-          <img src={editing ? dark.Edit : light.Edit} alt="edit this page" />
-        </button>
+        {isAuthor ? (
+          <button
+            className={`p-1 border-2 border-slate-950 hover:bg-orange-300 ${editing ? "bg-orange-300" : "bg-slate-950"}`}
+            onClick={() => setEditing(!editing)}
+            onMouseEnter={e => {
+              if (!editing) {
+                e.target.querySelector('img').src = dark.Edit;
+              };
+            }}
+            onMouseLeave={e => {
+              if (!editing) {
+                e.target.querySelector('img').src = light.Edit;
+              };
+            }}
+          >
+            <img src={editing ? dark.Edit : light.Edit} alt="edit this page" />
+          </button>
+        ) : (
+          null
+        )}
       </div>
     </>
   )

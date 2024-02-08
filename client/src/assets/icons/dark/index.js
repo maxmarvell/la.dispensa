@@ -29,6 +29,10 @@ import Fire from './Fire.svg';
 import ClockFill from './Clock_fill.svg';
 import FireFill from './Fire_fill.svg';
 import Refresh from './Refresh.svg';
+import ExpandLeft from './Expand_left_double.svg';
+import ExpandRight from './Expand_right_double.svg';
+import Eye from './Eye.svg';
+import RefundBack from './Refund_back.svg';
 
 export {
   AddFill,
@@ -61,5 +65,9 @@ export {
   Fire,
   ClockFill,
   FireFill,
-  Refresh
+  Refresh,
+  ExpandLeft, 
+  ExpandRight,
+  Eye,
+  RefundBack
 }

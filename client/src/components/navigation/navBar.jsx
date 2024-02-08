@@ -34,7 +34,6 @@ const NavBar = () => {
       <div className="flex flex-col flex-grow">
         <ul className="my-5 space-y-3">
           <NavbarLink to="/" name="dashboard" />
-          <NavbarLink to="/users" name="users" />
           {!(user) ? (
             null
           ) : (

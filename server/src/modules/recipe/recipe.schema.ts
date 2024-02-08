@@ -22,7 +22,8 @@ const createRecipeResponseSchema = z.object({
 const updateRecipeCore = {
   title: z.string().optional(),
   image: z.string().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
+  public: z.boolean().optional(),
 };
 
 const updateRecipeSchema = z.object({

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { get as getInstructions } from "../../../api/instructions";
 import { getComponents, getRecipe } from "../../../api/recipe";
 import UpdateField from "./updateField";
-import Create from "./create";
+import Create from "./createPreparations";
 
 
 const Preparations = () => {
