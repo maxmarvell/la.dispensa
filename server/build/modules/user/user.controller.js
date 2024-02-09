@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findGalleryRecipesHandler = exports.acceptConnectionHandler = exports.getConnectedByHandler = exports.getConnectionsHandler = exports.connectDeleteHandler = exports.connectHandler = exports.uploadPhotoHandler = exports.getUserHandler = exports.getUsersHandler = exports.changeUserPasswordHandler = exports.loginHandler = exports.registerUserHandler = void 0;
+exports.findGalleryRecipesHandler = exports.getConnectionRequestsHandler = exports.acceptConnectionHandler = exports.getConnectionsHandler = exports.removeConnectionHandler = exports.connectHandler = exports.uploadPhotoHandler = exports.getUserHandler = exports.getUsersHandler = exports.changeUserPasswordHandler = exports.loginHandler = exports.registerUserHandler = void 0;
 const user_service_1 = require("./user.service");
 const user_service_2 = require("./user.service");
 const aws_s3_1 = __importDefault(require("../../utils/aws.s3"));
@@ -31,6 +31,7 @@ const hash_1 = require("../../utils/hash");
 function registerUserHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
+        console.log(body);
         try {
             const user = yield (0, user_service_1.createUser)(body);
             return reply.code(201).send(user);
@@ -64,7 +65,7 @@ function loginHandler(request, reply) {
             return { accessToken: request.jwt.sign(rest) };
         }
         return reply.code(401).send({
-            message: "Invalid password",
+            message: "Invalid username or password",
         });
     });
 }
@@ -78,11 +79,13 @@ function changeUserPasswordHandler(request, reply) {
             yield (0, user_service_1.changeUserPassword)({
                 id, password
             });
-            return reply.code(204);
+            return reply.code(204).send();
         }
         catch (error) {
             console.log(error);
-            return reply.code(404);
+            return reply.code(404).send({
+                message: "Unable to Change Password"
+            });
         }
         ;
     });
@@ -143,26 +146,27 @@ exports.uploadPhotoHandler = uploadPhotoHandler;
 // Connection controllers
 function connectHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
+        const { userId: connectedWithId } = request.params;
+        const { id: connectedById } = request.user;
         try {
-            const connection = yield (0, user_service_1.createConnection)(body);
+            const connection = yield (0, user_service_1.createConnection)({ connectedById, connectedWithId });
             return reply.code(201).send(connection);
         }
         catch (e) {
             console.log(e);
-            return reply.code(400);
+            return reply.code(400).send(e);
         }
         ;
     });
 }
 exports.connectHandler = connectHandler;
 ;
-function connectDeleteHandler(request, reply) {
+function removeConnectionHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { connectedWithId, connectedById } = request.params;
-        console.log(connectedWithId, connectedById);
+        const { userId: connectedWithId } = request.params;
+        const { id: connectedById } = request.user;
         try {
-            const result = yield (0, user_service_1.deleteConnection)(connectedWithId, connectedById);
+            const result = yield (0, user_service_1.removeConnection)({ connectedWithId, connectedById });
             return reply.code(200).send(result);
         }
         catch (e) {
@@ -172,50 +176,58 @@ function connectDeleteHandler(request, reply) {
         ;
     });
 }
-exports.connectDeleteHandler = connectDeleteHandler;
+exports.removeConnectionHandler = removeConnectionHandler;
 ;
 function getConnectionsHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { userId } = request.params;
             const users = yield (0, user_service_1.getConnections)(userId);
-            console.log(users);
             return users;
         }
         catch (error) {
             console.log(error);
             return reply.code(404);
         }
+        ;
     });
 }
 exports.getConnectionsHandler = getConnectionsHandler;
-function getConnectedByHandler(request, reply) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const data = yield (0, user_service_1.getConnectedBy)(Object.assign({}, request.params));
-            return data;
-        }
-        catch (error) {
-            console.log(error);
-            return reply.code(404);
-        }
-    });
-}
-exports.getConnectedByHandler = getConnectedByHandler;
+;
 function acceptConnectionHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { userId: connectedById } = request.params;
+        const { id: connectedWithId } = request.user;
         try {
-            const { userId, connectedById } = request.params;
-            const result = yield (0, user_service_1.acceptConnection)({ userId, connectedById });
-            return result;
+            yield (0, user_service_1.acceptConnection)({ connectedById, connectedWithId });
+            return reply.code(204).send();
         }
         catch (error) {
             console.log(error);
-            return reply.code(401);
+            return reply.code(404).send(error);
         }
+        ;
     });
 }
 exports.acceptConnectionHandler = acceptConnectionHandler;
+;
+function getConnectionRequestsHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id: userId } = request.user;
+        try {
+            let requests = yield (0, user_service_1.getConnectionRequests)(userId);
+            return requests;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404).send(error);
+        }
+        ;
+    });
+}
+exports.getConnectionRequestsHandler = getConnectionRequestsHandler;
+;
+// Profile controls
 function findGalleryRecipesHandler(request, reply) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

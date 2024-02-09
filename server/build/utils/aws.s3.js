@@ -20,7 +20,6 @@ const s3 = new client_s3_2.S3Client({
 });
 function cloudImageUpload(file) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(file);
         const putObjectCommand = new client_s3_1.PutObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: file.filename,

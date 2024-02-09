@@ -58,24 +58,23 @@ const createManyIterationIngredientsResponseSchema = zod_1.z.array(zod_1.z.objec
     iterationId: zod_1.z.string(),
 }));
 const updateIterationInstructionSchema = zod_1.z.object({
-    time: zod_1.z.object({
+    timeAndTemperature: zod_1.z.object({
         hours: zod_1.z.number().optional(),
-        minutes: zod_1.z.number().optional()
-    }),
-    temperature: zod_1.z.object({
-        temperature: zod_1.z.number().optional(),
-        unit: zod_1.z.enum(["C", "K"]).optional(),
-    }),
+        minutes: zod_1.z.number().optional(),
+        temperature: zod_1.z.number(),
+        unit: zod_1.z.enum(["C", "K"]),
+    }).optional(),
+    description: zod_1.z.string().optional(),
+    step: zod_1.z.number(),
+    iterationId: zod_1.z.string(),
 });
 const updateIterationInstructionResponseSchema = zod_1.z.object({
-    time: zod_1.z.object({
+    timeAndTemperature: zod_1.z.object({
         hours: zod_1.z.number().optional(),
-        minutes: zod_1.z.number().optional()
-    }),
-    temperature: zod_1.z.object({
-        temperature: zod_1.z.number().optional(),
-        unit: zod_1.z.enum(["C", "K"]).optional(),
-    }),
+        minutes: zod_1.z.number().optional(),
+        temperature: zod_1.z.number(),
+        unit: zod_1.z.enum(["C", "K"]),
+    }).optional(),
     description: zod_1.z.string(),
     step: zod_1.z.number(),
     iterationId: zod_1.z.string(),

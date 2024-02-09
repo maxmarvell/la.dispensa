@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTags = exports.updateReview = exports.getReview = exports.createReview = exports.getReviews = exports.createRating = exports.updateRating = exports.getRating = exports.getRatings = exports.removeEditor = exports.addEditor = exports.getEditor = exports.addRecipePhoto = exports.availableToConnect = exports.removeConnectComponent = exports.connectComponent = exports.getComponents = exports.removeRecipe = exports.updateRecipe = exports.findUniqueRecipe = exports.findTestKitchenRecipes = exports.findRecipes = exports.createRecipe = void 0;
+exports.getDashboard = exports.updateTags = exports.updateReview = exports.getReview = exports.createReview = exports.getReviews = exports.createRating = exports.updateRating = exports.getRating = exports.getRatings = exports.removeEditor = exports.addEditor = exports.getEditor = exports.addRecipePhoto = exports.availableToConnect = exports.removeConnectComponent = exports.connectComponent = exports.getComponents = exports.removeRecipe = exports.updateRecipe = exports.findUniqueRecipe = exports.findTestKitchenRecipes = exports.findRecipes = exports.createRecipe = void 0;
 const prisma_1 = __importDefault(require("../../utils/prisma"));
 function createRecipe(input) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -104,20 +104,8 @@ function findUniqueRecipe(RecipeId) {
             include: {
                 tags: true,
                 author: true,
-                ingredients: {
-                    include: {
-                        ingredient: {
-                            select: {
-                                name: true
-                            },
-                        },
-                    },
-                },
-                instructions: {
-                    include: {
-                        timeAndTemperature: true
-                    }
-                },
+                ingredients: true,
+                instructions: true,
                 components: {
                     include: {
                         component: {
@@ -140,6 +128,7 @@ function findUniqueRecipe(RecipeId) {
                         }
                     }
                 },
+                editors: true
             }
         });
     });
@@ -406,4 +395,44 @@ function updateTags(input) {
 }
 exports.updateTags = updateTags;
 ;
+// Dashboard
+function getDashboard({ userId, take, lastCursor }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const results = yield prisma_1.default.recipe.findMany(Object.assign(Object.assign({ take: parseInt(take) }, (lastCursor && {
+            skip: 1, // Do not include the cursor itself in the query result.
+            cursor: {
+                id: lastCursor,
+            }
+        })), { orderBy: {
+                createdOn: "desc",
+            } }));
+        if (results.length == 0) {
+            return {
+                data: [],
+                metaData: {
+                    lastCursor: null,
+                    hasNextPage: false,
+                },
+            };
+        }
+        const lastPostInResults = results[results.length - 1];
+        const cursor = lastPostInResults.id;
+        const nextPage = yield prisma_1.default.user.findMany({
+            // Same as before, limit the number of events returned by this query.
+            take: take ? parseInt(take) : 7,
+            skip: 1, // Do not include the cursor itself in the query result.
+            cursor: {
+                id: cursor,
+            },
+        });
+        const data = {
+            data: results, metaData: {
+                lastCursor: cursor,
+                hasNextPage: nextPage.length > 0,
+            }
+        };
+        return data;
+    });
+}
+exports.getDashboard = getDashboard;
 //# sourceMappingURL=recipe.service.js.map

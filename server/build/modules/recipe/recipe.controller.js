@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTagsHandler = exports.updateReviewHandler = exports.createReviewHandler = exports.getReviewHandler = exports.getReviewsHandler = exports.createRatingHandler = exports.updateRatingHandler = exports.getRatingHandler = exports.getRatingsHandler = exports.removeEditorHandler = exports.addEditorHandler = exports.getEditorsHandler = exports.uploadPhotoHandler = exports.getAvailableComponentsHandler = exports.removeConnectComponentHandler = exports.connectComponentHandler = exports.getComponentsHandler = exports.removeRecipeHandler = exports.updateRecipeHandler = exports.getRecipeHandler = exports.createRecipeHandler = exports.findTestKitchenRecipesHandler = exports.getRecipesHandler = void 0;
+exports.getDashboardHandler = exports.updateTagsHandler = exports.updateReviewHandler = exports.createReviewHandler = exports.getReviewHandler = exports.getReviewsHandler = exports.createRatingHandler = exports.updateRatingHandler = exports.getRatingHandler = exports.getRatingsHandler = exports.removeEditorHandler = exports.addEditorHandler = exports.getEditorsHandler = exports.uploadPhotoHandler = exports.getAvailableComponentsHandler = exports.removeConnectComponentHandler = exports.connectComponentHandler = exports.getComponentsHandler = exports.removeRecipeHandler = exports.updateRecipeHandler = exports.getRecipeHandler = exports.createRecipeHandler = exports.findTestKitchenRecipesHandler = exports.getRecipesHandler = void 0;
 const recipe_service_1 = require("./recipe.service");
 const aws_s3_1 = __importDefault(require("../../utils/aws.s3"));
 const recipe_service_2 = require("./recipe.service");
@@ -349,7 +349,25 @@ function updateTagsHandler(request, reply) {
             console.log(error);
             return reply.code(404);
         }
+        ;
     });
 }
 exports.updateTagsHandler = updateTagsHandler;
+;
+// Dashboard
+function getDashboardHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let { lastCursor, take } = request.query;
+        let { id: userId } = request.user;
+        try {
+            let data = (0, recipe_service_1.getDashboard)({ userId, lastCursor, take });
+            return data;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+    });
+}
+exports.getDashboardHandler = getDashboardHandler;
 //# sourceMappingURL=recipe.controller.js.map

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tagRoutes = exports.iterationSchema = exports.iterationRoutes = exports.instructionSchemas = exports.instructionRoutes = exports.ingredientSchemas = exports.ingredientRoutes = exports.recipeSchemas = exports.recipeRoutes = exports.userSchemas = exports.userRoutes = void 0;
+exports.dashboardRoutes = exports.tagRoutes = exports.iterationSchema = exports.iterationRoutes = exports.instructionSchemas = exports.instructionRoutes = exports.ingredientSchemas = exports.ingredientRoutes = exports.recipeSchemas = exports.recipeRoutes = exports.userSchemas = exports.userRoutes = void 0;
 const user_route_1 = __importDefault(require("./user/user.route"));
 exports.userRoutes = user_route_1.default;
 const user_schema_1 = require("./user/user.schema");
@@ -26,4 +26,6 @@ const test_kitchen_schema_1 = require("./test_kitchen/test.kitchen.schema");
 Object.defineProperty(exports, "iterationSchema", { enumerable: true, get: function () { return test_kitchen_schema_1.iterationSchema; } });
 const tags_route_1 = __importDefault(require("./tags/tags.route"));
 exports.tagRoutes = tags_route_1.default;
+const dashboard_routes_1 = __importDefault(require("./dashboard/dashboard.routes"));
+exports.dashboardRoutes = dashboard_routes_1.default;
 //# sourceMappingURL=index.js.map

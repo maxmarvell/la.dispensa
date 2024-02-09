@@ -16,7 +16,8 @@ const createRecipeResponseSchema = zod_1.z.object(Object.assign({ id: zod_1.z.st
 const updateRecipeCore = {
     title: zod_1.z.string().optional(),
     image: zod_1.z.string().optional(),
-    description: zod_1.z.string().optional()
+    description: zod_1.z.string().optional(),
+    public: zod_1.z.boolean().optional(),
 };
 const updateRecipeSchema = zod_1.z.object(Object.assign({}, updateRecipeCore));
 const updateRecipeResponseSchema = Object.assign(Object.assign({}, updateRecipeCore), { authorId: zod_1.z.string({

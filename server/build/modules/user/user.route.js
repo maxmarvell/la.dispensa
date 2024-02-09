@@ -35,23 +35,19 @@ function userRoutes(server) {
         server.get('/', user_controller_1.getUsersHandler);
         server.get('/:userId', user_controller_1.getUserHandler);
         // Connections routes
-        server.post('/:userId/connections/', {
-            schema: {
-                body: (0, user_schema_1.$ref)('connectionRequestSchema'),
-                response: {
-                    200: (0, user_schema_1.$ref)('connectionResponseSchema')
-                }
-            },
+        server.get('/connections', user_controller_1.getConnectionsHandler);
+        server.post('/:userId/connect/', {
             onRequest: [server.authenticate]
         }, user_controller_1.connectHandler);
-        server.delete('/:userId/connectections/:connectedWithId', {
+        server.delete('/:userId/connect/', {
             onRequest: [server.authenticate]
-        }, user_controller_1.connectDeleteHandler);
-        server.get('/:userId/connections', user_controller_1.getConnectionsHandler);
-        server.get('/:userId/connected-by', user_controller_1.getConnectedByHandler);
-        server.patch('/:userId/connections/:connectedById/', {
+        }, user_controller_1.removeConnectionHandler);
+        server.put('/:userId/connect/', {
             onRequest: [server.authenticate]
         }, user_controller_1.acceptConnectionHandler);
+        server.get('/connection-requests', {
+            onRequest: [server.authenticate],
+        }, user_controller_1.getConnectionRequestsHandler);
         // Gallery
         server.get('/:userId/gallery', user_controller_1.findGalleryRecipesHandler);
         // User setting services

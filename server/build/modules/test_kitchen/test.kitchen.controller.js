@@ -1,150 +1,130 @@
 "use strict";
-// import { FastifyRequest } from "fastify/types/request"
-// import { FastifyReply } from "fastify"
-// import { CreateIterationInput, CreateManyIterationIngredientsInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput } from "./test.kitchen.schema"
-// import { createIteration, createIterationingredient, deleteIterationIngredient, getIterationInstance, getIterations, ingredientParams, instructionParams, updateIteration, updateIterationIngredient, updateIterationInstruction } from "./test.kitchen.service"
-// export async function getIterationsHandler(
-//   request: FastifyRequest<{
-//     Querystring: {
-//       recipeId: string
-//     }
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const { recipeId } = request.query
-//     const iterations = await getIterations(recipeId)
-//     return iterations
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(404)
-//   };
-// };
-// export async function getIterationInstanceHandler(
-//   request: FastifyRequest<{
-//     Params: {
-//       iterationId: string
-//     }
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const { iterationId } = request.params
-//     const iteration = await getIterationInstance(iterationId)
-//     return iteration
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(404)
-//   };
-// };
-// export async function createIterationHandler(
-//   request: FastifyRequest<{
-//     Body: CreateIterationInput
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const iteration = await createIteration({
-//       ...request.body,
-//     });
-//     return iteration;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(401);
-//   }
-// }
-// export async function updateIterationHandler(
-//   request: FastifyRequest<{
-//     Body: UpdateIterationInput,
-//     Params: {
-//       iterationId: string
-//     }
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const iteration = await updateIteration({
-//       ...request.body,
-//       ...request.params
-//     });
-//     return iteration;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(401);
-//   }
-// }
-// export async function deleteIterationIngredientHandler(
-//   request: FastifyRequest<{
-//     Params: ingredientParams
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const result = await deleteIterationIngredient(request.params);
-//     return result;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(404);
-//   }
-// }
-// export async function updateIterationIngredientHandler(
-//   request: FastifyRequest<{
-//     Params: ingredientParams,
-//     Body: UpdateIterationIngredientInput
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     // console.log({ ...request.params, ...request.body })
-//     const result = await updateIterationIngredient({ ...request.params, ...request.body });
-//     return result;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(401);
-//   };
-// };
-// export async function updateIterationInstructionHandler(
-//   request: FastifyRequest<{
-//     Params: instructionParams,
-//     Body: UpdateIterationInstructionInput,
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     console.log({
-//       ...request.params,
-//       ...request.body
-//     })
-//     const result = await updateIterationInstruction({
-//       ...request.params,
-//       ...request.body
-//     });
-//     return result;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(404);
-//   }
-// }
-// export async function createManyIterationIngredientHandler(
-//   request: FastifyRequest<{
-//     Params: {
-//       iterationId: string
-//     },
-//     Body: CreateManyIterationIngredientsInput
-//   }>,
-//   reply: FastifyReply
-// ) {
-//   try {
-//     const ingredients = await Promise.all(request.body.map((el) => {
-//       return new Promise(resolve => resolve(createIterationingredient({
-//         ...el,
-//         ...request.params
-//       })))
-//     }));
-//     return ingredients;
-//   } catch (error) {
-//     console.log(error);
-//     return reply.code(404);
-//   }
-// }
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createManyIterationIngredientHandler = exports.updateIterationInstructionHandler = exports.updateIterationIngredientHandler = exports.deleteIterationIngredientHandler = exports.updateIterationHandler = exports.createIterationHandler = exports.getIterationInstanceHandler = exports.getIterationsHandler = void 0;
+const test_kitchen_service_1 = require("./test.kitchen.service");
+function getIterationsHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { recipeId } = request.query;
+            const iterations = yield (0, test_kitchen_service_1.getIterations)(recipeId);
+            return iterations;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+        ;
+    });
+}
+exports.getIterationsHandler = getIterationsHandler;
+;
+function getIterationInstanceHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { iterationId } = request.params;
+            const iteration = yield (0, test_kitchen_service_1.getIterationInstance)(iterationId);
+            return iteration;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+        ;
+    });
+}
+exports.getIterationInstanceHandler = getIterationInstanceHandler;
+;
+function createIterationHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const iteration = yield (0, test_kitchen_service_1.createIteration)(Object.assign({}, request.body));
+            return iteration;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(401);
+        }
+    });
+}
+exports.createIterationHandler = createIterationHandler;
+function updateIterationHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const iteration = yield (0, test_kitchen_service_1.updateIteration)(Object.assign(Object.assign({}, request.body), request.params));
+            return iteration;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(401);
+        }
+    });
+}
+exports.updateIterationHandler = updateIterationHandler;
+function deleteIterationIngredientHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield (0, test_kitchen_service_1.deleteIterationIngredient)(request.params);
+            return result;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+    });
+}
+exports.deleteIterationIngredientHandler = deleteIterationIngredientHandler;
+function updateIterationIngredientHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // console.log({ ...request.params, ...request.body })
+            const result = yield (0, test_kitchen_service_1.updateIterationIngredient)(Object.assign(Object.assign({}, request.params), request.body));
+            return result;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(401);
+        }
+        ;
+    });
+}
+exports.updateIterationIngredientHandler = updateIterationIngredientHandler;
+;
+function updateIterationInstructionHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log(Object.assign(Object.assign({}, request.params), request.body));
+            const result = yield (0, test_kitchen_service_1.updateIterationInstruction)(Object.assign(Object.assign({}, request.params), request.body));
+            return result;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+    });
+}
+exports.updateIterationInstructionHandler = updateIterationInstructionHandler;
+function createManyIterationIngredientHandler(request, reply) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const ingredients = yield Promise.all(request.body.map((el) => {
+                return new Promise(resolve => resolve((0, test_kitchen_service_1.createIterationingredient)(Object.assign(Object.assign({}, el), request.params))));
+            }));
+            return ingredients;
+        }
+        catch (error) {
+            console.log(error);
+            return reply.code(404);
+        }
+    });
+}
+exports.createManyIterationIngredientHandler = createManyIterationIngredientHandler;
 //# sourceMappingURL=test.kitchen.controller.js.map

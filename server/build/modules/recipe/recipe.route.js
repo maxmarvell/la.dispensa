@@ -123,6 +123,8 @@ function recipeRoutes(server) {
         server.get('/test-kitchen', {
             onRequest: [server.authenticate]
         }, recipe_controller_1.findTestKitchenRecipesHandler);
+        // Dashboard
+        server.get('dashboard', recipe_controller_1.getDashboardHandler);
     });
 }
 ;

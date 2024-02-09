@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changeUserPassword = exports.findGalleryRecipes = exports.acceptConnection = exports.getConnectedBy = exports.getConnections = exports.deleteConnection = exports.createConnection = exports.getUser = exports.addUserPhoto = exports.findUsers = exports.findUserByEmail = exports.createUser = void 0;
+exports.changeUserPassword = exports.findGalleryRecipes = exports.getConnectionRequests = exports.acceptConnection = exports.getConnections = exports.removeConnection = exports.createConnection = exports.getUser = exports.addUserPhoto = exports.findUsers = exports.findUserByEmail = exports.createUser = void 0;
 const prisma_1 = __importDefault(require("../../utils/prisma"));
 const hash_1 = require("../../utils/hash");
 function createUser(input) {
@@ -50,7 +50,6 @@ exports.findUserByEmail = findUserByEmail;
 ;
 function findUsers(userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(userId);
         return prisma_1.default.user.findMany({
             where: {
                 NOT: {
@@ -60,7 +59,7 @@ function findUsers(userId) {
             select: {
                 password: false,
                 salt: false,
-                email: false,
+                email: true,
                 image: true,
                 id: true,
                 username: true,
@@ -101,7 +100,7 @@ function getUser(id) {
 }
 exports.getUser = getUser;
 ;
-// Connections services
+;
 function createConnection(input) {
     return __awaiter(this, void 0, void 0, function* () {
         return prisma_1.default.connection.create({
@@ -111,25 +110,39 @@ function createConnection(input) {
 }
 exports.createConnection = createConnection;
 ;
-function deleteConnection(connectedWithId, connectedById) {
+function removeConnection(input) {
     return __awaiter(this, void 0, void 0, function* () {
-        return prisma_1.default.connection.delete({
+        const { connectedById, connectedWithId } = input;
+        return prisma_1.default.connection.deleteMany({
             where: {
-                ConnectionId: {
-                    connectedWithId,
-                    connectedById
-                }
+                OR: [
+                    {
+                        connectedById,
+                        connectedWithId
+                    },
+                    {
+                        connectedWithId: connectedById,
+                        connectedById: connectedWithId
+                    }
+                ]
             }
         });
     });
 }
-exports.deleteConnection = deleteConnection;
+exports.removeConnection = removeConnection;
 ;
 function getConnections(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         return prisma_1.default.connection.findMany({
             where: {
-                connectedById: userId,
+                OR: [
+                    {
+                        connectedById: userId
+                    },
+                    {
+                        connectedWithId: userId
+                    }
+                ],
                 accepted: true
             },
             include: {
@@ -145,31 +158,12 @@ function getConnections(userId) {
     });
 }
 exports.getConnections = getConnections;
-function getConnectedBy({ userId }) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return prisma_1.default.connection.findMany({
-            where: {
-                connectedWithId: userId,
-                accepted: true,
-            },
-            include: {
-                connectedBy: {
-                    select: {
-                        username: true,
-                        image: true,
-                        id: true
-                    }
-                }
-            }
-        });
-    });
-}
-exports.getConnectedBy = getConnectedBy;
-function acceptConnection({ connectedById, userId }) {
+;
+function acceptConnection(input) {
     return __awaiter(this, void 0, void 0, function* () {
         return prisma_1.default.connection.update({
             where: {
-                ConnectionId: { connectedWithId: userId, connectedById }
+                ConnectionId: input
             },
             data: {
                 accepted: true
@@ -178,6 +172,30 @@ function acceptConnection({ connectedById, userId }) {
     });
 }
 exports.acceptConnection = acceptConnection;
+;
+function getConnectionRequests(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return prisma_1.default.connection.findMany({
+            where: {
+                connectedWithId: userId,
+                accepted: false,
+            },
+            orderBy: {
+                createdOn: 'desc'
+            },
+            include: {
+                connectedBy: {
+                    select: {
+                        username: true,
+                        image: true
+                    }
+                }
+            }
+        });
+    });
+}
+exports.getConnectionRequests = getConnectionRequests;
+;
 // Profile services
 function findGalleryRecipes({ userId }) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -232,7 +250,7 @@ function changeUserPassword(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const { password, id } = input;
         const { hash, salt } = (0, hash_1.hashPassword)(password);
-        return prisma_1.default.user.update({
+        const user = yield prisma_1.default.user.update({
             where: {
                 id
             },
@@ -241,6 +259,7 @@ function changeUserPassword(input) {
                 password: hash
             }
         });
+        return user;
     });
 }
 exports.changeUserPassword = changeUserPassword;

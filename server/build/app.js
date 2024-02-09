@@ -36,20 +36,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.server = void 0;
-const jwt_1 = __importDefault(require("@fastify/jwt"));
-const multipart_1 = require("@fastify/multipart");
+const fastify_1 = __importDefault(require("fastify"));
 const Modules = __importStar(require("./modules/index"));
-exports.server = require('fastify')();
-exports.server.register(jwt_1.default, {
-    secret: "nrEBgy!ug6Ls2Vy"
+exports.server = (0, fastify_1.default)();
+exports.server.register(require('@fastify/jwt'), {
+    secret: "bigsecretbigsecretbigsecretbigsecret"
 });
-// server.register(multer.contentParser);
 exports.server.register(require('@fastify/cors'), {
     origin: true,
     allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
     methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE']
 });
-exports.server.register(multipart_1.fastifyMultipart, {
+exports.server.register(require('@fastify/multipart'), {
     addToBody: true,
     limits: {
         fileSize: 4 * 1024 * 1024,
@@ -70,6 +68,10 @@ exports.server.get('/healthcheck', function () {
         return { status: 'ok' };
     });
 });
+exports.server.addHook("preHandler", (req, reply, next) => {
+    req.jwt = exports.server.jwt;
+    return next();
+});
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const schemas = [...Modules.userSchemas, ...Modules.recipeSchemas, ...Modules.instructionSchemas, ...Modules.ingredientSchemas, ...Modules.iterationSchema];
@@ -83,17 +85,16 @@ function main() {
         exports.server.register(Modules.ingredientRoutes, { prefix: "api/ingredients" });
         exports.server.register(Modules.iterationRoutes, { prefix: "api/iterations" });
         exports.server.register(Modules.tagRoutes, { prefix: "api/tags" });
-        const port = process.env.PORT || 3000;
+        exports.server.register(Modules.dashboardRoutes, { prefix: "api/dashboard" });
+        const port = Number(process.env.PORT) || 3000;
         const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
-        try {
-            yield exports.server.listen({ host: host, port: port });
-            console.log(`Server ready at http://${host}:${port}`);
-        }
-        catch (e) {
-            console.error(e);
-            process.exit(1);
-        }
-        ;
+        exports.server.listen({ port: port, host: host }, function (err, address) {
+            if (err) {
+                console.error(err);
+                process.exit(1);
+            }
+            console.log(`server listening on ${address}`);
+        });
     });
 }
 main();
