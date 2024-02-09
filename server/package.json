@@ -28,7 +28,6 @@
     "zod": "^3.22.4"
   },
   "scripts": {
-    "postinstall": "npx prisma generate",
     "dev": "tsnd --respawn --transpile-only --exit-child src/app.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node build/app.js"
