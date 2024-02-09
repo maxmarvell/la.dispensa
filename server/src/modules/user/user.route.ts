@@ -4,13 +4,13 @@ import {
   getUsersHandler,
   getUserHandler,
   connectHandler,
-  connectDeleteHandler,
   uploadPhotoHandler,
   getConnectionsHandler,
   acceptConnectionHandler,
   findGalleryRecipesHandler,
-  getConnectedByHandler,
-  changeUserPasswordHandler
+  changeUserPasswordHandler,
+  removeConnectionHandler,
+  getConnectionRequestsHandler
 } from "./user.controller";
 import { FastifyInstance, } from "fastify";
 import { $ref } from "./user.schema";
@@ -26,7 +26,6 @@ async function userRoutes(server: FastifyInstance) {
     }
   }, registerUserHandler);
 
-
   server.post('/login', {
     schema: {
       body: $ref('loginSchema'),
@@ -38,42 +37,35 @@ async function userRoutes(server: FastifyInstance) {
 
   server.patch('/:userId/uploadPhoto/', {
     onRequest: [server.authenticate]
-  }, uploadPhotoHandler)
-
+  }, uploadPhotoHandler);
 
   server.get('/', getUsersHandler);
 
   server.get('/:userId', getUserHandler);
 
-
   // Connections routes
 
-  server.post('/:userId/connections/', {
-    schema: {
-      body: $ref('connectionRequestSchema'),
-      response: {
-        200: $ref('connectionResponseSchema')
-      }
-    },
+  server.get('/connections', getConnectionsHandler);
+
+  server.post('/:userId/connect/', {
     onRequest: [server.authenticate]
-  }, connectHandler)
+  }, connectHandler);
 
-  server.delete('/:userId/connectections/:connectedWithId', {
+  server.delete('/:userId/connect/', {
     onRequest: [server.authenticate]
-  }, connectDeleteHandler)
+  }, removeConnectionHandler);
 
-  server.get('/:userId/connections', getConnectionsHandler)
-
-  server.get('/:userId/connected-by', getConnectedByHandler)
-
-  server.patch('/:userId/connections/:connectedById/', {
+  server.put('/:userId/connect/', {
     onRequest: [server.authenticate]
-  }, acceptConnectionHandler)
+  }, acceptConnectionHandler);
+
+  server.get('/connection-requests', {
+    onRequest: [server.authenticate],
+  }, getConnectionRequestsHandler);
 
   // Gallery
 
-  server.get('/:userId/gallery', findGalleryRecipesHandler)
-
+  server.get('/:userId/gallery', findGalleryRecipesHandler);
 
   // User setting services
 
@@ -82,7 +74,7 @@ async function userRoutes(server: FastifyInstance) {
       body: $ref('changePasswordSchema')
     }, 
     // onRequest: [server.authenticate]
-  }, changeUserPasswordHandler)
+  }, changeUserPasswordHandler);
 
 }
 

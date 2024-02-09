@@ -70,25 +70,24 @@ const createManyIterationIngredientsResponseSchema = z.array(z.object({
 }))
 
 const updateIterationInstructionSchema = z.object({
-  time: z.object({
+  timeAndTemperature : z.object({
     hours: z.number().optional(),
-    minutes: z.number().optional()
-  }),
-  temperature: z.object({
-    temperature: z.number().optional(),
-    unit: z.enum(["C", "K"]).optional(),
-  }),
+    minutes: z.number().optional(),
+    temperature: z.number(),
+    unit: z.enum(["C", "K"]),
+  }).optional(),
+  description: z.string().optional(),
+  step: z.number(),
+  iterationId: z.string(),
 })
 
 const updateIterationInstructionResponseSchema = z.object({
-  time: z.object({
+  timeAndTemperature : z.object({
     hours: z.number().optional(),
-    minutes: z.number().optional()
-  }),
-  temperature: z.object({
-    temperature: z.number().optional(),
-    unit: z.enum(["C", "K"]).optional(),
-  }),
+    minutes: z.number().optional(),
+    temperature: z.number(),
+    unit: z.enum(["C", "K"]),
+  }).optional(),
   description: z.string(),
   step: z.number(),
   iterationId: z.string(),

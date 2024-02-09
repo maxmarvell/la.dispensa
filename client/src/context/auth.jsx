@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
       if (!data) {
         throw new Error('User not Found!')
-      }
+      };
 
       setAuthToken(data.accessToken);
       setUser(jwtDecode(data.accessToken));
@@ -91,5 +91,5 @@ export const AuthProvider = ({ children }) => {
     }}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};

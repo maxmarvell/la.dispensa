@@ -29,13 +29,21 @@ export async function getUserFeed({ take, username }) {
         console.error(error)
         reject(error)
       }
-    }, 1000)
+    }, 500)
   });
 }
 
 
-export async function getNotificationFeed({ take, lastCursor }) {
-
+export async function getRecipeNotifications() {
+  return new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      try {
+        const { data } = await axiosInstance.get('/api/dashboard/recipe-notifications');
+        resolve(data)
+      } catch (error) {
+        console.error(error)
+        reject(error)
+      }
+    }, 500)
+  });
 }
-
-

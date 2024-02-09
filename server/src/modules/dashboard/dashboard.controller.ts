@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { getDashboard, getDashboardUsers } from "./dashboard.service";
+import { getDashboard, getDashboardUsers, getRecipeNotifications } from "./dashboard.service";
 
 
 export async function getDashboardHandler(
@@ -19,7 +19,7 @@ export async function getDashboardHandler(
     return reply.code(200).send(data);
   } catch (error) {
     console.log(error);
-    return reply.code(404);
+    return reply.code(404).send(error);
   };
 };
 
@@ -41,6 +41,22 @@ export async function getDashboardUsersHandler(
     return reply.code(200).send(data);
   } catch (error) {
     console.log(error);
-    return reply.code(404);
+    return reply.code(404).send(error);
+  };
+};
+
+
+export async function getRecipeNotificationsHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  let { id: userId } = request.user;
+
+  try {
+    let data = await getRecipeNotifications({ userId });
+    return reply.code(200).send(data);
+  } catch (error) {
+    console.log(error);
+    return reply.code(404).send(error);
   };
 };

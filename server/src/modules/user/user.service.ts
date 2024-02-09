@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { CreateConnectionInput, CreateUserInput } from "./user.schema";
+import { CreateUserInput } from "./user.schema";
 import { hashPassword } from "../../utils/hash";
 
 export async function createUser(input: CreateUserInput) {
@@ -33,7 +33,7 @@ export async function findUsers(userId?: string) {
     select: {
       password: false,
       salt: false,
-      email: false,
+      email: true,
       image: true,
       id: true,
       username: true,
@@ -74,28 +74,48 @@ export async function getUser(id: string) {
 
 // Connections services
 
-export async function createConnection(input: CreateConnectionInput) {
+interface connectionInput {
+  connectedById: string,
+  connectedWithId: string,
+};
+
+export async function createConnection(input: connectionInput) {
   return prisma.connection.create({
     data: input
   });
 };
 
-export async function deleteConnection(connectedWithId: string, connectedById: string) {
-  return prisma.connection.delete({
+export async function removeConnection(input: connectionInput) {
+
+  const { connectedById, connectedWithId } = input;
+
+  return prisma.connection.deleteMany({
     where: {
-      ConnectionId: {
-        connectedWithId,
-        connectedById
-      }
+      OR: [
+        {
+          connectedById,
+          connectedWithId
+        },
+        {
+          connectedWithId: connectedById,
+          connectedById: connectedWithId
+        }
+      ]
     }
   });
 };
 
 export async function getConnections(userId: string) {
-
   return prisma.connection.findMany({
     where: {
-      connectedById: userId,
+      OR: [
+        {
+          connectedById: userId
+        },
+        {
+          connectedWithId: userId
+        }
+      ],
       accepted: true
     },
     include: {
@@ -107,43 +127,40 @@ export async function getConnections(userId: string) {
         }
       }
     }
-  })
-}
+  });
+};
 
 
-export async function getConnectedBy({ userId }: { userId: string }) {
+export async function acceptConnection(input: connectionInput) {
+  return prisma.connection.update({
+    where: {
+      ConnectionId: input
+    },
+    data: {
+      accepted: true
+    }
+  });
+};
+
+export async function getConnectionRequests(userId: string) {
   return prisma.connection.findMany({
     where: {
       connectedWithId: userId,
-      accepted: true,
+      accepted: false,
+    },
+    orderBy: {
+      createdOn: 'desc'
     },
     include: {
       connectedBy: {
         select: {
           username: true,
-          image: true,
-          id: true
+          image: true
         }
       }
     }
-  })
-}
-
-interface acceptConnectionInput {
-  connectedById: string,
-  userId: string
-}
-
-export async function acceptConnection({ connectedById, userId }: acceptConnectionInput) {
-  return prisma.connection.update({
-    where: {
-      ConnectionId: { connectedWithId: userId, connectedById }
-    },
-    data: {
-      accepted: true
-    }
-  })
-}
+  });
+};
 
 
 // Profile services
@@ -201,11 +218,11 @@ export async function findGalleryRecipes({ userId }: { userId: string }) {
 
 // Account services
 
-export async function changeUserPassword(input : { id: string, password: string}) {
+export async function changeUserPassword(input: { id: string, password: string }) {
   const { password, id } = input;
 
   const { hash, salt } = hashPassword(password);
-  
+
   const user = await prisma.user.update({
     where: {
       id

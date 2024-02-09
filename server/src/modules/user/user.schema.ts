@@ -49,27 +49,12 @@ const loginResponseSchema = z.object({
   accessToken: z.string(),
 });
 
-
-const connectionRequestSchema = z.object({
-  connectedWithId: z.string(),
-  connectedById: z.string(),
-})
-
-const connectionResponseSchema = z.object({
-  connectedWithId: z.string(),
-  connectedById: z.string(),
-  accepted: z.boolean(),
-})
-
 const changePasswordSchema = z.object({
   password: z.string({
     required_error: 'Password is required',
     invalid_type_error: 'Password must be a string',
   })
 })
-
-
-export type CreateConnectionInput = z.infer<typeof connectionRequestSchema>
 
 export type CreateUserInput = z.infer<typeof createUserSchema>
 
@@ -83,7 +68,5 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   createUserResponseSchema,
   loginSchema,
   loginResponseSchema,
-  connectionRequestSchema,
-  connectionResponseSchema,
   changePasswordSchema
 }, { $id: "UserSchema" });

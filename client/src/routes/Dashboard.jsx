@@ -3,6 +3,7 @@ import RecipeFeed from "../components/dashboard/recipeFeed";
 import { UsersFeed } from "../components/dashboard/usersFeed";
 import AuthContext from "../context/auth";
 import { Link } from "react-router-dom";
+import { Notifications } from "../components/dashboard/notifications";
 
 export default function Dashboard() {
 
@@ -47,13 +48,13 @@ export default function Dashboard() {
       <section className="h-full grow mr-72">
         <RecipeFeed />
       </section>
-      <section className="border-l fixed right-0 top-0 bottom-0 min-w-72 flex flex-col justify-between divide-y">
+      <section className="border-l fixed right-0 top-0 bottom-0 w-72 flex flex-col justify-between divide-y">
         {!user ? (
           <Placeholder />
         ) : (
           <>
             <section className="min-h-72 mx-3 py-4">
-              Notifications
+              <Notifications />
             </section>
             <section className="grow mx-3 py-4">
               <UsersFeed />

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, findUsers, getUser, createConnection, deleteConnection, getConnections, acceptConnection, findGalleryRecipes, getConnectedBy, changeUserPassword } from "./user.service";
-import { CreateUserInput, LoginInput, CreateConnectionInput } from "./user.schema";
+import { createUser, findUserByEmail, findUsers, getUser, createConnection, getConnections, acceptConnection, findGalleryRecipes, changeUserPassword, removeConnection, getConnectionRequests } from "./user.service";
+import { CreateUserInput, LoginInput } from "./user.schema";
 import { addUserPhoto } from "./user.service";
 import cloudImageUpload from "../../utils/aws.s3";
 import { verifyPassword } from "../../utils/hash";
@@ -41,14 +41,14 @@ export async function loginHandler(
       message: "Invalid email or password",
     });
   }
-  
+
   // verify password
   const correctPassword = verifyPassword({
     candidatePassword: body.password,
     salt: user.salt,
     hash: user.password,
   });
-  
+
   if (correctPassword) {
     const { password, salt, ...rest } = user;
     // generate access token
@@ -159,34 +159,36 @@ export async function uploadPhotoHandler(
 
 export async function connectHandler(
   request: FastifyRequest<{
-    Body: CreateConnectionInput
-  }>,
-  reply: FastifyReply
-) {
-  const body = request.body;
-  console.log(body)
-  try {
-    const connection = await createConnection(body);
-    return reply.code(201).send(connection);
-  } catch (e) {
-    console.log(e);
-    return reply.code(400);
-  };
-};
-
-
-export async function connectDeleteHandler(
-  request: FastifyRequest<{
     Params: {
-      connectedWithId: string
-      connectedById: string
+      userId: string
     }
   }>,
   reply: FastifyReply
 ) {
-  const { connectedWithId, connectedById } = request.params;
+  const { userId: connectedWithId } = request.params;
+  const { id: connectedById } = request.user;
   try {
-    const result = await deleteConnection(connectedWithId, connectedById);
+    const connection = await createConnection({ connectedById, connectedWithId });
+    return reply.code(201).send(connection);
+  } catch (e) {
+    console.log(e);
+    return reply.code(400).send(e);
+  };
+};
+
+
+export async function removeConnectionHandler(
+  request: FastifyRequest<{
+    Params: {
+      userId: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { userId: connectedWithId } = request.params;
+  const { id: connectedById } = request.user;
+  try {
+    const result = await removeConnection({ connectedWithId, connectedById });
     return reply.code(200).send(result);
   } catch (e) {
     console.log(e);
@@ -209,10 +211,10 @@ export async function getConnectionsHandler(
   } catch (error) {
     console.log(error);
     return reply.code(404);
-  }
-}
+  };
+};
 
-export async function getConnectedByHandler(
+export async function acceptConnectionHandler(
   request: FastifyRequest<{
     Params: {
       userId: string
@@ -220,36 +222,34 @@ export async function getConnectedByHandler(
   }>,
   reply: FastifyReply
 ) {
+  const { userId: connectedById } = request.params;
+  const { id: connectedWithId } = request.user;
+  
   try {
-    const data = await getConnectedBy({
-      ...request.params
-    });
-    return data;
+    await acceptConnection({ connectedById, connectedWithId });
+    return reply.code(204).send();
   } catch (error) {
     console.log(error);
-    return reply.code(404);
-  }
-}
+    return reply.code(404).send(error);
+  };
+};
 
-export async function acceptConnectionHandler(
-  request: FastifyRequest<{
-    Params: {
-      userId: string,
-      connectedById: string,
-    }
-  }>,
+export async function getConnectionRequestsHandler(
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
+  const { id: userId } = request.user;
   try {
-    const { userId, connectedById } = request.params;
-    const result = await acceptConnection({ userId, connectedById });
-    return result;
+    let requests = await getConnectionRequests(userId);
+    return requests;
   } catch (error) {
-    console.log(error);
-    return reply.code(401);
-  }
-}
+    console.log(error);   
+    return reply.code(404).send(error); 
+  };
+};
 
+
+// Profile controls
 
 export async function findGalleryRecipesHandler(
   request: FastifyRequest<{

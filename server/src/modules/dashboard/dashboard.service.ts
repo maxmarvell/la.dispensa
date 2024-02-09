@@ -85,11 +85,19 @@ interface userFeed {
   take: string,
   userId: string,
   username?: string
-}
+};
 
 export async function getDashboardUsers(input: userFeed) {
 
   let { take, userId, username } = input
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  });
+
+  // console.log(user)
 
   const connections = await prisma.user.findMany({
     where: {
@@ -123,7 +131,9 @@ export async function getDashboardUsers(input: userFeed) {
     select: {
       username: true,
       image: true,
-      id: true
+      id: true,
+      connectedBy: true,
+      connectedWith: true,
     }
   });
 
@@ -156,9 +166,65 @@ export async function getDashboardUsers(input: userFeed) {
     select: {
       username: true,
       image: true,
-      id: true
+      id: true,
+      connectedBy: true,
+      connectedWith: true,
     }
   });
 
   return [...connections, ...otherUsers];
 };
+
+
+interface recipeNotificationsFeed {
+  userId: string
+}
+
+export async function getRecipeNotifications(input: recipeNotificationsFeed) {
+
+  const { userId } = input;
+
+  const connections = await prisma.user.findMany({
+    where: {
+      OR: [
+        {
+          connectedBy: {
+            some: {
+              connectedById: userId
+            }
+          }
+        },
+        {
+          connectedWith: {
+            some: {
+              connectedWithId: userId
+            }
+          }
+        }
+      ]
+    },
+    select: {
+      id: true
+    }
+  });
+
+  return prisma.recipe.findMany({
+    where: {
+      authorId: {
+        in: connections.map(({ id }) => id)
+      }
+    },
+    orderBy: {
+      updatedAt: 'desc'
+    },
+    include: {
+      author: {
+        select: {
+          username: true,
+          image: true,
+        }
+      }
+    }
+  })
+
+}

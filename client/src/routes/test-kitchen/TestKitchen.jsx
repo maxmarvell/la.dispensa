@@ -167,20 +167,14 @@ const TestKitchen = () => {
         <Background />
         <Controls />
       </ReactFlow>
-      <Collapse
-        in={clickedIndex ? true : false}
-        orientation="horizontal"
-
-      >
-        <div className="bg-slate-950 text-slate-50 w-92 shadow-lg p-2 pr-12 mr-12 pl-5 h-full flex flex-col text-xs divide-slate-50 divide-y">
-          {clickedIndex ? (
+        {clickedIndex ? (
+          <div className="bg-slate-50 text-slate-950 w-[30rem] shadow-lg p-2 pr-12 pl-5 h-full flex flex-col text-xs divide-slate-950 divide-y">
             <FocusedIteration
               iteration={nodes[clickedIndex].data}
               setNodes={setNodes}
             />
-          ) : null}
-        </div>
-      </Collapse>
+          </div>
+        ) : null}
     </div>
   )
 }

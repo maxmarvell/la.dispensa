@@ -26,7 +26,6 @@ export async function getMany({ userId }) {
 export async function getConnections({ userId }) {
   try {
     let { data } = await axiosInstance.get(`/api/users/${userId}/connections`);
-    console.log(data)
     return data;
   } catch (error) {
     console.error(e)
@@ -41,9 +40,50 @@ export async function uploadPhoto({ formData, userId }) {
       {
         headers: { 'Content-Type': 'multipart/form-data' }
       },
-      { withCredentials: true });
+      { withCredentials: true }
+    );
     return data;
   } catch (error) {
     console.error(error);
   };
 }
+
+
+// Connections API services
+
+export async function acceptConnection({ userId }) {
+  try {
+    let { data } = await axiosInstance.put(`/api/users/${userId}/connect/`);
+    console.log(data)
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
+
+export async function createConnection({ userId }) {
+  try {
+    let { data } = await axiosInstance.post(`/api/users/${userId}/connect/`);
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
+
+export async function removeConnection({ userId }) {
+  try {
+    let { data } = await axiosInstance.delete(`/api/users/${userId}/connect/`);
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
+
+export async function getConnectionRequests() {
+  try {
+    let { data } = await axiosInstance.get(`/api/users/connection-requests`);
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
