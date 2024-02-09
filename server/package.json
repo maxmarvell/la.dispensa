@@ -21,6 +21,7 @@
     "fastify-zod": "^1.4.0",
     "formidable": "^3.5.1",
     "multer": "^1.4.5-lts.1",
+    "prisma": "^5.9.1",
     "pump": "^3.0.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
@@ -36,7 +37,6 @@
     "@types/fastify-jwt": "^0.8.1",
     "@types/formidable": "^3.4.5",
     "@types/node": "^20.11.16",
-    "prisma": "5.9.1",
     "ts-node-dev": "^2.0.0"
   }
 }
