@@ -168,7 +168,7 @@ const TestKitchen = () => {
         <Controls />
       </ReactFlow>
         {clickedIndex ? (
-          <div className="bg-slate-50 text-slate-950 w-[30rem] shadow-lg p-2 pr-12 pl-5 h-full flex flex-col text-xs divide-slate-950 divide-y">
+          <div className="bg-slate-50 text-slate-950 w-[32rem] shadow-lg p-2 px-5 h-full flex flex-col text-xs divide-slate-950 divide-y">
             <FocusedIteration
               iteration={nodes[clickedIndex].data}
               setNodes={setNodes}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { deleteIterationIngredient, updateIterationIngredient, createManyIterationIngredients } from "../../api/test-kitchen"
 import { useMutation } from "@tanstack/react-query"
 import * as light from '../../assets/icons/light'
+import * as dark from '../../assets/icons/dark'
 
 
 const measureSelections = [
@@ -90,19 +91,19 @@ const ModifyIngredientField = ({ data, setNodes, setCurrentIngredients, setSelec
   }
 
   return (
-    <div className="text-xs space-y-2">
-      <div className="flex justify-evenly space-x-1">
-        <div className="y-auto border-b border-slate-50 flex items-center text-center">
+    <div className="text-xs lg:flex lg:justify-between py-3 first:pt-0 last:pb-0">
+      <div className="flex space-x-3">
+        <div className="border-b border-slate-950 flex items-center text-center">
           {ingredient.ingredient.name}
         </div>
         <input
           type="number"
           value={ingredient.quantity}
-          className="w-20 bg-transparent border-0 border-b border-slate-50"
+          className="w-10 bg-transparent border-0 border-b border-slate-950 focus:border-orange-300 focus:outline-none"
           onChange={(e) => setIngredient(prev => ({ ...prev, quantity: e.target.value }))}
         />
         <select
-          className="w-20 bg-transparent border-0 border-b border-slate-50"
+          className="w-10 bg-transparent border-0 border-b border-slate-950 focus:border-orange-300 focus:outline-none"
           value={ingredient.unit || ""}
           onChange={(e) => setIngredient(({ unit, ...rest }) => {
             return e.target.value ? { ...rest, unit: e.target.value } : { ...rest }
@@ -112,22 +113,22 @@ const ModifyIngredientField = ({ data, setNodes, setCurrentIngredients, setSelec
           {measureSelections.map((el, index) => (<option key={index} value={el.value}>{el.name}</option>))}
         </select>
       </div>
-      <div className="flex justify-evenly">
+      <div className="flex space-x-2">
         <button
-          className=""
+          className="bg-slate-950 text-white px-2 py-1"
           onClick={handleUpdate}
         >
           Save
         </button>
         <button
-          className=""
+          className="bg-slate-950 text-white px-2 py-1"
           onClick={handleCancel}
         >
           Cancel
         </button>
         <button
           onClick={handleDelete}
-          className=""
+          className="bg-slate-950 text-white px-2 py-1"
         >
           Delete
         </button>
@@ -139,9 +140,9 @@ const ModifyIngredientField = ({ data, setNodes, setCurrentIngredients, setSelec
 
 const AddIngredientField = ({ state, setNewIngredients }) => {
   return (
-    <div className="flex justify-evenly space-x-1">
+    <div className="flex space-x-3">
       <input
-        className="w-20 bg-transparent border-0 border-b border-slate-50 focus:outline-none focus:border-orange-300"
+        className="w-20 bg-transparent border-0 border-b border-slate-950 focus:outline-none focus:border-orange-300"
         type='text'
         value={state.ingredient.name}
         onChange={(e) =>
@@ -154,7 +155,7 @@ const AddIngredientField = ({ state, setNewIngredients }) => {
         placeholder="ingredient"
       />
       <input
-        className="w-20 bg-transparent border-0 border-b border-slate-50 focus:outline-none focus:border-orange-300"
+        className="w-20 bg-transparent border-0 border-b border-slate-950 focus:outline-none focus:border-orange-300"
         type="number"
         value={state.quantity}
         onChange={(e) =>
@@ -167,7 +168,7 @@ const AddIngredientField = ({ state, setNewIngredients }) => {
         placeholder="quantity"
       />
       <select
-        className="w-20 bg-transparent border-0 border-b border-slate-50 focus:outline-none focus:border-orange-300"
+        className="w-20 bg-transparent border-0 border-b border-slate-950 focus:outline-none focus:border-orange-300"
         type='text'
         value={state.unit || ""}
         onChange={(e) =>
@@ -258,9 +259,9 @@ const Ingredients = ({ iteration, setNodes }) => {
 
   return (
     <div className="flex flex-col">
-      <label className="mt-5" htmlFor="ingredient-select">Modify Ingredients</label>
+      <label htmlFor="ingredient-select">Modify Ingredients</label>
       <select
-        className="border-0 border-b-2 border-slate-50 bg-transparent focus:outline-none focus:border-orange-300"
+        className="border-0 border-b-2 border-slate-950 py-1 bg-transparent focus:outline-none focus:border-orange-300"
         value={""}
         onChange={(e) => handleOptionSelect(e)}
         id="ingredient-select"
@@ -270,7 +271,7 @@ const Ingredients = ({ iteration, setNodes }) => {
           <option key={index} value={el.ingredientId} className="capitalize">{el.ingredient.name}</option>
         ))}
       </select>
-      <div className="space-y-2 mt-2">
+      <div className="divide-y py-5 divide-slate-950">
         {
           currentIngredients.map((el, index) =>
             <ModifyIngredientField
@@ -289,7 +290,7 @@ const Ingredients = ({ iteration, setNodes }) => {
           className="h-5 w-5 ml-2 rounded-sm my-auto"
           onClick={handleAddIngredient}
         >
-          <img src={light.AddFill} alt="add ingredient" />
+          <img src={dark.AddFill} alt="add ingredient" />
         </button>
       </div>
       <div className="space-y-4">
@@ -302,14 +303,13 @@ const Ingredients = ({ iteration, setNodes }) => {
         )}
       </div>
       {newIngredients.length ?
-        <div className="flex justify-center mt-3">
-          <button
-            onClick={handleCreate}
-            className="h-5 w-5"
-          >
-            <img src={light.Save} alt="save ingredients" />
-          </button>
-        </div>
+        <button
+          onClick={handleCreate}
+          className="px-2 py-1 mt-4 bg-slate-950 text-white hover:bg-orange-300 hover:text-slate-950"
+        >
+          Save All
+        </button>
+
         :
         null
       }

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { editIteration } from "../../api/test-kitchen"
 import { useMutation } from "@tanstack/react-query"
 import Ingredients from "./ingredients";
-import Instructions from "./instructions";
+import Instructions from "./preparations";
 import Comments from "./comments";
 
 
@@ -75,24 +75,24 @@ const FocusedIteration = ({ iteration, setNodes }) => {
         <div className="flex justify-evenly space-x-5">
           <button
             onClick={() => setDisplay('ingredients')}
-            className={`border-b border-transparent ${display === 'ingredients' ? 'border-slate-50' : ''}`}
+            className={`border-b ${display === 'ingredients' ? 'border-slate-950' : 'border-transparent'}`}
           >
             Ingredients
           </button>
           <button
             onClick={() => setDisplay('instructions')}
-            className={`border-b border-transparent ${display === 'instructions' ? 'border-slate-50' : ''}`}
+            className={`border-b ${display === 'instructions' ? 'border-slate-950' : 'border-transparent'}`}
           >
             Instructions
           </button>
           <button
             onClick={() => setDisplay('comments')}
-            className={`border-b border-transparent ${display === 'comments' ? 'border-slate-50' : ''}`}
+            className={`border-b ${display === 'comments' ? 'border-slate-950' : 'border-transparent'}`}
           >
             Comments
           </button>
         </div>
-        <div className="flex flex-col grow">
+        <div className="flex flex-col grow py-3">
           {renderSwitch(display)}
         </div>
       </div>

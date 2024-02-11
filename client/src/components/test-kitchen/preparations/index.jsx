@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { updateIterationInstruction } from "../../api/test-kitchen"
-import * as dark from "../../assets/icons/dark";
-import { useMutation } from "@tanstack/react-query"
+import { updateIterationInstruction } from "../../../api/test-kitchen"
+import * as dark from "../../../assets/icons/dark";
+import { useMutation } from "@tanstack/react-query";
+import { CreatePreparations } from "./createPreparations";
 
 const InstructionField = ({ instruction, setNodes }) => {
 
@@ -9,7 +10,7 @@ const InstructionField = ({ instruction, setNodes }) => {
 
   const { temperature, time, ...data } = instruction;
 
-  const [ updatedInstruction, setUpdates ] = useState((temperature && time) ? instruction : temperature ? { ...data, temperature } : time ? { ...data, time } : data);
+  const [updatedInstruction, setUpdates] = useState((temperature && time) ? instruction : temperature ? { ...data, temperature } : time ? { ...data, time } : data);
 
   const { mutateAsync: updateMutation } = useMutation({
     mutationFn: updateIterationInstruction
@@ -85,9 +86,26 @@ const InstructionField = ({ instruction, setNodes }) => {
 
 
 const Instructions = ({ iteration, setNodes }) => {
+
+  const { instructions, id } = iteration;
+
+  if (instructions.length === 0) {
+    return (
+      <>
+        <div className="pb-3">
+          No instructions have been added to this recipe yet,
+          <br />
+          Use the form below to add the first
+        </div>
+        <CreatePreparations instructions={instructions} id={id} />
+      </>
+    )
+  }
+
+
   return (
     <div className="flex flex-col divide-y-1 divide-black">
-      {iteration.instructions.map((el, index) => (
+      {instructions.map((el, index) => (
         <InstructionField
           instruction={el}
           setNodes={setNodes}

@@ -9,7 +9,6 @@ const CreateField = ({ instruction, setNewInstructions }) => {
     setNewInstructions((prev) => (
       prev.map((el) => {
         if (el.step === step) {
-          console.log(el)
           return { ...el, ["description"]: value }
         } else {
           return el
@@ -31,7 +30,6 @@ const CreateField = ({ instruction, setNewInstructions }) => {
           } else {
             delete newField[name]
           };
-          console.log({ ...rest, timeAndTemperature: { ...newField } })
           return { ...rest, timeAndTemperature: { ...newField } }
         } else {
           return { timeAndTemperature, ...rest }
@@ -71,7 +69,7 @@ const CreateField = ({ instruction, setNewInstructions }) => {
                     type="number"
                     name="hours"
                     value={timeAndTemperature.hours ? timeAndTemperature.hours : ""}
-                    className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
+                    className="bg-transparent border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
                     onChange={(e) => setTimeTemperatureField(e)}
                   />
                   <span>hr</span>
@@ -81,7 +79,7 @@ const CreateField = ({ instruction, setNewInstructions }) => {
                     type="number"
                     name="minutes"
                     value={timeAndTemperature.minutes ? timeAndTemperature.minutes : ""}
-                    className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
+                    className="bg-transparent border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
                     onChange={(e) => setTimeTemperatureField(e)}
                   />
                   <span>mins</span>
@@ -92,7 +90,7 @@ const CreateField = ({ instruction, setNewInstructions }) => {
                     name="temperature"
                     value={timeAndTemperature.temperature ? timeAndTemperature.temperature : ""}
                     onChange={(e) => setTimeTemperatureField(e)}
-                    className=" border-0 px-0 py-1 pr-1 w-14 focus:outline-none"
+                    className=" bg-transparent border-0 px-0 py-1 pr-1 w-14 focus:outline-none"
                   />
                   <span>{timeAndTemperature.unit}</span>
                 </div>
@@ -117,7 +115,7 @@ const CreateField = ({ instruction, setNewInstructions }) => {
             value={description}
             id={`input-new-instruction-${instruction.step}`}
             onChange={(e) => handleSetDescription(e.target.value)}
-            className="h-full w-full border-none focus:outline-none px-0"
+            className="bg-transparent h-full w-full border-none focus:outline-none px-0"
             placeholder="Write here..."
           />
         </div>
