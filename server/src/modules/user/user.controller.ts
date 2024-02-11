@@ -197,6 +197,24 @@ export async function removeConnectionHandler(
 };
 
 export async function getConnectionsHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { id: userId } = request.user;
+  try {
+    const connections = await getConnections(userId);
+    return reply.code(200).send(
+      connections.map(({ connectedById, connectedWithId }) => (
+        connectedById === userId ? connectedWithId : connectedById
+      ))
+    );
+  } catch (error) {
+    console.log(error);
+    return reply.code(404);
+  };
+};
+
+export async function getConnectionsOfUserHandler(
   request: FastifyRequest<{
     Params: {
       userId: string
@@ -204,13 +222,20 @@ export async function getConnectionsHandler(
   }>,
   reply: FastifyReply
 ) {
+  const { userId } = request.params;
+
+  console.log(userId)
+
   try {
-    const { userId } = request.params;
-    const users = await getConnections(userId);
-    return users;
+    const connections = await getConnections(userId);
+    return reply.code(200).send(
+      connections.map(({ connectedById, connectedWithId, ...rest }) => (
+        connectedById === userId ? rest.connectedWith : rest.connectedBy
+      ))
+    );
   } catch (error) {
     console.log(error);
-    return reply.code(404);
+    return reply.code(404).send(error);
   };
 };
 
@@ -224,7 +249,7 @@ export async function acceptConnectionHandler(
 ) {
   const { userId: connectedById } = request.params;
   const { id: connectedWithId } = request.user;
-  
+
   try {
     await acceptConnection({ connectedById, connectedWithId });
     return reply.code(204).send();
@@ -243,8 +268,8 @@ export async function getConnectionRequestsHandler(
     let requests = await getConnectionRequests(userId);
     return requests;
   } catch (error) {
-    console.log(error);   
-    return reply.code(404).send(error); 
+    console.log(error);
+    return reply.code(404).send(error);
   };
 };
 

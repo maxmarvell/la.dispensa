@@ -17,6 +17,9 @@ export async function getDashboard(input: infiniteScroll) {
         id: lastCursor,
       }
     }),
+    where: {
+      public: true
+    },
     orderBy: {
       createdOn: "desc",
     },
@@ -32,7 +35,7 @@ export async function getDashboard(input: infiniteScroll) {
       lastCursor: null,
       hasNextPage: false,
     };
-  }
+  };
 
   let ratings = await prisma.rating.groupBy({
     by: ['recipeId'],
@@ -53,7 +56,7 @@ export async function getDashboard(input: infiniteScroll) {
       }
     },
     _count: true
-  })
+  });
 
   const lastPostInResults: any = results[results.length - 1];
   const cursor: any = lastPostInResults.id;

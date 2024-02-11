@@ -1,4 +1,4 @@
-import { getConnections } from "../../api/user"
+import { getConnectionsByUserId } from "../../api/user"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -10,16 +10,16 @@ import Card from "../../components/recipe/permissions/card";
 
 export default function Permissions() {
 
-  const { user: { id: userId } } = useContext(AuthContext)
+  const { user: { id: userId } } = useContext(AuthContext);
   const { recipeId } = useParams();
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const { isLoading, isError, data: users, error } = useQuery({
+  const { isLoading, isError, data: users } = useQuery({
     queryKey: ['connections', userId],
-    queryFn: () => getConnections({ userId })
+    queryFn: () => getConnectionsByUserId({ userId })
   });
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { mutateAsync: mutateEditors } = useMutation({
     mutationFn: addEditor,
@@ -45,7 +45,6 @@ export default function Permissions() {
   const [input, setInput] = useState('')
 
   const canPermit = input === selectedUser?.username;
-
 
   const handleAddEditor = async () => {
     let result = await mutateEditors({
@@ -87,11 +86,11 @@ export default function Permissions() {
             <img src={dark.ExpandLeft} alt="pan left" />
           </div>
           <div className="flex items-center overflow-x-auto">
-            {users?.map(({ connectedWith: user }, index) => (
+            {users?.map((el, index) => (
               <Card
                 setSelectedUser={setSelectedUser}
                 selectedUser={selectedUser}
-                user={user}
+                user={el}
                 key={index}
               />
             ))}

@@ -10,8 +10,10 @@ import {
   findGalleryRecipesHandler,
   changeUserPasswordHandler,
   removeConnectionHandler,
-  getConnectionRequestsHandler
+  getConnectionRequestsHandler,
+  getConnectionsOfUserHandler
 } from "./user.controller";
+
 import { FastifyInstance, } from "fastify";
 import { $ref } from "./user.schema";
 
@@ -45,7 +47,11 @@ async function userRoutes(server: FastifyInstance) {
 
   // Connections routes
 
-  server.get('/connections', getConnectionsHandler);
+  server.get('/connections', {
+    onRequest: [server.authenticate]
+  } ,getConnectionsHandler);
+
+  server.get('/:userId/connections', getConnectionsOfUserHandler)
 
   server.post('/:userId/connect/', {
     onRequest: [server.authenticate]

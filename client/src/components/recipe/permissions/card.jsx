@@ -11,7 +11,7 @@ const Card = ({ user, setSelectedUser, selectedUser }) => {
   const { data: editors } = useQuery({
     queryKey: ['editors', recipeId],
     queryFn: () => getEditors({ recipeId })
-  })
+  });
 
   const editor = editors?.map(({ userId }) => userId)?.includes(user.id);
 

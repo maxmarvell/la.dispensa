@@ -14,7 +14,8 @@ import Profile from "../../components/recipe/profile"
 export default function Index() {
 
   const { recipeId } = useParams();
-  const { user: { id: userId } } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const userId = user?.id;
 
   const { isLoading, isError, data: recipe, error } = useQuery({
     queryKey: ['recipe', recipeId],

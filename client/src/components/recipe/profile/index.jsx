@@ -70,7 +70,9 @@ const Profile = ({ reviewsRef, recipeRef }) => {
     await editMutation({ recipeId, data: { title } });
   }
 
-  const { user: { id } } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+
+  const id = user?.id;
 
   const isAuthor = (id === recipe.authorId);
   const isEditor = recipe.editors.find(el => el.userId === id);

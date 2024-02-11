@@ -7,9 +7,7 @@ import { uploadPhotoHandler } from "./recipe.controller";
 
 async function recipeRoutes(server: FastifyInstance) {
 
-  server.get('/', {
-    onRequest: [server.authenticate]
-  }, getRecipesHandler);
+  server.get('/', getRecipesHandler);
 
   server.post('/', {
     schema: {
@@ -21,11 +19,7 @@ async function recipeRoutes(server: FastifyInstance) {
     onRequest: [server.authenticate],
   }, createRecipeHandler);
 
-
-  server.get('/:recipeId', {
-    onRequest: [server.authenticate]
-  }, getRecipeHandler);
-
+  server.get('/:recipeId', getRecipeHandler);
 
   server.patch('/:recipeId/', {
     schema: {

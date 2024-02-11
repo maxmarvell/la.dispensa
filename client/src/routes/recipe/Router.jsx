@@ -9,28 +9,28 @@ import Delete from "./Delete";
 const RecipeRouter = () => (
   <Routes>
     <Route
-      path='/:recipeId'
+      path='/'
       element={<Index />}
     >
       <Route
         element={<AuthorRoutes />}
       >
         <Route
-          path="/:recipeId/privacy"
+          path="/privacy"
           element={<Permissions />}
         ></Route>
         <Route
-          path="/:recipeId/components"
+          path="/components"
           element={<Components />}
         ></Route>
         <Route
-          path="/:recipeId/delete"
+          path="/delete"
           element={<Delete />}
         ></Route>
       </Route>
     </Route>
     <Route
-      path="/:recipeId/test-kitchen"
+      path="/test-kitchen"
       element={<TestKitchen />}
     ></Route>
 

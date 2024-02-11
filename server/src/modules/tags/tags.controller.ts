@@ -16,10 +16,8 @@ export async function searchTagsHandler(
   try {
 
     const { excludeTags, name } = request.query;
-  
     let exlude = excludeTags.split(',');
 
-    console.log(request.query)
     const tags = searchTags({
       name, excludeTags: exlude
     });

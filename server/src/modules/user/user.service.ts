@@ -12,7 +12,7 @@ export async function createUser(input: CreateUserInput) {
   });
 
   return user;
-}
+};
 
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({
@@ -21,7 +21,6 @@ export async function findUserByEmail(email: string) {
     }
   });
 };
-
 
 export async function findUsers(userId?: string) {
   return prisma.user.findMany({
@@ -43,8 +42,6 @@ export async function findUsers(userId?: string) {
   });
 };
 
-
-
 export async function addUserPhoto(filepath: string, userId: string) {
   return prisma.user.update({
     where: {
@@ -54,8 +51,7 @@ export async function addUserPhoto(filepath: string, userId: string) {
       image: filepath
     }
   })
-}
-
+};
 
 export async function getUser(id: string) {
   return prisma.user.findUnique({
@@ -77,6 +73,38 @@ export async function getUser(id: string) {
 interface connectionInput {
   connectedById: string,
   connectedWithId: string,
+};
+
+export async function getConnections(userId: string) {
+  return prisma.connection.findMany({
+    where: {
+      OR: [
+        {
+          connectedById: userId
+        },
+        {
+          connectedWithId: userId
+        }
+      ],
+      accepted: true
+    },
+    include: {
+      connectedWith: {
+        select: {
+          username: true,
+          image: true,
+          id: true
+        }
+      },
+      connectedBy: {
+        select: {
+          username: true,
+          image: true,
+          id: true
+        }
+      }
+    }
+  });
 };
 
 export async function createConnection(input: connectionInput) {
@@ -104,32 +132,6 @@ export async function removeConnection(input: connectionInput) {
     }
   });
 };
-
-export async function getConnections(userId: string) {
-  return prisma.connection.findMany({
-    where: {
-      OR: [
-        {
-          connectedById: userId
-        },
-        {
-          connectedWithId: userId
-        }
-      ],
-      accepted: true
-    },
-    include: {
-      connectedWith: {
-        select: {
-          username: true,
-          image: true,
-          id: true
-        }
-      }
-    }
-  });
-};
-
 
 export async function acceptConnection(input: connectionInput) {
   return prisma.connection.update({
