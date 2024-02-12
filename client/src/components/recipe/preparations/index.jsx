@@ -1,98 +1,120 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { get as getInstructions } from "../../../api/instructions";
-import { getComponents, getRecipe } from "../../../api/recipe";
-import UpdateField from "./updateField";
-import Create from "./createPreparations";
+
+// APIs
+import { getInstructions } from "../../../api/instructions";
+import { getRecipe } from "../../../api/recipe";
+
+// Components
+import { CreatePreparations } from "./createPreparations";
+import { UpdatePreparations } from "./updatePreparations";
+
+// Context
+import AuthContext from "../../../context/auth";
+
+
+const Field = ({ instruction }) => {
+  const { step, timeAndTemperature } = instruction;
+  return (
+    <div className="flex">
+      <div className="grow text-lg font-bold justify-between border-l-4 pl-2 border-transparent focus-within:border-orange-300">
+        <div className="flex grow justify-between">
+          <div>
+            Step {step}
+          </div>
+          <div className="text-xs space-x-2 flex min-w-fit">
+            <div className="my-auto flex space-x-2 text-xs">
+              {timeAndTemperature?.hours ? (
+                <div>{timeAndTemperature.hours} hr(s)</div>
+              ) : (
+                null
+              )}
+              {timeAndTemperature?.minutes ? (
+                <div>{timeAndTemperature.minutes} min(s)</div>
+              ) : (
+                null
+              )}
+              <span>{timeAndTemperature?.temperature} {timeAndTemperature?.unit}</span>
+            </div>
+          </div>
+        </div>
+        <div className="grow border mb-2 text-sm px-0 border-transparent min-h-16">
+          <div className="py-2">
+            {instruction.description}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 const Preparations = () => {
 
-  // 
+  // Extract recipeId and current user
   const { recipeId } = useParams();
+  const { user } = useContext(AuthContext);
 
+  // Retrieve the recipe and extract the author id
   const { data: recipe } = useQuery({
     queryKey: ['recipe', recipeId],
     queryFn: () => getRecipe({ recipeId })
   });
+  const authorId = recipe?.authorId;
 
-  // Get the instructions for this recipe id
-  const { isPending, isError, data: instructions, error } = useQuery({
+  // Get the instructions and components for this recipe id
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['instructions', recipeId],
     queryFn: () => getInstructions({ recipeId })
   });
 
-  const { data: components } = useQuery({
-    queryKey: ['components', recipeId],
-    queryFn: () => getComponents({ recipeId })
-  })
+  const instructions = data?.instructions;
+  const components = data?.components;
 
-  const [selected, setSelected] = useState(null)
-
-  if (selected !== null) {
-
-    let { component: { instructions } } = components[selected];
-
+  if (authorId !== user?.id) {
     return (
-      <>
-        <div className="flex justify-center divide-x my-5">
-          <button
-            className="pr-3 hover:underline"
-            onClick={() => setSelected(null)}
-          >
-            {recipe?.title}
-          </button>
-          {components.map(({ component }, index) => (
-            <button key={index}
-              className="px-3 last:pr-0 hover:underline"
-              onClick={() => setSelected(index)}
-            >
-              {component.title}
-            </button>
-          ))}
-        </div>
+      <div className="divide-y text-sm">
         {instructions?.map((instruction, index) => (
-          <UpdateField
+          <Field
             key={index}
             instruction={instruction}
           />
         ))}
-      </ >
-    )
-  }
+        {components?.map(({ instructions, title }, index) => (
+          <div className="pb-1 pt-1 last:pb-0" key={index}>
+            <div className="italic text-lg">For the {title}</div>
+            {instructions.map((instruction, index) => (
+              <Field
+                key={index}
+                instruction={instruction}
+              />
+            ))}
+          </div >
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <>
-      {components?.length ? (
-        <div className="flex justify-center divide-x my-5">
-          <button
-            className="pr-3 hover:underline"
-            onClick={() => setSelected(null)}
-          >
-            {recipe?.title}
-          </button>
-          {components.map(({ component }, index) => (
-            <button key={index}
-              className="px-3 last:pr-0 hover:underline"
-              onClick={() => setSelected(index)}
-            >
-              {component.title}
-            </button>
+    <div className="divide-y text-sm">
+      <div>
+        <UpdatePreparations />
+        <CreatePreparations />
+      </div>
+      {components?.map(({ instructions, title }, index) => (
+        <div className="pb-1 pt-1 last:pb-0" key={index}>
+          <div className="italic text-lg">For the {title}</div>
+          {instructions.map((instruction, index) => (
+            <Field
+              key={index}
+              instruction={instruction}
+            />
           ))}
-        </div>
-      ) : (
-        null
-      )}
-      {instructions?.map((instruction, index) => (
-        <UpdateField
-          key={index}
-          instruction={instruction}
-        />
+        </div >
       ))}
-      <Create instructions={instructions} />
-    </>
-  )
-}
+    </div>
+  );
+};
 
 export default Preparations;

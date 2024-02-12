@@ -1,6 +1,6 @@
 import axiosInstance from "./refresh"
 
-export async function get({ recipeId }) {
+export async function getIngredients({ recipeId }) {
   try {
     const { data } = await axiosInstance.get("/api/ingredients?" + new URLSearchParams({
       recipeId
@@ -27,7 +27,7 @@ export async function createIngredients({ data: input }) {
 }
 
 
-export async function remove({ recipeId, ingredientId }) {
+export async function removeIngredient({ recipeId, ingredientId }) {
   try {
     const { data } = await axiosInstance.delete(`/api/ingredients/${recipeId}/${ingredientId}/`,
       {
@@ -41,7 +41,7 @@ export async function remove({ recipeId, ingredientId }) {
   }
 }
 
-export async function update({ recipeId, ingredientId, data: input }) {
+export async function updateIngredient({ recipeId, ingredientId, data: input }) {
   try {
     const { data } = await axiosInstance.patch(`/api/ingredients/${recipeId}/${ingredientId}/`,
       input,

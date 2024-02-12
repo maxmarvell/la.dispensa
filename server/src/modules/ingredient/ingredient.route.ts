@@ -7,7 +7,6 @@ async function ingredientRoutes(server: FastifyInstance) {
   
   server.get('/', getIngredientsHandler)
 
-
   server.post('/', {
     schema: {
       body: $ref('createManyIngredientSchema'),
@@ -17,7 +16,6 @@ async function ingredientRoutes(server: FastifyInstance) {
     },
     onRequest: [server.authenticate]
   }, createManyIngredientsHandler)
-
 
   server.patch('/:recipeId/:ingredientId/', {
     schema: {
@@ -32,7 +30,6 @@ async function ingredientRoutes(server: FastifyInstance) {
   server.delete('/:recipeId/:ingredientId/', {
     onRequest: [server.authenticate]
   }, removeIngredientHandler)
-
 };
 
 

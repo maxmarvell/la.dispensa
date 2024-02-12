@@ -40,9 +40,7 @@ async function recipeRoutes(server: FastifyInstance) {
   }, uploadPhotoHandler);
 
 
-  server.get('/:recipeId/components', {
-    onRequest: [server.authenticate]
-  }, getComponentsHandler)
+  server.get('/:recipeId/components', getComponentsHandler)
 
   server.post('/:recipeId/components/', {
     schema: {
@@ -83,9 +81,7 @@ async function recipeRoutes(server: FastifyInstance) {
 
   // Reviews
 
-  server.get('/:recipeId/reviews', {
-    onRequest: [server.authenticate],
-  }, getReviewsHandler)
+  server.get('/:recipeId/reviews', getReviewsHandler)
 
   server.post('/:recipeId/reviews/', {
     onRequest: [server.authenticate],
@@ -108,9 +104,7 @@ async function recipeRoutes(server: FastifyInstance) {
 
   // Ratings
 
-  server.get('/:recipeId/ratings', {
-    onRequest: [server.authenticate],
-  }, getRatingsHandler)
+  server.get('/:recipeId/ratings', getRatingsHandler)
 
   server.get('/:recipeId/ratings/:userId', {
     onRequest: [server.authenticate]

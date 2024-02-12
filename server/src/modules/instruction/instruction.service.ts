@@ -7,7 +7,42 @@ export interface InstructionURLParams {
 }
 
 export async function getInstructions(recipeId: string) {
-  return prisma.instruction.findMany({
+
+  // Retrieve the recipe Ids of all the components
+  const componentIds = await prisma.recipe.findMany({
+    where: {
+      parentRecipes: {
+        some: {
+          recipeId
+        }
+      }
+    },
+    select: {
+      id: true
+    }
+  });
+
+  // Retrieve the components and their instructions
+  const components = await prisma.recipe.findMany({
+    where: {
+      id: {
+        in: componentIds.map(({ id }) => id)
+      }
+    },
+    select: {
+      title: true,
+      instructions: {
+        include: {
+          timeAndTemperature: true
+        },
+        orderBy: {
+          step: 'asc'
+        }
+      }
+    }
+  });
+
+  const instructions = await prisma.instruction.findMany({
     where: {
       recipeId
     },
@@ -17,8 +52,10 @@ export async function getInstructions(recipeId: string) {
     include: {
       timeAndTemperature: true
     }
-  })
-}
+  });
+
+  return { instructions, components };
+};
 
 export async function createInstruction(input: CreateInstructionInput) {
 

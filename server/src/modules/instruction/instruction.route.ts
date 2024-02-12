@@ -6,9 +6,7 @@ import { getInstructionsHandler, updateInstructionHandler, createManyInstruction
 
 async function instructionRoutes(server: FastifyInstance) {
 
-  server.get('/', {
-    onRequest: [server.authenticate]
-  }, getInstructionsHandler);
+  server.get('/', getInstructionsHandler);
 
 
   server.post('/', {

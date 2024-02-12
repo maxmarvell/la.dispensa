@@ -47,9 +47,9 @@ export async function updateIngredientHandler(
     }
   }>,
   reply: FastifyReply
-) {
+  ) {
+  const { ingredientId, recipeId } = request.params;
   try {
-    const { ingredientId, recipeId } = request.params;
     const ingredient = await updateIngredient({
       ...request.body,
       ingredientId,

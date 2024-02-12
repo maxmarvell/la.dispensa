@@ -11,9 +11,10 @@ export async function getInstructionsHandler(
   }>,
   reply: FastifyReply
 ) {
+  const { recipeId } = request.query;
   try {
-    const instructions = await getInstructions(request.query.recipeId);
-    return instructions;
+    const instructions = await getInstructions(recipeId);
+    return reply.code(200).send(instructions);
   } catch (error) {
     console.log(error);
     return reply.code(404);;

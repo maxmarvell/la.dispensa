@@ -14,6 +14,13 @@ const RecipeRouteAuth = () => {
     queryFn: () => getRecipe({ recipeId })
   });
 
+  const { user } = useContext(AuthContext);
+
+  const { data: connections, isLoading: connectionsLoading } = useQuery({
+    queryKey: ["my-connections", user],
+    queryFn: () => getConnections()
+  });
+  
   if (recipeLoading) {
     return (
       <div></div>
@@ -26,18 +33,12 @@ const RecipeRouteAuth = () => {
     );
   };
 
-  const { user } = useContext(AuthContext);
-
   if (!user) {
     return (
       <Navigate to="/login" />
     )
   }
 
-  const { data: connections, isLoading: connectionsLoading } = useQuery({
-    queryKey: ["my-connections", user],
-    queryFn: () => getConnections()
-  });
 
   if (connectionsLoading) {
     return (

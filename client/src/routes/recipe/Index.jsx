@@ -63,7 +63,7 @@ export default function Index() {
           </section>
         </div>
       </section>
-      {isAuthor ? (
+      {(isAuthor || !userId) ? (
         null
       ) : (
         <section

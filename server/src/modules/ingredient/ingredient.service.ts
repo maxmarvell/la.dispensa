@@ -3,7 +3,42 @@ import { CreateIngredientInput, UpdateIngredientInput } from "./ingredient.schem
 
 
 export async function getIngredients({ recipeId }: { recipeId: string }) {
-  return prisma.recipeIngredient.findMany({
+
+  // Retrieve the recipe Ids of all the components
+  const componentIds = await prisma.recipe.findMany({
+    where: {
+      parentRecipes: {
+        some: {
+          recipeId
+        }
+      }
+    },
+    select: {
+      id: true
+    }
+  });
+
+  const components = await prisma.component.findMany({
+    where: {
+      componentId: {
+        in: componentIds.map(({ id }) => id)
+      }
+    },
+    include: {
+      component: {
+        select: {
+          title: true,
+          ingredients: {
+            include: {
+              ingredient: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const ingredients = await prisma.recipeIngredient.findMany({
     where: {
       recipeId
     },
@@ -12,9 +47,11 @@ export async function getIngredients({ recipeId }: { recipeId: string }) {
         select: {
           name: true
         }
-      },
+      }
     }
-  })
+  });
+
+  return { ingredients, components };
 }
 
 
@@ -44,7 +81,7 @@ export async function createIngredient(input: CreateIngredientInput) {
 
 
 
-export async function updateIngredient(input: UpdateIngredientInput & { ingredientId: string, recipeId: string}) {
+export async function updateIngredient(input: UpdateIngredientInput & { ingredientId: string, recipeId: string }) {
   const { ingredient, ...data } = input;
 
   const fetchIngredient = await prisma.ingredient.upsert({
@@ -62,9 +99,11 @@ export async function updateIngredient(input: UpdateIngredientInput & { ingredie
 
   const { ingredientId, recipeId, ...rest } = data
 
+  console.log(ingredientId, recipeId)
+
   return prisma.recipeIngredient.update({
     where: {
-      RecipeIngredientId : {ingredientId, recipeId}
+      RecipeIngredientId: { ingredientId, recipeId }
     },
     data: {
       ...rest,
@@ -77,7 +116,7 @@ export async function updateIngredient(input: UpdateIngredientInput & { ingredie
 export async function removeIngredient(ingredientId: string, recipeId: string) {
   return prisma.recipeIngredient.delete({
     where: {
-      RecipeIngredientId : {ingredientId, recipeId}
+      RecipeIngredientId: { ingredientId, recipeId }
     }
   })
 }
