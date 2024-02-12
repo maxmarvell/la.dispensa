@@ -127,6 +127,7 @@ const Description = () => {
     )
   }
 
+  // Render non-authorized display
   if (authorId !== user?.id) {
     return (
       <div className="text-sm border-transparent border-l-4 pl-2">
@@ -137,9 +138,10 @@ const Description = () => {
     );
   };
 
+  // Render 
   if (!recipe?.description) {
     return (
-      <div className="text-sm flex justify-between border-transparent border-l-4 focus-within:border-orange-300">
+      <div className="text-sm min-h-14 flex justify-between border-transparent border-l-4 focus-within:border-orange-300">
         <label className="grow">
           <textarea
             ref={ref}
@@ -149,12 +151,15 @@ const Description = () => {
             placeholder="Description should be written here"
           />
         </label>
+        <div>
+          <UpdateButton />
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="text-sm flex justify-between border-transparent border-l-4 focus-within:border-orange-300">
+    <div className="text-sm flex min-h-14 justify-between border-transparent border-l-4 focus-within:border-orange-300">
       {editing ? (
         <label className="grow">
           <textarea

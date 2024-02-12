@@ -26,6 +26,9 @@ const Field = ({ ingredient }) => {
   // Extract the optional field
   const { unit, ...rest } = data;
 
+  // Extract rest of fields
+  const { quantity, ingredient: { name } } = rest;
+
   // Check optional field exists and save state accordingly
   const [updatedIngredient, setUpdates] = useState(unit ? data : rest)
 
@@ -49,46 +52,72 @@ const Field = ({ ingredient }) => {
     },
   })
 
+  const RemoveButton = () => {
+    let [hovered, setHovered] = useState(false);
+    return (
+      <button
+            onClick={() => removeMutation({ ingredientId, recipeId })}
+            className="bg-slate-950 border-2 border-slate-950 hover:bg-orange-300"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <img src={hovered ? dark.Remove : light.Remove} className="h-5" alt="remove-icon" />
+          </button>
+    )
+  }
+
   // Save the updates
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     let result = await updateMutation({
       ingredientId, recipeId,
       data: updatedIngredient,
     })
     setEditing(false);
+  };
+
+  // Update button
+  const UpdateButton = () => {
+    let [hovered, setHovered] = useState(false);
+    return (
+      <button
+        className="bg-slate-950 border-2 border-slate-950 mb-1 hover:bg-orange-300"
+        onClick={handleUpdate}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <img src={hovered ? dark.Save : light.Save} className="w-5" alt="remove-icon" />
+      </button>
+    )
   }
 
   // By default the ingredient is not editable
   const [editing, setEditing] = useState(false);
 
-  const [hovered, setHovered] = useState([false, false])
-
-  const { quantity, ingredient: { name } } = rest;
+  // Button to handle toggle editing mode
+  const EditButton = () => {
+    const [hovered, setHovered] = useState(false);
+    return (
+      <button
+        onClick={() => setEditing(!editing)}
+        className="bg-slate-950 border-2 border-slate-950 hover:bg-orange-300"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <img src={hovered ? dark.Edit : light.Edit} className="h-5" alt="edit-icon" />
+      </button>
+    );
+  };
 
   if (!editing) {
     return (
       <div className="flex justify-between items-center p-1 pl-2 odd:bg-white even:bg-slate-100">
         <div className="flex space-x-2">
           <span className="capitalize">{name}</span>
-          <span>{ingredient.quantity} {ingredient.unit}</span>
+          <span>{quantity} {unit}</span>
         </div>
         <div className="flex space-x-2 min-w-fit">
-          <button
-            onClick={() => removeMutation({ ingredientId, recipeId })}
-            className="bg-slate-950 border-2 border-slate-950 hover:bg-orange-300"
-            onMouseEnter={() => setHovered(prev => [true, prev[1]])}
-            onMouseLeave={() => setHovered(prev => [false, prev[1]])}
-          >
-            <img src={hovered[0] ? dark.Remove : light.Remove} className="h-5" alt="remove-icon" />
-          </button>
-          <button
-            onClick={() => setEditing(!editing)}
-            className="bg-slate-950 border-2 border-slate-950 hover:bg-orange-300"
-            onMouseEnter={() => setHovered(prev => [prev[0], true])}
-            onMouseLeave={() => setHovered(prev => [prev[0], false])}
-          >
-            <img src={hovered[1] ? dark.Edit : light.Edit} className="h-5" alt="edit-icon" />
-          </button>
+          <RemoveButton />
+          <EditButton />
         </div>
       </div>
     )
@@ -125,22 +154,8 @@ const Field = ({ ingredient }) => {
         </select>
       </div>
       <div className="flex space-x-2 min-w-fit">
-        <button
-          onClick={handleSave}
-          className="bg-slate-950 border-2 border-slate-950 hover:bg-orange-300"
-          onMouseEnter={() => setHovered(prev => [true, prev[1]])}
-          onMouseLeave={() => setHovered(prev => [false, prev[1]])}
-        >
-          <img src={hovered[0] ? dark.Save : light.Save} className="h-5" alt="save-icon" />
-        </button>
-        <button
-          onClick={() => setEditing(!editing)}
-          className="border-2 border-orange-300 bg-orange-300"
-          onMouseEnter={() => setHovered(prev => [prev[0], true])}
-          onMouseLeave={() => setHovered(prev => [prev[0], false])}
-        >
-          <img src={dark.Edit} className="h-5" alt="edit-icon" />
-        </button>
+        <UpdateButton />
+        <EditButton />
       </div>
     </div >
   )

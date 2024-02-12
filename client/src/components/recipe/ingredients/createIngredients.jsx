@@ -146,7 +146,8 @@ export const CreateIngredients = () => {
         name: ""
       },
       quantity: "",
-      recipeId
+      recipeId,
+      index: 0
     }]) : setNewIngredients([]);
   }, [ingredients]);
 

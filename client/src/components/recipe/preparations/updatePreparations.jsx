@@ -165,10 +165,10 @@ const UpdateField = ({ instruction }) => {
     if (instructionInput.timeAndTemperature && editing) {
       return (
         <button
-        onClick={toggleTimeAndTemperatureField}
-        className="bg-orange-300 border-2 border-orange-300 my-1"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+          onClick={toggleTimeAndTemperatureField}
+          className="bg-orange-300 border-2 border-orange-300 my-1"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
           <img src={dark.Fire} className="w-5" alt="add-temperature-field" />
         </button>
@@ -176,10 +176,10 @@ const UpdateField = ({ instruction }) => {
     } else if (editing) {
       return (
         <button
-        onClick={toggleTimeAndTemperatureField}
-        className="bg-slate-950 border-2 border-slate-950 my-1 hover:bg-orange-300"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+          onClick={toggleTimeAndTemperatureField}
+          className="bg-slate-950 border-2 border-slate-950 my-1 hover:bg-orange-300"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
           <img src={hovered ? dark.Fire : light.Fire} className="w-5" alt="add-temperature-field" />
         </button>
@@ -187,11 +187,11 @@ const UpdateField = ({ instruction }) => {
     } else {
       return (
         <button
-        onClick={toggleTimeAndTemperatureField}
-        className="bg-slate-950 border-2 border-slate-950 my-1"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        disabled={true}
+          onClick={toggleTimeAndTemperatureField}
+          className="bg-slate-950 border-2 border-slate-950 my-1"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          disabled={true}
         >
           <img src={light.Fire} className="w-5" alt="add-temperature-field" />
         </button>
@@ -221,33 +221,33 @@ const UpdateField = ({ instruction }) => {
 
     return (
       <>
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+        <div className="mb-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
           <input
             type="number"
             name="hours"
             value={hours ? hours : ""}
-            className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
+            className="border-0 pl-0 pr-1 w-10 focus:outline-none"
             onChange={(e) => setTimeTemperatureField(e)}
           />
           <span>hr</span>
         </div>
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+        <div className="mb-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
           <input
             type="number"
             name="minutes"
             value={minutes ? minutes : ""}
-            className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none"
+            className="border-0 pl-0 pr-1 w-10 focus:outline-none"
             onChange={(e) => setTimeTemperatureField(e)}
           />
           <span>mins</span>
         </div>
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+        <div className="mb-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
           <input
             type="number"
             name="temperature"
             value={temperature ? temperature : ""}
             onChange={(e) => setTimeTemperatureField(e)}
-            className=" border-0 px-0 py-1 pr-1 w-14 focus:outline-none"
+            className="border-0 px-0 pr-1 w-14 focus:outline-none"
           />
           <span>{unit}</span>
         </div>
@@ -283,7 +283,9 @@ const UpdateField = ({ instruction }) => {
               </>
             ) : null
             )}
-            <TimeTemperatureButton />
+            <div>
+              <TimeTemperatureButton />
+            </div>
           </div>
         </div>
         <div className="grow mb-2 text-sm px-0">

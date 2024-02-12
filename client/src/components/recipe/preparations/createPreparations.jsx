@@ -62,22 +62,60 @@ const Field = ({ instruction, setNewInstructions }) => {
     ))
   };
 
+  const TimeTemperatureButton = () => {
+    const [hovered, setHovered] = useState(false);
+    if (timeAndTemperature) {
+      return (
+        <button
+          onClick={toggleTimeAndTemperatureField}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="border-2 border-orange-300 my-1 bg-orange-300"
+        >
+          <img src={dark.Fire} className="w-5" alt="add-temperature-field" />
+        </button>
+      );
+    } else {
+      return (
+        <button
+          onClick={toggleTimeAndTemperatureField}
+          className="bg-slate-950 border-2 border-slate-950 my-1 hover:bg-orange-300"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <img src={hovered ? dark.Fire : light.Fire} className="w-5" alt="add-temperature-field" />
+        </button>
+      );
+    };
+  };
+
   const removeField = () => {
     setNewInstructions(prev => {
       let newArr = [...prev];
-      return newArr.filter(el => el.step !== step).map(({step:s, ...rest}) => (
-        s > step ? ({ ...rest, step:s-1}) : ({ ...rest, step:s})
+      return newArr.filter(el => el.step !== step).map(({ step: s, ...rest }) => (
+        s > step ? ({ ...rest, step: s - 1 }) : ({ ...rest, step: s })
       ));
     })
-  }
+  };
+
+  const RemoveButton = () => {
+    const [hovered, setHovered] = useState(false);
+    return (
+      <button
+        onClick={removeField}
+        className="border-2 border-slate-950 my-1 bg-slate-950 hover:bg-orange-300"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <img src={hovered ? dark.Remove : light.Remove} className="w-5" alt="add-temperature-field" />
+      </button>
+    );
+  };
 
   const adjustTextareaHeight = (textarea) => {
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
-
-  const [hoveredFire, setHoveredFire] = useState(false);
-  const [hoveredRemove, setHoveredRemove] = useState(false);
 
   return (
     <div className="flex">
@@ -92,7 +130,7 @@ const Field = ({ instruction, setNewInstructions }) => {
           <div className="text-xs space-x-2 flex">
             {timeAndTemperature ? (
               <>
-                <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+                <div className="my-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
                   <input
                     type="number"
                     name="hours"
@@ -102,7 +140,7 @@ const Field = ({ instruction, setNewInstructions }) => {
                   />
                   <span>hr</span>
                 </div>
-                <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+                <div className="my-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
                   <input
                     type="number"
                     name="minutes"
@@ -112,7 +150,7 @@ const Field = ({ instruction, setNewInstructions }) => {
                   />
                   <span>mins</span>
                 </div>
-                <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2">
+                <div className="my-1 border-b-2 border-black flex items-center focus-within:border-orange-300">
                   <input
                     type="number"
                     name="temperature"
@@ -122,41 +160,13 @@ const Field = ({ instruction, setNewInstructions }) => {
                   />
                   <span>{timeAndTemperature.unit}</span>
                 </div>
-                <button
-                  onClick={toggleTimeAndTemperatureField}
-                  onMouseEnter={() => setHoveredFire(true)}
-                  onMouseLeave={() => setHoveredFire(false)}
-                  className="border-2 border-orange-300 my-1 bg-orange-300"
-                >
-                  <img src={dark.Fire} className="w-5" alt="add-temperature-field" />
-                </button>
-                <button
-                  onClick={removeField}
-                  className="border-2 border-orange-300 my-1 bg-orange-300"
-                  onMouseEnter={() => setHoveredRemove(true)}
-                  onMouseLeave={() => setHoveredRemove(false)}
-                >
-                  <img src={hoveredRemove ? dark.Remove : light.Remove} className="w-5" alt="add-temperature-field" />
-                </button>
+                <TimeTemperatureButton />
+                <RemoveButton />
               </>
             ) : (
               <>
-                <button
-                  onClick={toggleTimeAndTemperatureField}
-                  className="bg-slate-950 border-2 border-slate-950 my-1 hover:bg-orange-300"
-                  onMouseEnter={() => setHoveredFire(true)}
-                  onMouseLeave={() => setHoveredFire(false)}
-                >
-                  <img src={hoveredFire ? dark.Fire : light.Fire} className="w-5" alt="add-temperature-field" />
-                </button>
-                <button
-                  onClick={removeField}
-                  className="bg-slate-950 border-2 border-slate-950 my-1 hover:bg-orange-300"
-                  onMouseEnter={() => setHoveredRemove(true)}
-                  onMouseLeave={() => setHoveredRemove(false)}
-                >
-                  <img src={hoveredRemove ? dark.Remove : light.Remove} className="w-5" alt="add-temperature-field" />
-                </button>
+                <TimeTemperatureButton />
+                <RemoveButton />
               </>
             )}
           </div>
@@ -175,7 +185,7 @@ const Field = ({ instruction, setNewInstructions }) => {
           />
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
@@ -199,7 +209,7 @@ export const CreatePreparations = () => {
     setNewInstructions((instructions?.length === 0) ? [{
       step: 1,
       description: "",
-      recipeId
+      recipeId,
     }] : []);
   }, [instructions]);
 
