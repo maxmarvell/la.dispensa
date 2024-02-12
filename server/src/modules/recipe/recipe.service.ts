@@ -1,4 +1,5 @@
 import prisma from "../../utils/prisma";
+import { getConnections } from "../user/user.service";
 import { ConnectComponentInput, CreateRatingInput, CreateRecipeInput, UpdateRecipeInput, CreateReviewInput, UpdateTagsInput } from "./recipe.schema";
 
 export async function createRecipe(input: CreateRecipeInput & { authorId: string }) {
@@ -12,13 +13,14 @@ export interface queryRecipesInterface {
   page?: number,
   take?: number,
   tags?: string[],
+  userId?: string,
 }
 
 // find recipes
 
 export async function findRecipes(input: queryRecipesInterface) {
 
-  const { title, page, take, tags } = input;
+  const { title, page, take, tags, userId } = input;
 
   let skip = (page && take) ? (page - 1) * take : undefined;
 
@@ -28,9 +30,46 @@ export async function findRecipes(input: queryRecipesInterface) {
         in: tags
       }
     }
-  } : undefined
+  } : undefined;
 
+  if (userId) {
+    const connections = await getConnections(userId);
 
+    return prisma.recipe.findMany({
+      skip,
+      take,
+      where: {
+        title: {
+          contains: title,
+          mode: 'insensitive',
+        },
+        tags: tagQuery,
+        OR: [
+          {
+            authorId: userId
+          },
+          {
+            public: true
+          },
+          {
+            authorId: {
+              in: connections
+            }
+          }
+        ]
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            image: true
+          }
+        }
+      }
+    })
+
+  }
 
   return prisma.recipe.findMany({
     skip,
@@ -40,7 +79,8 @@ export async function findRecipes(input: queryRecipesInterface) {
         contains: title,
         mode: 'insensitive',
       },
-      tags: tagQuery
+      tags: tagQuery,
+      public: true,
     },
     include: {
       author: {

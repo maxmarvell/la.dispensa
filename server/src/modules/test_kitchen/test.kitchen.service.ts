@@ -48,17 +48,6 @@ export async function getIterationInstance(iterationId: string) {
   });
 };
 
-interface parentInstructionInterface {
-  timeAndTemperature: {
-    iterationId: string;
-    instructionStep: number;
-    hours: number | null;
-    minutes: number | null;
-    temperature: number;
-    unit: $Enums.TemperatureUnit | null;
-  } | null
-}
-
 export async function createIteration(input: CreateIterationInput) {
 
   // Extract the recipeId and rest

@@ -14,7 +14,6 @@ export async function registerUserHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-  console.log(body)
   try {
     const user = await createUser(body);
     return reply.code(201).send(user);
@@ -203,11 +202,7 @@ export async function getConnectionsHandler(
   const { id: userId } = request.user;
   try {
     const connections = await getConnections(userId);
-    return reply.code(200).send(
-      connections.map(({ connectedById, connectedWithId }) => (
-        connectedById === userId ? connectedWithId : connectedById
-      ))
-    );
+    return reply.code(200).send(connections);
   } catch (error) {
     console.log(error);
     return reply.code(404);
@@ -228,11 +223,7 @@ export async function getConnectionsOfUserHandler(
 
   try {
     const connections = await getConnections(userId);
-    return reply.code(200).send(
-      connections.map(({ connectedById, connectedWithId, ...rest }) => (
-        connectedById === userId ? rest.connectedWith : rest.connectedBy
-      ))
-    );
+    return reply.code(200).send(connections);
   } catch (error) {
     console.log(error);
     return reply.code(404).send(error);

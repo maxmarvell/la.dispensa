@@ -47,6 +47,10 @@ const router = createBrowserRouter(
               element={<RecipeRoutes />}
             />
           </Route>
+          <Route
+              path='/recipes'
+              element={<Recipes />}
+            />
           <Route element={<ProtectedRoutes />}>
             <Route
               path='/logout'
@@ -59,10 +63,6 @@ const router = createBrowserRouter(
             <Route
               path='/test-kitchen/*'
               element={<TestKitchenRoutes />}
-            />
-            <Route
-              path='/recipes'
-              element={<Recipes />}
             />
           </Route>
         </Route>

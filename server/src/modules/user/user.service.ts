@@ -81,7 +81,7 @@ interface connectionInput {
 };
 
 export async function getConnections(userId: string) {
-  return prisma.connection.findMany({
+  const connections = await prisma.connection.findMany({
     where: {
       OR: [
         {
@@ -110,6 +110,10 @@ export async function getConnections(userId: string) {
       }
     }
   });
+
+  return connections.map(({ connectedById, connectedWithId }) => (
+    connectedById === userId ? connectedWithId : connectedById
+  ));
 };
 
 export async function createConnection(input: connectionInput) {
@@ -231,7 +235,7 @@ export async function getRecipeCount({ userId }: { userId: string }) {
   });
 };
 
-export async function getConnnectionCount({userId}: {userId: string}) {
+export async function getConnnectionCount({ userId }: { userId: string }) {
   return prisma.connection.count({
     where: {
       OR: [

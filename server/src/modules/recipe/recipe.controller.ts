@@ -1,30 +1,43 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createRecipe, findUniqueRecipe, findRecipes, updateRecipe, getComponents, connectComponent, removeConnectComponent, availableToConnect, removeRecipe, queryRecipesInterface, addEditor, editorInterface, removeEditor, getEditor, getRatings, createRating, getReviews, createReview, getRating, updateRating, getReview, updateReview, updateTags, findTestKitchenRecipes, getDashboard } from "./recipe.service";
+import { createRecipe, findUniqueRecipe, findRecipes, updateRecipe, getComponents, connectComponent, removeConnectComponent, availableToConnect, removeRecipe, addEditor, editorInterface, removeEditor, getEditor, getRatings, createRating, getReviews, createReview, getRating, updateRating, getReview, updateReview, updateTags, findTestKitchenRecipes, getDashboard } from "./recipe.service";
 import { CreateRecipeInput, UpdateRecipeInput, ConnectComponentInput, AddEditorInput, CreateRatingInput, CreateReviewInput, UpdateRatingInput, UpdateReviewInput, UpdateTagsInput } from "./recipe.schema";
 import cloudImageUpload from "../../utils/aws.s3";
 import { addRecipePhoto } from "./recipe.service";
 
-
-interface queryStringRequestInterface {
+interface queryRecipesInterface {
   title?: string,
   page?: string,
   take?: string,
   tags?: string,
 }
 
-
 export async function getRecipesHandler(
   request: FastifyRequest<{
-    Querystring: queryStringRequestInterface
+    Querystring: queryRecipesInterface
   }>,
   reply: FastifyReply
 ) {
-  try {
-    const { title } = request.query;
-    const page = Number(request.query.page);
-    const take = Number(request.query.take);
-    const tags = request.query.tags?.length ? request.query.tags.split(',') : undefined
+  const { title } = request.query;
+  const page = Number(request.query.page);
+  const take = Number(request.query.take);
+  const tags = request.query.tags?.length ? request.query.tags.split(',') : undefined;
 
+  const auth = request.headers.authorization
+  const token = auth?.split(" ")[1]
+
+  if (token !== "null") {
+    await request.jwtVerify();
+    const { id: userId } = request.user;
+    try {
+      const recipes = await findRecipes({ title, page, take, tags, userId });
+      return recipes;
+    } catch (error) {
+      console.log(error);
+      return reply.code(404);
+    };
+  };
+
+  try {
     const recipes = await findRecipes({ title, page, take, tags });
     return recipes;
   } catch (error) {
@@ -507,7 +520,7 @@ export async function getDashboardHandler(
   let { id: userId } = request.user;
 
   try {
-    let data = getDashboard({ userId, lastCursor, take}) ;
+    let data = getDashboard({ userId, lastCursor, take });
     return data
   } catch (error) {
     console.log(error)

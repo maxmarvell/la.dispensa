@@ -10,14 +10,15 @@ export async function getRecipe({ recipeId }) {
 }
 
 
-export async function getRecipes({ title, page, take, tags }) {
+export async function getRecipes({ title, page, take, tags, userId }) {
   try {
     let { data } = await axiosInstance.get(`/api/recipes?` + new URLSearchParams({
       title,
       page,
       take,
-      tags: tags.join(',')
-    }), { timeout: 5000 })
+      tags: tags.join(','),
+      userId: userId,
+    }));
     return data
   } catch (e) {
     console.error(e)

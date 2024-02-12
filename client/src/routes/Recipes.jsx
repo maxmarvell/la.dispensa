@@ -1,11 +1,12 @@
 import { getRecipes } from "../api/recipe";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import RecipeCard from "../components/index/card";
 import Pagination from '@mui/material/Pagination';
 import Collapse from '@mui/material/Collapse';
 import TagSearch from "../components/index/tagSearch";
 import RecipeSearch from "../components/index/recipeSearch";
+import AuthContext from "../context/auth";
 
 const take = 48;
 
@@ -24,13 +25,15 @@ const LoadingRecipe = () => {
 
 export default function Recipes() {
 
+  const { user } = useContext(AuthContext);
+
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([])
   const [page, setPage] = useState(1);
 
   const { isLoading, isError, data: recipes } = useQuery({
     queryKey: ['recipes', title, page, tags],
-    queryFn: () => getRecipes({ title, page, take, tags }),
+    queryFn: () => getRecipes({ title, page, take, tags, user }),
     placeholderData: keepPreviousData,
   });
 
