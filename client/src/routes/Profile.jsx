@@ -1,14 +1,20 @@
 import { useParams } from "react-router-dom";
-import { get as getUser, uploadPhoto } from "../api/user";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useContext, useState } from "react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
+// APIs
+import { get as getUser, uploadPhoto, removeConnection, acceptConnection, createConnection } from "../api/user";
+
+// Components
+import RecipeGallery from "../components/profile/recipeGallery";
+import { AggregatedRecipes } from "../components/profile/aggregatedRecipes";
+import { AggregatedConnections } from "../components/profile/aggregatedConnections";
 import { FileUploader } from "react-drag-drop-files";
+
+// Assets
 import * as light from '../assets/icons/light'
 import * as dark from '../assets/icons/dark'
-import RecipeGallery from "../components/profile/recipeGallery";
-import Connections from "../components/profile/connections";
-import ConnectedBy from "../components/profile/connectedBy";
+import AuthContext from "../context/auth";
 
 const fileTypes = ["JPG", "PNG", "GIF", "JPEG"];
 
@@ -16,27 +22,71 @@ export default function Profile() {
 
   const { userId } = useParams();
 
-  const { isLoading, isError, data: user, error } = useQuery({ queryKey: ['user', userId], queryFn: () => getUser({ userId }) })
+  const { user: { id } } = useContext(AuthContext);
+
+  const { isLoading, isError, data: user } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => getUser({ userId })
+  });
+
+  const isConnectedWith = user?.connectedWith.find(({ connectedWithId }) => connectedWithId === id);
+  const isConnectedBy = user?.connectedBy.find(({ connectedById }) => connectedById === id);
+  const isConnected = isConnectedBy || isConnectedWith;
 
   const queryClient = useQueryClient();
 
   const { mutateAsync: uploadPhotoMutation } = useMutation({
     mutationFn: uploadPhoto,
     onSuccess: () => {
-      queryClient.invalidateQueries(['recipe'])
+      queryClient.invalidateQueries(['profile', userId])
     }
   });
 
   const [editing, setEditing] = useState(false);
 
   // Handle Image Upload
-  const [file, setFile] = useState(null);
+  const [_, setFile] = useState(null);
   const handleChange = async (file) => {
     setFile(file);
     let formData = new FormData();
     formData.append('photo', file);
     await uploadPhotoMutation({ formData, userId });
     setEditing(false)
+  };
+
+  const connectionFn = ({ userId }) => {
+    return isConnected ? (
+      isConnected.accepted ? (
+        removeConnection({ userId })
+      ) : (
+        isConnected.connectedWithId === userId ? (
+          removeConnection({ userId })
+        ) : (
+          acceptConnection({ userId })
+        )
+      )
+    ) : (
+      createConnection({ userId })
+    )
+  };
+
+  const { mutateAsync } = useMutation({
+    mutationFn: connectionFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["profile", userId]);
+    }
+  });
+
+  const ConnectionStatus = () => {
+    return (
+      <button
+        className="bg-slate-950 text-white hover:text-slate-950 hover:bg-orange-300 
+                     px-2 py-1 text-xs"
+        onClick={() => mutateAsync({ userId: user.id })}
+      >
+        {isConnected ? isConnected.accepted ? "Friends" : (isConnected.connectedWithId === userId) ? "Accept" : "Requested" : "Add"}
+      </button>
+    )
   };
 
 
@@ -48,9 +98,9 @@ export default function Profile() {
 
   return (
     <div className="grow divide-y pb-0 p-10 pr-20 flex flex-col h-full overflow-y-scroll">
-      <div className="flex divide-x mb-2">
+      <div className="flex md:divide-x mb-2 flex-col md:flex-row">
         <section
-          className="relative aspect-square w-1/4 items-center flex overflow-hidden mr-3"
+          className="relative aspect-square w-full max-w-56 items-center flex overflow-hidden mr-3"
         >
           <img
             src={user?.image ? user.image : dark.User}
@@ -69,21 +119,28 @@ export default function Profile() {
               />
             </div>
           )}
-          <button
-            className={`p-1 border-2 absolute top-2 left-2 ${editing ? "bg-orange-300 border-orange-300" : "bg-slate-950 border-slate-950"}`}
-            onClick={() => setEditing(!editing)}
-          >
-            <img src={editing ? dark.Edit : light.Edit} alt="edit this page" />
-          </button>
+          {id === userId && (
+            <button
+              className={`p-1 border-2 absolute top-2 left-2 ${editing ? "bg-orange-300 border-orange-300" : "bg-slate-950 border-slate-950"}`}
+              onClick={() => setEditing(!editing)}
+            >
+              <img src={editing ? dark.Edit : light.Edit} alt="edit this page" />
+            </button>
+          )}
         </section>
         <section
-          className="pl-5 grow divide-y"
+          className="py-3 md:py-0 md:pl-5 text-sm grow"
         >
-          <div className="text-lg font-bold pb-1">{user?.username}</div>
-          <div className="py-1">where does he work</div>
-          <div className="py-1">what does he do</div>
-          <div className="py-1">how many connections does he have</div>
-
+          <div className="text-lg font-bold pb-3">{user?.username}</div>
+          <AggregatedRecipes />
+          <AggregatedConnections />
+          <div className="py-1">Works @ la.dispensa</div>
+          <div className="py-1">Recipe Publisher</div>
+          {id !== userId && (
+            <div className="my-3">
+              <ConnectionStatus />
+            </div>
+          )}
         </section>
       </div>
       <section className="mb-10 pt-2">

@@ -41,7 +41,7 @@ export const Notifications = () => {
           Test Kitchen
         </button>
       </div>
-      <div className="flex flex-col divide-y">
+      <div className="flex flex-col divide-y grow">
         <Content />
       </div>
     </>

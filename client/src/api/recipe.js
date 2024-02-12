@@ -86,7 +86,6 @@ export async function getComponents({ recipeId }) {
 }
 
 export async function connectComponent({ recipeId, data }) {
-  console.log(data)
   try {
     return axiosInstance.post(`/api/recipes/${recipeId}/components/`,
       data,

@@ -120,8 +120,8 @@ export async function updateIterationInstruction({ iterationId, step, input }) {
 
 export async function getIterationsLayout({ recipeId }) {
   try {
-    const iterations = await getIterations({ recipeId })
-    const recipe = await getRecipe({ recipeId })
+    const iterations = await getIterations({ recipeId });
+    const recipe = await getRecipe({ recipeId });
 
     const root = stratify()
       .id((d) => d.id)

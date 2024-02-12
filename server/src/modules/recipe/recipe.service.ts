@@ -87,8 +87,16 @@ export async function findUniqueRecipe(RecipeId: string) {
     include: {
       tags: true,
       author: true,
-      ingredients: true,
-      instructions: true,
+      ingredients: {
+        include: {
+          ingredient: true
+        }
+      },
+      instructions: {
+        include: {
+          timeAndTemperature: true
+        }
+      },
       components: {
         include: {
           component: {

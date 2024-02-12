@@ -19,8 +19,6 @@ const UserRow = ({ user }) => {
   const isConnectedBy = connectedBy.find(({ connectedById }) => connectedById === userId);
   const isConnected = isConnectedBy || isConnectedWith;
 
-  // useEffect(() => console.log(user), [user])
-
   const connectionFn = ({ userId }) => {
     return isConnected ? (
       isConnected.accepted ? (
@@ -47,41 +45,13 @@ const UserRow = ({ user }) => {
   });
 
   const ConnectionStatus = () => {
-    return isConnected ? (
-      isConnected.accepted ? (
-        <button
-          className="bg-slate-950 text-white hover:text-slate-950 hover:bg-orange-300 
-                     px-2 py-1 text-xs"
-          onClick={() => mutateAsync({ userId: user.id })}
-        >
-          Friends
-        </button>
-      ) : (
-        isConnected.connectedWithId === userId ? (
-          <button
-            className="bg-slate-950 text-white hover:text-slate-950 hover:bg-orange-300 
-                       px-2 py-1 text-xs"
-            onClick={() => mutateAsync({ userId: user.id })}
-          >
-            Accept
-          </button>
-        ) : (
-          <button
-            className="bg-slate-950 text-white hover:text-slate-950 hover:bg-orange-300 
-                       px-2 py-1 text-xs"
-            onClick={() => mutateAsync({ userId: user.id })}
-          >
-            Requested
-          </button>
-        )
-      )
-    ) : (
+    return (
       <button
         className="bg-slate-950 text-white hover:text-slate-950 hover:bg-orange-300 
-                   px-2 py-1 text-xs"
+                     px-2 py-1 text-xs"
         onClick={() => mutateAsync({ userId: user.id })}
       >
-        Add
+        {isConnected ? isConnected.accepted ? "Friends" : (isConnected.connectedWithId === userId) ? "Accept" : "Requested" : "Add"}
       </button>
     )
   };

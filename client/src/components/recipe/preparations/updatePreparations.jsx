@@ -256,7 +256,7 @@ const UpdateField = ({ instruction }) => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-24">
       <div className="grow text-lg font-bold justify-between pl-2 border-l-4 border-transparent focus-within:border-orange-300">
         <div className="flex grow justify-between">
           <div>

@@ -53,7 +53,7 @@ export default function Dashboard() {
           <Placeholder />
         ) : (
           <>
-            <section className="min-h-72 mx-3 py-4">
+            <section className="min-h-72 flex flex-col mx-3 py-4">
               <Notifications />
             </section>
             <section className="grow mx-3 py-4">

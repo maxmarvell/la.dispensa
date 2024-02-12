@@ -11,7 +11,9 @@ import {
   changeUserPasswordHandler,
   removeConnectionHandler,
   getConnectionRequestsHandler,
-  getConnectionsOfUserHandler
+  getConnectionsOfUserHandler,
+  getRecipeCountHandler,
+  getConnectionCountHandler
 } from "./user.controller";
 
 import { FastifyInstance, } from "fastify";
@@ -72,6 +74,10 @@ async function userRoutes(server: FastifyInstance) {
   // Gallery
 
   server.get('/:userId/gallery', findGalleryRecipesHandler);
+
+  server.get('/:userId/count-recipes', getRecipeCountHandler);
+
+  server.get('/:userId/count-connections', getConnectionCountHandler);
 
   // User setting services
 

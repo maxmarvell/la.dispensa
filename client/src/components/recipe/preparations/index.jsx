@@ -17,33 +17,29 @@ import AuthContext from "../../../context/auth";
 const Field = ({ instruction }) => {
   const { step, timeAndTemperature } = instruction;
   return (
-    <div className="flex">
-      <div className="grow text-lg font-bold justify-between border-l-4 pl-2 border-transparent focus-within:border-orange-300">
-        <div className="flex grow justify-between">
-          <div>
-            Step {step}
-          </div>
-          <div className="text-xs space-x-2 flex min-w-fit">
-            <div className="my-auto flex space-x-2 text-xs">
-              {timeAndTemperature?.hours ? (
-                <div>{timeAndTemperature.hours} hr(s)</div>
-              ) : (
-                null
-              )}
-              {timeAndTemperature?.minutes ? (
-                <div>{timeAndTemperature.minutes} min(s)</div>
-              ) : (
-                null
-              )}
-              <span>{timeAndTemperature?.temperature} {timeAndTemperature?.unit}</span>
-            </div>
+    <div className="border-l-4 border-l-transparent pl-2 py-2">
+      <div className="text-lg font-bold flex grow justify-between">
+        <div>
+          Step {step}
+        </div>
+        <div className="text-xs space-x-2 flex min-w-fit">
+          <div className="my-auto flex space-x-2 text-xs">
+            {timeAndTemperature?.hours ? (
+              <div>{timeAndTemperature.hours} hr(s)</div>
+            ) : (
+              null
+            )}
+            {timeAndTemperature?.minutes ? (
+              <div>{timeAndTemperature.minutes} min(s)</div>
+            ) : (
+              null
+            )}
+            <span>{timeAndTemperature?.temperature} {timeAndTemperature?.unit}</span>
           </div>
         </div>
-        <div className="grow border mb-2 text-sm px-0 border-transparent min-h-16">
-          <div className="py-2">
-            {instruction.description}
-          </div>
-        </div>
+      </div>
+      <div className="text-sm py-2">
+        {instruction.description}
       </div>
     </div>
   );

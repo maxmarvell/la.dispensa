@@ -59,9 +59,14 @@ export async function getUser(id: string) {
       id
     },
     select: {
+      password: false,
+      salt: false,
       email: true,
-      username: true,
       image: true,
+      id: true,
+      username: true,
+      connectedWith: true,
+      connectedBy: true,
     }
   });
 };
@@ -169,29 +174,10 @@ export async function getConnectionRequests(userId: string) {
 
 export async function findGalleryRecipes({ userId }: { userId: string }) {
 
-  let rated = await prisma.rating.groupBy({
-    by: ['recipeId'],
-    where: {
-      recipe: {
-        authorId: userId
-      }
-    },
-    _avg: { value: true },
-    orderBy: {
-      _avg: {
-        value: "desc"
-      }
-    },
-    take: 10,
-  });
-
-
-
   let recipes = await prisma.recipe.findMany({
     where: {
-      id: {
-        in: rated.map(({ recipeId }) => recipeId)
-      }
+      authorId: userId,
+      public: true,
     },
     include: {
       author: {
@@ -209,12 +195,55 @@ export async function findGalleryRecipes({ userId }: { userId: string }) {
             }
           }
         }
-      }
+      },
     }
-  })
+  });
 
-  // Adding the average rating field to return typr of recipes
-  return rated.map(({ _avg, recipeId }) => ({ averageRating: _avg.value, ...recipes.find(({ id }) => id === recipeId) }));
+  let ratings = await prisma.rating.groupBy({
+    by: ['recipeId'],
+    where: {
+      recipe: {
+        authorId: userId
+      }
+    },
+    _avg: { value: true },
+    orderBy: {
+      _avg: {
+        value: "desc"
+      }
+    },
+  });
+
+  // Adding the average rating field to return type of recipes
+  return recipes.map(el => {
+    let { id } = el;
+    let rating = ratings.find(({ recipeId }) => (recipeId === id)) || undefined;
+    return { ...el, rating }
+  });
+};
+
+export async function getRecipeCount({ userId }: { userId: string }) {
+  return prisma.recipe.count({
+    where: {
+      authorId: userId,
+      public: true,
+    }
+  });
+};
+
+export async function getConnnectionCount({userId}: {userId: string}) {
+  return prisma.connection.count({
+    where: {
+      OR: [
+        {
+          connectedById: userId
+        },
+        {
+          connectedWithId: userId
+        }
+      ]
+    }
+  });
 };
 
 

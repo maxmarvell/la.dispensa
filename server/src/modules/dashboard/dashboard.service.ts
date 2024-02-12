@@ -75,8 +75,8 @@ export async function getDashboard(input: infiniteScroll) {
   return {
     recipes: results.map(el => {
       let { id } = el;
-      let rating = ratings.find(({ recipeId }) => (recipeId === id));
-      let review = reviews.find(({ recipeId }) => (recipeId === id));
+      let rating = ratings.find(({ recipeId }) => (recipeId === id)) || undefined;
+      let review = reviews.find(({ recipeId }) => (recipeId === id)) || undefined;
       return { ...el, rating, review }
     }),
     lastCursor: cursor,

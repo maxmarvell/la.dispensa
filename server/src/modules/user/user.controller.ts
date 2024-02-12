@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, findUsers, getUser, createConnection, getConnections, acceptConnection, findGalleryRecipes, changeUserPassword, removeConnection, getConnectionRequests } from "./user.service";
+import { createUser, findUserByEmail, findUsers, getUser, createConnection, getConnections, acceptConnection, findGalleryRecipes, changeUserPassword, removeConnection, getConnectionRequests, getRecipeCount, getConnnectionCount } from "./user.service";
 import { CreateUserInput, LoginInput } from "./user.schema";
 import { addUserPhoto } from "./user.service";
 import cloudImageUpload from "../../utils/aws.s3";
@@ -293,4 +293,41 @@ export async function findGalleryRecipesHandler(
   };
 };
 
+export async function getRecipeCountHandler(
+  request: FastifyRequest<{
+    Params: {
+      userId: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { userId } = request.params;
+
+  try {
+    const aggregate = await getRecipeCount({ userId });
+    return reply.code(200).send(aggregate);
+  } catch (error) {
+    console.log(error);
+    return reply.code(404);
+  };
+};
+
+export async function getConnectionCountHandler(
+  request: FastifyRequest<{
+    Params: {
+      userId: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { userId } = request.params;
+
+  try {
+    const aggregate = await getConnnectionCount({ userId });
+    return reply.code(200).send(aggregate);
+  } catch (error) {
+    console.log(error);
+    return reply.code(404);
+  };
+};
 

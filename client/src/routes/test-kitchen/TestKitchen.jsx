@@ -43,6 +43,10 @@ const TestKitchen = () => {
   // Monitor which element is clicked by the user
   const [clickedIndex, setClickedIndex] = useState(null)
 
+  useEffect(() => {
+    setClickedIndex(null)
+  }, [recipeId])
+
   const onClickNode = useCallback((_, element) => {
     setClickedIndex(element.data.index)
   }, [])

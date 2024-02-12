@@ -3,7 +3,9 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import StyledRating from "../styled-components/rating";
-import LoadingSpinner from "../styled-components/loadingSpinner";
+
+const take = 10;
+
 
 export function useOnScreen(ref) {
 
@@ -85,8 +87,8 @@ function RecipeCard({ recipe, last, hasNextPage, fetchNextPage }) {
         </div>
         <div className="flex justify-between items-center text-xs">
           <div className="flex items-center space-x-1">
-            <StyledRating name="read-only" value={rating._avg.value} precision={0.1} readOnly />
-            <span className="text-gray-500">({rating._count})</span>
+            <StyledRating name="read-only" value={rating?._avg.value} precision={0.1} readOnly />
+            <span className="text-gray-500">({rating?._count || 0})</span>
           </div>
           {review ? (
             <div>{review._count} reviews</div>
@@ -149,7 +151,7 @@ const LoadingRecipeCard = () => {
 const RecipeFeed = () => {
 
   const { data, error, isLoading, hasNextPage, fetchNextPage, isSuccess, isFetchingNextPage } = useInfiniteQuery({
-    queryFn: ({ pageParam = "" }) => getDashboardRecipes({ take: 3, lastCursor: pageParam }),
+    queryFn: ({ pageParam = "" }) => getDashboardRecipes({ take, lastCursor: pageParam }),
     queryKey: ["dashboardRecipes"],
     getNextPageParam: (lastPage) => {
       return lastPage?.lastCursor;
@@ -159,7 +161,7 @@ const RecipeFeed = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col divide-y items-center">
-        {Array.from(Array(10).keys()).map(el => (
+        {Array.from(Array(3).keys()).map(el => (
           <LoadingRecipeCard key={el} />
         ))}
       </div>
