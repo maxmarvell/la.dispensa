@@ -2,10 +2,14 @@ import { createRecipe } from "../../api/recipe";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as dark from "../../assets/icons/dark"
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../context/auth";
 
 const RecipeSearch = ({ title, setTitle }) => {
 
   const queryClient = useQueryClient();
+
+  const { user } = useContext(AuthContext);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createRecipe,
@@ -39,12 +43,16 @@ const RecipeSearch = ({ title, setTitle }) => {
         className="border-none w-5/6 mx-2 focus:outline-none"
       />
       <div className="sr-only" aria-live="polite"></div>
-      <button onClick={handleCreate} className="min-w-fit">
-        <img
-          src={isPending ? dark.Refresh : dark.Add} alt="add"
-          className={isPending ? "animate-spin" : ""}
-        />
-      </button>
+      {user ? (
+        <button onClick={handleCreate} className="min-w-fit">
+          <img
+            src={isPending ? dark.Refresh : dark.Add} alt="add"
+            className={isPending ? "animate-spin" : ""}
+          />
+        </button>
+      ) : (
+        null
+      )}
     </div>
   );
 };
