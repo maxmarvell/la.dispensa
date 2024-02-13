@@ -39,8 +39,8 @@ export default function Index() {
   }
 
   return (
-    <div className="flex flex-col divide-y-4 divide-slate-950 ">
-      <section className="h-screen flex relative" ref={topRef}>
+    <div className="flex flex-col divide-y-4 divide-slate-950 overflow-x-hidden">
+      <section className="h-screen flex flex-col lg:flex-row relative" ref={topRef}>
         <Profile recipeRef={recipeRef} reviewsRef={reviewsRef} />
       </section>
       <section

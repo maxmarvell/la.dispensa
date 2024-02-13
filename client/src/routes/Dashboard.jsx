@@ -48,7 +48,7 @@ export default function Dashboard() {
       <section className="h-full grow mr-72">
         <RecipeFeed />
       </section>
-      <section className="border-l fixed right-0 top-0 bottom-0 w-72 flex flex-col justify-between divide-y">
+      <section className="border-l fixed right-0 top-12 lg:top-0 bottom-0 w-72 flex flex-col justify-between divide-y">
         {!user ? (
           <Placeholder />
         ) : (

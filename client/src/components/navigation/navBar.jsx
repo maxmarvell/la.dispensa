@@ -4,14 +4,14 @@ import { NavLink } from "react-router-dom";
 
 const NavbarLink = ({ to, name }) => {
   return (
-    <li className="text-base uppercase">
+    <li className="text-xs lg:text-base uppercase">
       <NavLink
         className={
           ({ isActive }) => {
             if (isActive) {
-              return "border-r-4 border-orange-300 text-orange-300 py-3 flex space-x-3"
+              return "flex h-full items-center border-b-4 border-orange-300 text-orange-300 lg:border-b-0 lg:border-r-4 lg:py-3"
             }
-            return "py-3 flex space-x-3"
+            return "flex h-full items-center border-b-4 border-slate-950 lg:border-b-0 lg:py-3"
           }
         }
         to={to}
@@ -27,12 +27,14 @@ const NavBar = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <nav className="h-screen w-44 bg-slate-950 text-slate-300 shadow-2xl pl-3 flex flex-col justify-between fixed">
-      <div className="h-24">
+    <nav className="bg-slate-950 text-slate-300 shadow-2xl justify-between fixed
+                    w-screen flex h-12 z-50 px-2 sm:px-10 
+                    lg:px-0 lg:h-screen lg:w-44 lg:pl-3 lg:flex-col ">
+      <div className="lg:h-24">
 
       </div>
-      <div className="flex flex-col flex-grow">
-        <ul className="my-5 space-y-3">
+      <div className="h-full grow lg:h-fit">
+        <ul className="flex space-x-5 h-full lg:h-fit lg:space-x-0 lg:flex-col lg:my-5 lg:space-y-3">
           <NavbarLink to="/" name="dashboard" />
           <NavbarLink to="/recipes" name="recipes" />
           {!(user) ? (
@@ -45,8 +47,8 @@ const NavBar = () => {
           )}
         </ul>
       </div>
-      <div>
-        <ul className="my-5 space-y-3">
+      <div className="h-full lg:h-fit">
+        <ul className="flex space-x-5 h-full lg:h-fit lg:space-x-0 lg:flex-col lg:my-5 lg:space-y-3">
           {/* <NavbarLink to="/info" name="info" /> */}
           {!(user) ? (
             <NavbarLink to="/login" name="login" />

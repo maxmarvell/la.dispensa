@@ -2,14 +2,15 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { editRecipe, getRecipe } from "../../../api/recipe";
-import * as dark from "../../../assets/icons/dark/index";
-import * as light from "../../../assets/icons/light/index";
 import { uploadPhoto } from "../../../api/recipe";
 import AggregateRating from "./aggregateRating";
 import Tags from "./tags";
 import { FileUploader } from "react-drag-drop-files";
 import AuthContext from "../../../context/auth";
 
+import ImgNotAvailable from "../../../assets/Image_not_available.png"
+import * as dark from "../../../assets/icons/dark/index";
+import * as light from "../../../assets/icons/light/index";
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const fileTypes = ["JPG", "PNG", "GIF", "JPEG"];
@@ -79,20 +80,21 @@ const Profile = ({ reviewsRef, recipeRef }) => {
 
   return (
     <>
-      <div className="flex flex-col my-auto items-center w-1/2">
-        <section className="mb-8">
+      <div className="flex flex-col my-auto items-center py-5 lg:py-0 lg:w-1/2">
+        <section className="min-h-6 mb-8">
           <Tags editing={editing} />
         </section>
         {editing ? (
           <input
-            className="text-5xl capitalize mb-5 mx-10 bg-transparent text-center "
+            className="text-xl lg:text-5xl capitalize lg:mb-5 mx-10 bg-transparent text-center "
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
+            placeholder="type recipe title here..."
             onBlur={handleEditTitle}
           />
         ) : (
-          <div className="text-5xl capitalize mb-5 px-10 text-center">
+          <div className="text-xl lg:text-5xl capitalize lg:mb-5 px-10 text-center">
             {recipe?.title}
           </div>
         )}
@@ -102,7 +104,7 @@ const Profile = ({ reviewsRef, recipeRef }) => {
         <div className="text-xs text-gray-400 capitalize">
           {month} {date}, {year}
         </div>
-        <div className="text-lg mt-4 space-x-3 capitalize flex items-center">
+        <div className="text-lg mt-1 lg:mt-4 space-x-3 capitalize flex items-center">
           <AggregateRating />
         </div>
         <button
@@ -128,16 +130,17 @@ const Profile = ({ reviewsRef, recipeRef }) => {
           null
         )}
       </div>
-      <div className="h-full w-1/2 relative">
+      <div className="h-full lg:w-1/2 relative">
         <img
-          src={recipe?.image} alt={`display photo - ${recipe?.title}`}
-          className="object-cover h-full w-full"
+          src={recipe?.image || dark.BookOpen }
+          alt={`display photo - ${recipe?.title}`}
+          className={`w-full ${recipe?.image ? "object-cover h-full" : "mt-52"}`}
         />
         {editing && (
           <div
             className="absolute top-0 left-0 h-full w-full
-              bg-black/50 flex justify-center items-center
-              text-white cursor-pointer text-center"
+                     bg-black/50 flex justify-center items-center
+                     text-white cursor-pointer text-center"
           >
             <FileUploader
               handleChange={handleChange} name="file" types={fileTypes}
