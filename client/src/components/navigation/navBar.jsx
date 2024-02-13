@@ -47,7 +47,7 @@ const NavBar = () => {
       </div>
       <div>
         <ul className="my-5 space-y-3">
-          <NavbarLink to="/info" name="info" />
+          {/* <NavbarLink to="/info" name="info" /> */}
           {!(user) ? (
             <NavbarLink to="/login" name="login" />
           ) : (
