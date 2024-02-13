@@ -20,7 +20,7 @@ const RecipeRouteAuth = () => {
     queryKey: ["my-connections", user],
     queryFn: () => getConnections()
   });
-  
+
   if (recipeLoading) {
     return (
       <div></div>
@@ -46,7 +46,7 @@ const RecipeRouteAuth = () => {
     );
   };
 
-  const hasAccess = connections?.includes(recipe?.authorId) || recipe?.authorId === user?.id;
+  const hasAccess = connections?.map(({ id }) => id).includes(recipe?.authorId) || recipe?.authorId === user?.id;
   return hasAccess ? <Outlet /> : <Navigate to="/login" />;
 };
 

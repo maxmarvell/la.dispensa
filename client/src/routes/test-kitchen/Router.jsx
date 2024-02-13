@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Index from "./Index";
 import TestKitchen from "./TestKitchen";
+import ProtectTestKitchenRoutes from "../utility/ProtectTestKitchenRoutes";
 
 const RecipeRouter = () => (
   <Routes>
@@ -9,9 +10,13 @@ const RecipeRouter = () => (
       element={<Index />}
     >
       <Route
-        path='/:recipeId'
-        element={<TestKitchen />}
-      />
+        element={<ProtectTestKitchenRoutes />}
+      >
+        <Route
+          path='/:recipeId'
+          element={<TestKitchen />}
+        />
+      </Route>
     </Route>
   </Routes>
 );
