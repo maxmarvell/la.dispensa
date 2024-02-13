@@ -95,12 +95,28 @@ export async function updateIterationIngredient({ iterationId, ingredientId, inp
       },
       { withCredentials: true }
     );
-    return data
+    return data;
   } catch (error) {
-    console.error(error)
-  }
-}
+    console.error(error);
+  };
+};
 
+// Instructions
+
+export async function createManyIterationInstruction({ iterationId, input }) {
+  try {
+    const { data } = await axiosInstance.post(`/api/iterations/${iterationId}/instructions/`,
+      input,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    );
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
 
 export async function updateIterationInstruction({ iterationId, step, input }) {
   try {
@@ -111,12 +127,52 @@ export async function updateIterationInstruction({ iterationId, step, input }) {
       },
       { withCredentials: true }
     );
-    return data
+    return data;
   } catch (error) {
-    console.error(error)
-  }
+    console.error(error);
+  };
 };
 
+export async function removeIterationInstruction({ iterationId, step }) {
+  try {
+    const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/instructions/${step}/`,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    );
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
+
+
+// Comments
+
+export async function getComments({ iterationId }) {
+  try {
+    const { data } = await axiosInstance.get(`/api/iterations/${iterationId}/comments`);
+    return data;
+  } catch (error) {
+    console.error(err)
+  }
+}
+
+export async function createComment({ input, iterationId }) {
+  try {
+    const { data } = await axiosInstance.post(`/api/iterations/${iterationId}/comments/`,
+      input,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    );
+    return data;
+  } catch (error) {
+    console.error(error);
+  };
+};
 
 export async function getIterationsLayout({ recipeId }) {
   try {

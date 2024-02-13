@@ -21,6 +21,7 @@ model User {
   recipes       Recipe[]
   recipeEditors RecipeEditors[]
   reviews       Review[]
+  comments      Comment[]
 }
 
 model Recipe {
@@ -155,6 +156,7 @@ model Iteration {
   parent       Iteration?             @relation("IterationHistory", fields: [parentId], references: [id], onDelete: Cascade)
   children     Iteration[]            @relation("IterationHistory")
   recipe       Recipe                 @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  comments     Comment[]
 }
 
 model IngredientIteration {
@@ -188,6 +190,16 @@ model TimeAndTemperatureIteration {
   instruction     InstructionIteration @relation(fields: [iterationId, instructionStep], references: [iterationId, step], onDelete: Cascade)
 
   @@unique([iterationId, instructionStep])
+}
+
+model Comment {
+  id          String    @id @default(uuid())
+  text        String    @db.VarChar(510)
+  createdOn   DateTime? @default(now())
+  iterationId String
+  userId      String
+  iteration   Iteration @relation(fields: [iterationId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum TemperatureUnit {

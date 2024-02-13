@@ -24,15 +24,13 @@ export default function iterationNode({ data, selected }) {
     <>
       <Handle type="target" position={Position.Top} />
       <div
-        className={`w-64 h-64 p-2 bg-yellow-200 divide-y divide-black divide-dashed overflow-y-scroll ${selected && 'outline-dashed outline-4 outline-blue-500'}`}
+        className={`w-64 h-64 p-2 bg-yellow-200 divide-y-2 divide-black divide-dashed overflow-y-scroll ${selected && 'outline-dashed outline-4 outline-blue-500'}`}
       >
         <div
-          className={`w-full uppercase text-lg font-bold flex flex-row border-b-2 border-transparent
-        focus-within:border-blue-500 mb-1`}
+          className="w-full uppercase text-base font-bold mb-1 text-wrap"
         >
           # {data.tag}
         </div>
-        <div></div>
         <div className='pt-2'>
           <ul>
             {added.map((el, index) =>

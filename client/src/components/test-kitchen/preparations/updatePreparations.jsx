@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // APIs
-import { getInstructions, updateInstruction, removeInstruction } from "../../../api/instructions";
+import { updateIterationInstruction, removeIterationInstruction } from "../../../api/test-kitchen";
 
 // Components
 import * as dark from "../../../assets/icons/dark";
 import * as light from "../../../assets/icons/light";
-import { useParams } from "react-router-dom";
 
-const UpdateField = ({ instruction }) => {
+const UpdateField = ({ instruction, setNodes }) => {
 
   // Extract relavent information with instruction
-  const { recipeId, step, ...data } = instruction;
-  const { timeAndTemperature, ...rest } = data;
+  const { step, ...data } = instruction;
+  const { iterationId, timeAndTemperature, ...rest } = data;
 
   // Set the instruction input field
   const [instructionInput, setInput] = useState(timeAndTemperature ? data : rest);
@@ -82,24 +81,36 @@ const UpdateField = ({ instruction }) => {
     adjustTextareaHeight(target);
   }
 
-  // Query client for invalidating queries
-  const queryClient = useQueryClient();
-
   // Remove an Instruction
   const { mutateAsync: removeMutation } = useMutation({
-    mutationFn: removeInstruction,
-    onSuccess: () => {
-      queryClient.invalidateQueries(['instructions'])
-    },
+    mutationFn: removeIterationInstruction
   });
 
   // Handler for remove
   const handleRemove = async () => {
     let result = await removeMutation({
-      recipeId, step
+      iterationId, step
     });
     if (result) {
       setEditing(false)
+
+      // Update the global test-kitchen state
+      setNodes((prev) => (prev.map(({ data, ...rest }) => {
+        if (data.id === iterationId) {
+          let { instructions } = data
+          let newInstructions = instructions.filter(el => el.step !== step)
+          return {
+            ...rest, data: {
+              ...data, instructions: newInstructions.map(el => el.step > step ? {
+                ...el,
+                step: el.step - 1
+              } : el)
+            }
+          };
+        } else {
+          return { ...rest, data };
+        }
+      })));
     };
   };
 
@@ -120,21 +131,36 @@ const UpdateField = ({ instruction }) => {
 
   // Update an instruction
   const { mutateAsync: updateMutation } = useMutation({
-    mutationFn: updateInstruction,
-    onSuccess: () => {
-      queryClient.invalidateQueries(['instructions'])
-    },
+    mutationFn: updateIterationInstruction
   });
 
   // Handler for update
   const handleUpdate = async () => {
     let result = await updateMutation({
       step,
-      recipeId,
-      data: instructionInput
+      iterationId,
+      input: instructionInput
     });
     if (result) {
       setEditing(false);
+
+      // Update the global test-kitchen state
+      setNodes((prev) => (prev.map(({ data, ...rest }) => {
+        if (data.id === iterationId) {
+          let { instructions } = data;
+          return {
+            ...rest, data: {
+              ...data, instructions: instructions.map(el => el.step === step ? {
+                ...instructionInput,
+                step,
+                iterationId
+              } : el)
+            }
+          };
+        } else {
+          return { ...rest, data };
+        }
+      })));
     };
   };
 
@@ -256,9 +282,9 @@ const UpdateField = ({ instruction }) => {
   };
 
   return (
-    <div className="flex min-h-24">
-      <div className="grow text-lg font-bold justify-between pl-2 border-l-4 border-transparent focus-within:border-orange-300">
-        <div className="flex grow justify-between">
+    <div className="flex min-h-28 py-2 first:pt-0">
+      <div className="grow text-sm font-bold justify-between pl-2 border-l-4 border-transparent focus-within:border-orange-300">
+        <div className="flex grow items-center justify-between">
           <div>
             Step {step}
           </div>
@@ -288,7 +314,7 @@ const UpdateField = ({ instruction }) => {
             </div>
           </div>
         </div>
-        <div className="grow mb-2 text-sm px-0">
+        <div className="grow mb-2 text-xs px-0">
           {editing ? (
             <label>
               <textarea
@@ -296,7 +322,7 @@ const UpdateField = ({ instruction }) => {
                 value={instructionInput.description}
                 id={`update-instruction-${instruction.step}`}
                 onChange={handleSetDescription}
-                className="border-none w-full focus:outline-none overflow-y-hidden resize-none px-0"
+                className="bg-transparent border-none w-full focus:outline-none overflow-y-hidden resize-none px-0"
                 placeholder="Write here..."
               />
             </label>
@@ -322,23 +348,16 @@ const UpdateField = ({ instruction }) => {
   );
 };
 
-export const UpdatePreparations = () => {
 
-  const { recipeId } = useParams();
-
-  // Get the instructions and components for this recipe id
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['instructions', recipeId],
-    queryFn: () => getInstructions({ recipeId })
-  });
-  const instructions = data?.instructions;
-
+export const UpdatePreparations = ({ instructions, iterationId, setNodes }) => {
   return (
     <>
       {instructions?.map((instruction, index) => (
         <UpdateField
           key={index}
           instruction={instruction}
+          iterationId={iterationId}
+          setNodes={setNodes}
         />
       ))}
     </>

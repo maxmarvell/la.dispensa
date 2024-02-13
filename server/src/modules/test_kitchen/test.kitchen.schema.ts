@@ -5,9 +5,9 @@ const createIterationCore = {
   recipeId: z.string(),
   tag: z.string().optional(),
   parentId: z.string().optional(),
-}
+};
 
-const createIterationSchema = z.object(createIterationCore)
+const createIterationSchema = z.object(createIterationCore);
 
 const createIterationResponseSchema = z.object({
   ...createIterationCore,
@@ -37,16 +37,16 @@ const createIterationResponseSchema = z.object({
   id: z.string(),
   createdOn: z.date(),
   updatedAt: z.date(),
-})
+});
 
 const updateIterationSchema = z.object({
   tag: z.string().optional(),
-})
+});
 
 const updateIterationIngredeientSchema = z.object({
   unit: z.enum(["G", "KG", "CUP", "ML", "L", "OZ"]).optional(),
   quantity: z.number().optional()
-})
+});
 
 const createIterationIngredientSchema = z.object({
   ingredient: z.object({
@@ -54,9 +54,9 @@ const createIterationIngredientSchema = z.object({
   }),
   unit: z.enum(["G", "KG", "CUP", "ML", "L", "OZ"]).optional(),
   quantity: z.number(),
-})
+});
 
-const createManyIterationIngredientsSchema = z.array(createIterationIngredientSchema)
+const createManyIterationIngredientsSchema = z.array(createIterationIngredientSchema);
 
 const createManyIterationIngredientsResponseSchema = z.array(z.object({
   ingredient: z.object({
@@ -67,19 +67,34 @@ const createManyIterationIngredientsResponseSchema = z.array(z.object({
   quantity: z.number(),
   ingredientId: z.string(),
   iterationId: z.string(),
-}))
+}));
 
-const updateIterationInstructionSchema = z.object({
-  timeAndTemperature : z.object({
+const instructionCore = {
+  description: z.string(),
+  timeAndTemperature: z.object({
     hours: z.number().optional(),
     minutes: z.number().optional(),
     temperature: z.number(),
-    unit: z.enum(["C", "K"]),
+    unit: z.enum(["C", "K"]).optional(),
+  }).optional(),
+  step: z.number()
+}
+
+const createIterationInstructionSchema = z.object({
+  ...instructionCore,
+});
+
+const createManyIterationInstructionsSchema = z.array(createIterationInstructionSchema);
+
+const updateIterationInstructionSchema = z.object({
+  timeAndTemperature: z.object({
+    hours: z.number().optional(),
+    minutes: z.number().optional(),
+    temperature: z.number(),
+    unit: z.enum(["C", "K"]).optional(),
   }).optional(),
   description: z.string().optional(),
-  step: z.number(),
-  iterationId: z.string(),
-})
+});
 
 const updateIterationInstructionResponseSchema = z.object({
   timeAndTemperature : z.object({
@@ -89,9 +104,17 @@ const updateIterationInstructionResponseSchema = z.object({
     unit: z.enum(["C", "K"]),
   }).optional(),
   description: z.string(),
-  step: z.number(),
-  iterationId: z.string(),
-})
+});
+
+const createIterationCommentSchema = z.object({
+  text: z.string()
+});
+
+const createIterationCommentResponseSchema = z.object({
+  text: z.string(),
+  id: z.string(),
+  createdOn: z.date(),
+});
 
 
 export type CreateIterationInput = z.infer<typeof createIterationSchema>
@@ -100,16 +123,25 @@ export type UpdateIterationIngredientInput = z.infer<typeof updateIterationIngre
 export type CreateManyIterationIngredientsInput = z.infer<typeof createManyIterationIngredientsSchema>
 export type CreateIterationIngredientInput = z.infer<typeof createIterationIngredientSchema>
 export type UpdateIterationInstructionInput = z.infer<typeof updateIterationInstructionSchema>
+export type CreateIterationCommentInput = z.infer<typeof createIterationCommentSchema>
+export type CreateIterationInstructionInput = z.infer<typeof createIterationInstructionSchema>
+export type CreateManyIterationInstructionInput = z.infer<typeof createManyIterationInstructionsSchema>
 
 
 export const { schemas: iterationSchema, $ref } = buildJsonSchemas({
   createIterationSchema,
   createIterationResponseSchema,
   updateIterationSchema,
+
   updateIterationIngredeientSchema,
   createIterationIngredientSchema,
   createManyIterationIngredientsSchema,
   createManyIterationIngredientsResponseSchema,
+
   updateIterationInstructionSchema,
-  updateIterationInstructionResponseSchema
+  updateIterationInstructionResponseSchema,
+  createManyIterationInstructionsSchema,
+
+  createIterationCommentSchema,
+  createIterationCommentResponseSchema
 }, { $id: "IterationSchema" });

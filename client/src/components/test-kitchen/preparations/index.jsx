@@ -1,89 +1,5 @@
-import { useState } from "react";
-import { updateIterationInstruction } from "../../../api/test-kitchen"
-import * as dark from "../../../assets/icons/dark";
-import { useMutation } from "@tanstack/react-query";
 import { CreatePreparations } from "./createPreparations";
-
-const InstructionField = ({ instruction, setNodes }) => {
-
-  const { iterationId, step } = instruction;
-
-  const { temperature, time, ...data } = instruction;
-
-  const [updatedInstruction, setUpdates] = useState((temperature && time) ? instruction : temperature ? { ...data, temperature } : time ? { ...data, time } : data);
-
-  const { mutateAsync: updateMutation } = useMutation({
-    mutationFn: updateIterationInstruction
-  });
-
-  const handleUpdate = async () => {
-
-    // Await the update
-    let newInstruction = await updateMutation({
-      input: updatedInstruction, iterationId, step
-    });
-
-    // update the global node state
-    setNodes(prev => prev.map(({ data, ...rest }) => {
-      if (data.id === iterationId) {
-        let { instructions } = data;
-        return { ...rest, data: { ...data, instructions: instructions.map(el => el.step === step ? newInstruction : el) } };
-      } else {
-        return { ...rest, data };
-      };
-    }));
-  };
-
-
-  return (
-    <div className="space-y-3 border p-2 border-black relative">
-      <div className="text-sm font-bold uppercase text-center">Step {step}</div>
-      <div className="text-center">{instruction.description}</div>
-      <div className="flex space-x-2 justify-center">
-        <img className="h-5 w-5 my-auto" src={dark.ClockFill} alt="add-time-field" />
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2 focus-within:outline-none">
-          <input
-            type="number"
-            value={updatedInstruction.time?.hours || ""}
-            className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none bg-transparent"
-            onChange={e => setUpdates(({ time, time: { minutes }, ...rest }) => {
-              return e.target.value ? { ...rest, time: { ...time, hours: e.target.value } } : minutes ? { ...rest, time: { minutes } } : rest
-            })}
-          />
-          <span>hr</span>
-        </div>
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2 focus-within:outline-none">
-          <input
-            type="number"
-            value={updatedInstruction.time?.minutes || ""}
-            className="border-0 pl-0 pr-1 py-1 w-10 focus:outline-none bg-transparent"
-            onChange={e => setUpdates(({ time, time: { hours }, ...rest }) => (
-              e.target.value ? { ...rest, time: { ...time, minutes: e.target.value } } : hours ? { ...rest, time: { hours } } : rest
-            ))}
-          />
-          <span>mins</span>
-          <button
-            className="absolute top-2 right-3 h-5 w-5"
-            onClick={handleUpdate}
-          >
-            <img src={dark.Save} alt="save instruction changes" />
-          </button>
-        </div>
-      </div>
-      <div className="flex space-x-2 justify-center">
-        <img className="h-5 w-5 my-auto" src={dark.FireFill} alt="add-temperature-field" />
-        <div className="border-b-2 border-black flex items-center ring-offset-2 focus-within:ring-2 focus-within:outline-none">
-          <input type="number" value={updatedInstruction.temperature?.temperature || ""}
-            onChange={e => setUpdates(({ temperature, ...rest }) => (e.target.value ? { ...rest, temperature: { ...temperature, temperature: e.target.value } } : rest))}
-            className="border-0 pl-0 pr-1 py-1 w-14 focus:outline-none bg-transparent"
-          />
-          <span>{updatedInstruction.temperature?.unit || "C"}</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
+import { UpdatePreparations } from "./updatePreparations";
 
 const Instructions = ({ iteration, setNodes }) => {
 
@@ -97,23 +13,17 @@ const Instructions = ({ iteration, setNodes }) => {
           <br />
           Use the form below to add the first
         </div>
-        <CreatePreparations instructions={instructions} id={id} />
+        <CreatePreparations instructions={instructions} iterationId={id} />
       </>
-    )
-  }
-
+    );
+  };
 
   return (
-    <div className="flex flex-col divide-y-1 divide-black">
-      {instructions.map((el, index) => (
-        <InstructionField
-          instruction={el}
-          setNodes={setNodes}
-          key={index}
-        />
-      ))}
+    <div className="flex flex-col divide-y divide-black">
+      <UpdatePreparations instructions={instructions} setNodes={setNodes} iterationId={id} />
+      <CreatePreparations instructions={instructions} setNodes={setNodes} iterationId={id} />
     </div>
-  )
-}
+  );
+};
 
 export default Instructions

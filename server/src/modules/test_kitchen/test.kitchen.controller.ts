@@ -1,7 +1,7 @@
 import { FastifyRequest } from "fastify/types/request"
 import { FastifyReply } from "fastify"
-import { CreateIterationInput, CreateManyIterationIngredientsInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput } from "./test.kitchen.schema"
-import { createIteration, createIterationingredient, deleteIterationIngredient, getIterationInstance, getIterations, ingredientParams, instructionParams, updateIteration, updateIterationIngredient, updateIterationInstruction } from "./test.kitchen.service"
+import { CreateIterationCommentInput, CreateIterationInput, CreateManyIterationIngredientsInput, CreateManyIterationInstructionInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput } from "./test.kitchen.schema"
+import { createIteration, createIterationComment, createIterationInstruction, createIterationingredient, deleteIterationIngredient, deleteIterationInstruction, getIterationComments, getIterationInstance, getIterations, ingredientParams, instructionParams, updateIteration, updateIterationIngredient, updateIterationInstruction } from "./test.kitchen.service"
 
 
 export async function getIterationsHandler(
@@ -61,6 +61,8 @@ export async function createIterationHandler(
 }
 
 
+// Ingredients
+
 export async function updateIterationHandler(
   request: FastifyRequest<{
     Body: UpdateIterationInput,
@@ -79,6 +81,29 @@ export async function updateIterationHandler(
   } catch (error) {
     console.log(error);
     return reply.code(401);
+  }
+}
+
+export async function createManyIterationIngredientHandler(
+  request: FastifyRequest<{
+    Params: {
+      iterationId: string
+    },
+    Body: CreateManyIterationIngredientsInput
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const ingredients = await Promise.all(request.body.map((el) => {
+      return new Promise(resolve => resolve(createIterationingredient({
+        ...el,
+        ...request.params
+      })))
+    }));
+    return ingredients;
+  } catch (error) {
+    console.log(error);
+    return reply.code(404);
   }
 }
 
@@ -116,6 +141,34 @@ export async function updateIterationIngredientHandler(
 };
 
 
+// Instructions
+
+export async function createManyIterationInstructionsHandler(
+  request: FastifyRequest<{
+    Params: {
+      iterationId: string
+    },
+    Body: CreateManyIterationInstructionInput
+  }>,
+  reply: FastifyReply
+) {
+
+  const { iterationId } = request.params;
+
+  try {
+    const instructions = await Promise.all(request.body.map((el) => {
+      return new Promise(resolve => resolve(createIterationInstruction({
+        ...el,
+        iterationId
+      })))
+    }));
+    return instructions;
+  } catch (e) {
+    console.log(e);
+    return reply.code(400);
+  };
+};
+
 export async function updateIterationInstructionHandler(
   request: FastifyRequest<{
     Params: instructionParams,
@@ -124,10 +177,6 @@ export async function updateIterationInstructionHandler(
   reply: FastifyReply
 ) {
   try {
-    console.log({
-      ...request.params,
-      ...request.body
-    })
     const result = await updateIterationInstruction({
       ...request.params,
       ...request.body
@@ -137,28 +186,74 @@ export async function updateIterationInstructionHandler(
     console.log(error);
     return reply.code(404);
   }
-}
+};
+
+export async function deleteIterationInstructionHandler(
+  request: FastifyRequest<{
+    Params: {
+      iterationId: string,
+      step: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { iterationId, step } = request.params;
+
+  try {
+    const result = await deleteIterationInstruction({ iterationId, step });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return reply.code(400).send(error);
+  };
+};
 
 
-export async function createManyIterationIngredientHandler(
+// Comments
+
+
+export async function getCommentsHandler(
+  request: FastifyRequest<{
+    Params: {
+      iterationId: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { iterationId } = request.params;
+  try {
+    const comments = await getIterationComments({ iterationId });
+    return reply.code(200).send(comments);
+  } catch (error) {
+    console.log(error);
+    return reply.code(404).send(error);
+  };
+};
+
+export async function createIterationCommentHandler(
   request: FastifyRequest<{
     Params: {
       iterationId: string
     },
-    Body: CreateManyIterationIngredientsInput
+    Body: CreateIterationCommentInput
   }>,
   reply: FastifyReply
 ) {
+  const { iterationId } = request.params;
+  const { id: userId } = request.user;
+
   try {
-    const ingredients = await Promise.all(request.body.map((el) => {
-      return new Promise(resolve => resolve(createIterationingredient({
-        ...el,
-        ...request.params
-      })))
-    }));
-    return ingredients;
+    const comment = await createIterationComment({
+      iterationId,
+      userId,
+      ...request.body
+    });
+    return reply.code(201).send(comment);
   } catch (error) {
     console.log(error);
-    return reply.code(404);
-  }
-}
+    return reply.code(401).send(error);
+  };
+};
+
+
+

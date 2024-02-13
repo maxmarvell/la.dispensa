@@ -1,16 +1,17 @@
 import { FastifyInstance } from "fastify";
-import { createIterationHandler, createManyIterationIngredientHandler, deleteIterationIngredientHandler, getIterationInstanceHandler, getIterationsHandler, updateIterationHandler, updateIterationIngredientHandler, updateIterationInstructionHandler } from "./test.kitchen.controller";
+import { createIterationCommentHandler, createIterationHandler, createManyIterationIngredientHandler, createManyIterationInstructionsHandler, deleteIterationIngredientHandler, deleteIterationInstructionHandler, getCommentsHandler, getIterationInstanceHandler, getIterationsHandler, updateIterationHandler, updateIterationIngredientHandler, updateIterationInstructionHandler } from "./test.kitchen.controller";
 import { $ref } from "./test.kitchen.schema";
+
 
 async function iterationRoutes(server: FastifyInstance) {
 
   server.get('/', {
     onRequest: [server.authenticate]
-  }, getIterationsHandler),
+  }, getIterationsHandler);
 
   server.get('/:iterationId', {
     onRequest: [server.authenticate]
-  }, getIterationInstanceHandler),
+  }, getIterationInstanceHandler);
 
   server.post('/', {
     schema: {
@@ -20,7 +21,7 @@ async function iterationRoutes(server: FastifyInstance) {
       },
     },
     onRequest: [server.authenticate]
-  }, createIterationHandler)
+  }, createIterationHandler);
   
   server.patch('/:iterationId/', {
     schema: {
@@ -30,7 +31,7 @@ async function iterationRoutes(server: FastifyInstance) {
       // }
     },
     onRequest: [server.authenticate]
-  }, updateIterationHandler)
+  }, updateIterationHandler);
 
   server.post('/:iterationId/ingredients/', {
     schema: {
@@ -40,18 +41,27 @@ async function iterationRoutes(server: FastifyInstance) {
       }
     }, 
     onRequest: [server.authenticate]
-  }, createManyIterationIngredientHandler)
+  }, createManyIterationIngredientHandler);
 
   server.delete('/:iterationId/ingredients/:ingredientId/', {
     onRequest: [server.authenticate]
-  }, deleteIterationIngredientHandler)
+  }, deleteIterationIngredientHandler);
 
   server.patch('/:iterationId/ingredients/:ingredientId/', {
     schema: {
       body: $ref('updateIterationIngredeientSchema'),
     },
     onRequest: [server.authenticate]
-  }, updateIterationIngredientHandler)
+  }, updateIterationIngredientHandler);
+
+  // Instructions
+
+  server.post('/:iterationId/instructions/', {
+    schema: {
+      body: $ref('createManyIterationInstructionsSchema')
+    },
+    onRequest: [server.authenticate]
+  }, createManyIterationInstructionsHandler);
 
   server.patch('/:iterationId/instructions/:step/', {
     schema: {
@@ -61,7 +71,25 @@ async function iterationRoutes(server: FastifyInstance) {
       }
     },
     onRequest: [server.authenticate]
-  }, updateIterationInstructionHandler)
+  }, updateIterationInstructionHandler);
+
+  server.delete('/:iterationId/instructions/:step/', {
+    onRequest: [server.authenticate]
+  }, deleteIterationInstructionHandler)
+
+  // Comments
+
+  server.get('/:iterationId/comments', {
+    onRequest: [server.authenticate]
+  }, getCommentsHandler);
+
+  server.post('/:iterationId/comments/', {
+    onRequest: [server.authenticate],
+    schema: {
+      body: $ref('createIterationCommentSchema')
+    }
+  }, createIterationCommentHandler);
+  
 }
 
 export default iterationRoutes

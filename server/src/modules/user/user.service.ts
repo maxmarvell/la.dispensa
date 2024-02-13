@@ -111,8 +111,8 @@ export async function getConnections(userId: string) {
     }
   });
 
-  return connections.map(({ connectedById, connectedWithId }) => (
-    connectedById === userId ? connectedWithId : connectedById
+  return connections.map(({ connectedById, connectedWithId, connectedBy, connectedWith }) => (
+    connectedById === userId ? {...connectedWith} : {...connectedBy}
   ));
 };
 

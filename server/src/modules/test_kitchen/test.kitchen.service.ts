@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma"
-import { CreateIterationInput, CreateIterationIngredientInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput } from "./test.kitchen.schema";
+import { CreateIterationInput, CreateIterationIngredientInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput, CreateIterationCommentInput, CreateIterationInstructionInput } from "./test.kitchen.schema";
 import { $Enums } from "@prisma/client";
 
 export async function getIterations(recipeId: string) {
@@ -189,13 +189,13 @@ export async function createIteration(input: CreateIterationInput) {
 
   // Map the instructions to a nested create query
   const instructions = parentInstructions.map(({ timeAndTemperature, ...rest }) => ({
-      ...rest,
-      ...(timeAndTemperature && {
-        timeAndTemperature: {
-          create: timeAndTemperature
-        }
-      }),
-    })
+    ...rest,
+    ...(timeAndTemperature && {
+      timeAndTemperature: {
+        create: timeAndTemperature
+      }
+    }),
+  })
   );
 
   // Nested creation of the iteration and the ingredient fields
@@ -267,6 +267,8 @@ export async function updateIteration(input: UpdateIterationInput & { iterationI
   })
 };
 
+// Ingredients
+
 export interface ingredientParams {
   ingredientId: string,
   iterationId: string,
@@ -329,9 +331,29 @@ export async function createIterationingredient(input: CreateIterationIngredient
   })
 };
 
+// Instructions
+
 export interface instructionParams {
-  step: number,
+  step: string,
   iterationId: string,
+};
+
+export async function createIterationInstruction(input: CreateIterationInstructionInput & { iterationId: string }) {
+
+  const { timeAndTemperature, ...data } = input;
+
+  return prisma.instructionIteration.create({
+    data: {
+      ...data,
+      ...(timeAndTemperature && {
+        timeAndTemperature: {
+          create: {
+            ...timeAndTemperature
+          }
+        },
+      })
+    }
+  });
 };
 
 export async function updateIterationInstruction(input: UpdateIterationInstructionInput & instructionParams) {
@@ -347,7 +369,7 @@ export async function updateIterationInstruction(input: UpdateIterationInstructi
       }
     },
     data: {
-      ...rest, 
+      ...rest,
       ...(timeAndTemperature && {
         timeAndTemperature: {
           upsert: {
@@ -357,8 +379,80 @@ export async function updateIterationInstruction(input: UpdateIterationInstructi
         }
       })
     },
-    include: {
-      timeAndTemperature: true,
+  });
+};
+
+export async function deleteIterationInstruction(input: instructionParams) {
+
+  const { step, iterationId } = input;
+
+  const instructionsToUpdate = await prisma.instructionIteration.findMany({
+    select: {
+      step: true,
+      iterationId: true,
+    },
+    where: {
+      iterationId,
+      step: {
+        gt: parseInt(step as string)
+      }
     }
-  })
+  });
+
+  await prisma.instructionIteration.delete({
+    where: {
+      InstructionId: {
+        iterationId,
+        step: parseInt(step as string),
+      }
+    }
+  });
+
+  await Promise.all(instructionsToUpdate.map((instruction) => {
+    return new Promise(resolve => resolve(prisma.instructionIteration.update({
+      where: {
+        InstructionId: {
+          step: instruction.step,
+          iterationId: instruction.iterationId
+        }
+      },
+      data: {
+        step: {
+          decrement: 1
+        }
+      }
+    })));
+  }));
+
+  return { ok: true };
+};
+
+// Comments
+
+export async function getIterationComments({ iterationId }: { iterationId: string }) {
+
+  console.log(iterationId)
+  return prisma.comment.findMany({
+    where: {
+      iterationId
+    },
+    orderBy: {
+      createdOn: 'desc'
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+        }
+      }
+    }
+  });
+};
+
+export async function createIterationComment(input: CreateIterationCommentInput & { iterationId: string, userId: string }) {
+  return prisma.comment.create({
+    data: input
+  });
 };

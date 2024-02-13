@@ -30,29 +30,33 @@ const TagSearch = ({ selectedTags, setSelectedTags }) => {
 
 
   return (
-    <div className="border-b-4 border-slate-950 min-h-40 pl-5 w-2/3">
-      <input
-        type="text"
-        value={name}
-        className="border-0 border-b-2 border-black focus:outline-none focus:border-orange-300"
-        onChange={e => setName(e.target.value)}
-        placeholder="search tags"
-      />
-      <div className="flex text-xs text-white space-x-4 my-5">
-        {selectedTags?.map((name, index) => (
-          <div
-            className="bg-slate-950 relative px-2 py-1" key={index}
-            onClick={() => handleRemoveTag({ name })}
-          >
-            {name}
-            <button
-              className="h-4 w-4 absolute -top-2 -right-2 bg-slate-950 rounded-full"
-              onClick={() => handleRemoveTag({ name })}
-            >
-              <img src={light.RemoveFill} alt="remove tag" />
-            </button>
+    <div className="border-b-4 border-slate-950 pl-5 w-2/3">
+      <div className="flex items-center space-x-5">
+        <input
+          type="text"
+          value={name}
+          className="border-0 border-b-2 border-black focus:outline-none focus:border-orange-300"
+          onChange={e => setName(e.target.value)}
+          placeholder="search tags"
+        />
+        <div>
+          <div className="flex text-xs text-white space-x-3">
+            {selectedTags?.map((name, index) => (
+              <div
+                className="bg-slate-950 relative px-2 py-1" key={index}
+                onClick={() => handleRemoveTag({ name })}
+              >
+                {name}
+                <button
+                  className="h-4 w-4 absolute -top-2 -right-2 bg-slate-950 rounded-full"
+                  onClick={() => handleRemoveTag({ name })}
+                >
+                  <img src={light.RemoveFill} alt="remove tag" />
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
       <div className="flex text-xs text-white space-x-4 my-5">
         {tags?.map(({ name }, index) => (

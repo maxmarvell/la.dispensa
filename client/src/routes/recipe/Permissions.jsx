@@ -1,4 +1,4 @@
-import { getConnectionsByUserId } from "../../api/user"
+import { getConnections, getConnectionsByUserId } from "../../api/user"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -16,7 +16,7 @@ export default function Permissions() {
 
   const { isLoading, isError, data: users } = useQuery({
     queryKey: ['connections', userId],
-    queryFn: () => getConnectionsByUserId({ userId })
+    queryFn: () => getConnections()
   });
 
   const queryClient = useQueryClient();
@@ -40,11 +40,9 @@ export default function Permissions() {
     queryFn: () => getEditors({ recipeId })
   });
 
-  const editor = editors?.map(({ userId }) => userId)?.includes(selectedUser?.id);
-
   const [input, setInput] = useState('')
-
   const canPermit = input === selectedUser?.username;
+  const editor = editors?.map(({ userId }) => userId)?.includes(selectedUser?.id);
 
   const handleAddEditor = async () => {
     let result = await mutateEditors({
@@ -66,7 +64,11 @@ export default function Permissions() {
       setSelectedUser(null)
       setInput("")
     }
-  }
+  };
+
+  useEffect(() => {
+    setInput("")
+  }, [selectedUser])
 
   if (isLoading) {
     return (
@@ -128,7 +130,7 @@ export default function Permissions() {
               <button
                 className="px-2 py-1 bg-slate-950 text-white"
                 onClick={editor ? handleRemoveEditor : handleAddEditor}
-                disabled={canPermit}
+                disabled={!canPermit}
               >
                 Allow
               </button>

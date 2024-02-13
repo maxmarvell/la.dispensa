@@ -83,20 +83,7 @@ export async function createInstruction(input: CreateInstructionInput) {
 export async function updateInstruction(input: UpdateInstructionInput & InstructionURLParams) {
 
   const { recipeId, step, ...rest } = input
-  const { timeAndTemperature, ...data }: any = rest
-
-  if (timeAndTemperature) {
-    data.temperature = {
-      upsert: {
-        create: {
-          ...timeAndTemperature
-        },
-        update: {
-          ...timeAndTemperature
-        },
-      }
-    }
-  }
+  const { timeAndTemperature, ...data } = rest
 
   return prisma.instruction.update({
     where: {
@@ -104,7 +91,17 @@ export async function updateInstruction(input: UpdateInstructionInput & Instruct
         recipeId, step: Number(step)
       }
     },
-    data: data
+    data: {
+      ...data,
+      ...(timeAndTemperature && {
+        timeAndTemperature: {
+          upsert: {
+            update: timeAndTemperature,
+            create: timeAndTemperature
+          }
+        }
+      })
+    }
   });
 };
 

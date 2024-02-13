@@ -24,13 +24,13 @@ export async function findRecipes(input: queryRecipesInterface) {
 
   let skip = (page && take) ? (page - 1) * take : undefined;
 
-  const tagQuery = input.tags ? {
-    some: {
-      name: {
-        in: tags
+  const tagQuery = input.tags?.map(el => ({
+    tags: {
+      some: {
+        name: el
       }
     }
-  } : undefined;
+  })) || undefined;
 
   if (userId) {
     const connections = await getConnections(userId);
@@ -43,7 +43,7 @@ export async function findRecipes(input: queryRecipesInterface) {
           contains: title,
           mode: 'insensitive',
         },
-        tags: tagQuery,
+        AND: tagQuery,
         OR: [
           {
             authorId: userId
@@ -53,7 +53,7 @@ export async function findRecipes(input: queryRecipesInterface) {
           },
           {
             authorId: {
-              in: connections
+              in: connections.map(({ id }) => id)
             }
           }
         ]
@@ -79,7 +79,7 @@ export async function findRecipes(input: queryRecipesInterface) {
         contains: title,
         mode: 'insensitive',
       },
-      tags: tagQuery,
+      AND: tagQuery,
       public: true,
     },
     include: {
@@ -295,6 +295,15 @@ export async function getEditor({ recipeId }: { recipeId: string }) {
   return prisma.recipeEditors.findMany({
     where: {
       recipeId
+    },
+    include: {
+      user: {
+        select: {
+          image: true,
+          id: true,
+          username: true,
+        }
+      }
     }
   });
 };
