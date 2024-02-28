@@ -21,7 +21,6 @@ export async function createInstructions({ data }: any) {
       data,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return instructions
@@ -37,7 +36,6 @@ export async function updateInstruction({ recipeId, step, data }: any) {
       data,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return instructions;
@@ -52,7 +50,6 @@ export async function removeInstruction({ recipeId, step }: any) {
     return axiosInstance.delete(`/api/instructions/${recipeId}/${step}`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
   } catch (e) {

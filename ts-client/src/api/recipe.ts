@@ -39,7 +39,6 @@ export async function createRecipe({ title }: any) {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -55,7 +54,6 @@ export async function editRecipe({ recipeId, data }: any) {
       data,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return recipe;
@@ -70,7 +68,6 @@ export async function uploadPhoto({ formData, recipeId }: any) {
       formData,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true
       }
     );
     return data;
@@ -95,7 +92,6 @@ export async function connectComponent({ recipeId, data }: any) {
       data,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     )
   } catch (error) {
@@ -109,7 +105,6 @@ export async function removeComponentConnection({ recipeId, componentId }: any) 
     return axiosInstance.delete(`/api/recipes/${recipeId}/components/${componentId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     )
   } catch (error) {
@@ -139,7 +134,6 @@ export async function deleteRecipe({ recipeId }: any) {
     const { data } = await axiosInstance.delete(`/api/recipes/${recipeId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return data;
@@ -167,7 +161,6 @@ export async function addEditor({ recipeId, userId }: any) {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -182,7 +175,6 @@ export async function removeEditor({ recipeId, userId }: any) {
     const { data } = await axiosInstance.delete(`/api/recipes/${recipeId}/editors/${userId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -220,7 +212,6 @@ export async function createReview({ recipeId, input }: any) {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -235,7 +226,6 @@ export async function updateReview({ recipeId, userId, input }: any) {
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return data;
@@ -254,7 +244,6 @@ export async function createRating({ recipeId, input }: any) {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -283,7 +272,6 @@ export async function updateRating({ recipeId, userId, input }: any) {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -310,7 +298,6 @@ export async function updateTags({ recipeId, input }: any) {
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;

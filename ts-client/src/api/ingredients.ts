@@ -18,7 +18,6 @@ export async function createIngredients({ data: input }: any) {
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return data
@@ -33,7 +32,6 @@ export async function removeIngredient({ recipeId, ingredientId }: any) {
     const { data } = await axiosInstance.delete(`/api/ingredients/${recipeId}/${ingredientId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     )
     return data;
@@ -48,7 +46,6 @@ export async function updateIngredient({ recipeId, ingredientId, data: input }: 
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     )
     return data;

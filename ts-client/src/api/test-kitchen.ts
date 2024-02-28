@@ -32,7 +32,6 @@ export async function createIteration(input: any) {
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -47,7 +46,6 @@ export async function editIteration({ iterationId, input }: any) {
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -61,7 +59,6 @@ export async function deleteIteration({ iterationId }: { iterationId: string }) 
     await axiosInstance.delete(`/api/iterations/${iterationId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return { ok: true };
@@ -76,7 +73,6 @@ export async function deleteIterationIngredient({ iterationId, ingredientId }: a
     const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/ingredients/${ingredientId}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data
@@ -91,7 +87,6 @@ export async function createManyIterationIngredients({ iterationId, input }: any
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -106,7 +101,6 @@ export async function updateIterationIngredient({ iterationId, ingredientId, inp
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -123,7 +117,6 @@ export async function createManyIterationInstruction({ iterationId, input }: any
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -138,7 +131,6 @@ export async function updateIterationInstruction({ iterationId, step, input }: a
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;
@@ -152,7 +144,6 @@ export async function removeIterationInstruction({ iterationId, step }: any) {
     const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/instructions/${step}/`,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       }
     );
     return data;
@@ -179,7 +170,6 @@ export async function createComment({ input, iterationId }: { input: any, iterat
       input,
       {
         headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
       },
     );
     return data;

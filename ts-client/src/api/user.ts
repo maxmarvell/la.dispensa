@@ -26,8 +26,7 @@ export async function uploadPhoto({ formData, userId }: any) {
     let { data } = await axiosInstance.patch(`/api/users/${userId}/uploadPhoto/`,
       formData,
       {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true
+        headers: { 'Content-Type': 'multipart/form-data' }
       }
     );
     return data;
