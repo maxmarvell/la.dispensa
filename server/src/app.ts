@@ -1,8 +1,15 @@
 import { JWT } from '@fastify/jwt';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
-import * as Modules from './modules/index'
+import * as Modules from './modules/index';
+import dotenv from 'dotenv';
+import { randomUUID } from 'crypto';
 
-export const server = fastify();
+dotenv.config()
+
+const PORT = parseInt(process.env.PORT || "3000", 10);
+const HOST = process.env.HOST || "0.0.0.0";
+
+// export const server = fastify();
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -24,42 +31,56 @@ declare module "@fastify/jwt" {
   }
 }
 
-server.register(require('@fastify/jwt'), {
-  secret: "bigsecretbigsecretbigsecretbigsecret"
-})
+async function build() {
 
-server.register(require('@fastify/cors'), {
-  origin: true,
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
-  methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE']
-})
+  const server = fastify();
 
-server.register(require('@fastify/multipart'), {
-  addToBody: true,
-  limits: {
-    fileSize: 4 * 1024 * 1024,
-  }
-}).after(() => { });
+  // jwt web tokens
+  await server.register(require('@fastify/jwt'), {
+    secret: "bigsecretbigsecretbigsecretbigsecret"
+  })
 
-server.decorate("authenticate", async function (request: FastifyRequest, reply: FastifyReply) {
-  try {
-    await request.jwtVerify();
-  } catch (err) {
-    reply.send(err)
-  }
-});
+  // cors
+  await server.register(require('@fastify/cors'), {
+    origin: true,
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
+    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE']
+  })
 
-server.get('/healthcheck', async function () {
-  return { status: 'ok' };
-});
+  // file upload buffer and size limit
+  server.register(require('@fastify/multipart'), {
+    addToBody: true,
+    limits: {
+      fileSize: 4 * 1024 * 1024,
+    }
+  }).after(() => { });
 
-server.addHook("preHandler", (req, reply, next) => {
-  req.jwt = server.jwt;
-  return next();
-});
+  // authtication decoration
+  server.decorate("authenticate", async function (request: FastifyRequest, reply: FastifyReply) {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.send(err)
+    }
+  });
+
+  server.addHook("preHandler", (req, reply, next) => {
+    req.jwt = server.jwt;
+    return next();
+  });
+
+  // server healthcheck API
+  server.get('/healthcheck', async function () {
+    return { status: 'ok', port: PORT };
+  });
+
+  return server;
+}
 
 
 async function main() {
+
+  const server = await build();
 
   const schemas = [...Modules.userSchemas, ...Modules.recipeSchemas, ...Modules.instructionSchemas, ...Modules.ingredientSchemas, ...Modules.iterationSchema]
 
@@ -81,16 +102,13 @@ async function main() {
 
   server.register(Modules.dashboardRoutes, { prefix: "api/dashboard" })
 
-  const port = Number(process.env.PORT) || 3000;
-  const host = ("RENDER" in process.env) ? `0.0.0.0` : `localhost`;
-
-  server.listen({ port: port, host: host }, function (err, address) {
+  server.listen({ port: PORT, host: HOST }, function (err, address) {
     if (err) {
       console.error(err);
       process.exit(1)
     }
     console.log(`server listening on ${address}`)
-  })
+  });
 }
 
 

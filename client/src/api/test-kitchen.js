@@ -21,9 +21,8 @@ export async function getIterationInstance({ iterationId }) {
     return data
   } catch (error) {
     console.error(error)
-  }
-}
-
+  };
+};
 
 export async function createIteration(input) {
   try {
@@ -55,6 +54,20 @@ export async function editIteration({ iterationId, input }) {
   }
 };
 
+export async function deleteIteration({ iterationId }) {
+  try {
+    const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/`,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      },
+      { withCredentials: true }
+    );
+    return { ok: true };
+  } catch (error) {
+    console.error(error);
+  };
+};
+
 
 export async function deleteIterationIngredient({ iterationId, ingredientId }) {
   try {
@@ -71,7 +84,6 @@ export async function deleteIterationIngredient({ iterationId, ingredientId }) {
 };
 
 export async function createManyIterationIngredients({ iterationId, input }) {
-  console.log(input)
   try {
     const { data } = await axiosInstance.post(`/api/iterations/${iterationId}/ingredients/`,
       input,
@@ -176,6 +188,7 @@ export async function createComment({ input, iterationId }) {
 
 export async function getIterationsLayout({ recipeId }) {
   try {
+
     const iterations = await getIterations({ recipeId });
     const recipe = await getRecipe({ recipeId });
 

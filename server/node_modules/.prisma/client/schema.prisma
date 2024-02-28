@@ -43,6 +43,7 @@ model Recipe {
   ingredients   RecipeIngredient[]
   reviews       Review[]
   tags          Tag[]
+  rootLayout    RootLayout[]
 }
 
 model Ingredient {
@@ -157,6 +158,25 @@ model Iteration {
   children     Iteration[]            @relation("IterationHistory")
   recipe       Recipe                 @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   comments     Comment[]
+  nodeLayout   NodeLayout[]
+}
+
+model RootLayout {
+  x        Float?
+  y        Float?
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+
+  @@unique([recipeId])
+}
+
+model NodeLayout {
+  x        Float?
+  y        Float?
+  recipe   Iteration @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+
+  @@unique([recipeId])
 }
 
 model IngredientIteration {

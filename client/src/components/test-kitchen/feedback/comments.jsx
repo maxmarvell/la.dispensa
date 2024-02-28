@@ -1,17 +1,28 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 
-// Assets
+// assets
 import * as dark from "../../../assets/icons/dark";
 
-// APIs
+// services
 import { createComment, getComments } from "../../../api/test-kitchen";
 
-const CommentInput = ({ iteration }) => {
+// contexts
+import SocketContext from "../../../context/socket";
+import AuthContext from "../../../context/auth";
 
-  const { id: iterationId } = iteration;
+// feeds
+const COMMENT_FEED_CHANNEL = import.meta.env.VITE_COMMENT_FEED_CHANNEL;
 
+const CommentInput = ({ iterationId }) => {
+
+  // socket
+  const { socket } = useContext(SocketContext);
+  const { recipeId } = useParams();
+  const { user: { id: userId } } = useContext(AuthContext);
+
+  // input state
   const [text, setText] = useState("");
 
   const adjustTextareaHeight = (textarea) => {
@@ -25,6 +36,8 @@ const CommentInput = ({ iteration }) => {
     setText(value);
     adjustTextareaHeight(target)
   }
+
+  // react-mutate
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation({
@@ -35,11 +48,15 @@ const CommentInput = ({ iteration }) => {
   });
 
   const handleCreateComment = async () => {
-    const result = await mutateAsync({
+    const newComment = await mutateAsync({
       iterationId, input: { text }
     });
-    if (result) {
+    if (newComment) {
       setText("");
+      socket?.emit(COMMENT_FEED_CHANNEL, {
+        userId,
+        newComment
+      });
     };
   };
 
@@ -104,7 +121,12 @@ const CommentWrap = ({ comment }) => {
 
 export const Comments = ({ iteration }) => {
 
+  // unpack iteration id
   const { id: iterationId } = iteration;
+
+  const { socket } = useContext(SocketContext);
+  const { recipeId } = useParams();
+  const { user: { id: userId } } = useContext(AuthContext);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["comments", iterationId],
@@ -112,11 +134,26 @@ export const Comments = ({ iteration }) => {
     placeholderData: keepPreviousData
   });
 
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    socket?.on(COMMENT_FEED_CHANNEL, ({ userId: emitterId, newComment }) => {
+
+      console.log(newComment)
+
+      if (emitterId === userId) return;
+
+      if (iterationId === newComment.iterationId) {
+        queryClient.invalidateQueries(["comments", iterationId])
+      };
+    });
+  }, [socket])
+
   // Render loading screen
   if (isLoading) {
     return (
       <div className="flex flex-col">
-        <CommentInput iteration={iteration} />
+        <CommentInput iterationId={iterationId} />
         <div className="animate-pulse rounded-full my-5 h-4 bg-slate-300" />
         <div className="animate-pulse divide-y divide-slate-600">
           {Array.from(Array(5).keys()).map((index) => (
@@ -137,7 +174,7 @@ export const Comments = ({ iteration }) => {
 
   return (
     <div className="flex flex-col">
-      <CommentInput iteration={iteration} />
+      <CommentInput iterationId={iterationId} />
       {data?.length ? (
         <>
           <div className="my-5">

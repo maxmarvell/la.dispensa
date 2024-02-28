@@ -1,4 +1,5 @@
 import prisma from "../../utils/prisma"
+import { RecipeFeedResponseType } from "./dashboard.schema"
 
 interface infiniteScroll {
   lastCursor?: string,
@@ -7,9 +8,9 @@ interface infiniteScroll {
 
 export async function getDashboard(input: infiniteScroll) {
 
-  let { lastCursor, take } = input
+  let { lastCursor, take } = input;
 
-  const results = await prisma.recipe.findMany({
+  const results: RecipeFeedResponseType = await prisma.recipe.findMany({
     take: parseInt(take as string),
     ...(lastCursor && {
       skip: 1,
@@ -41,7 +42,7 @@ export async function getDashboard(input: infiniteScroll) {
     by: ['recipeId'],
     where: {
       recipeId: {
-        in: results.map(({ id }) => id)
+        in: results.map(({ id }: { id: string }) => id)
       }
     },
     _avg: { value: true },
@@ -52,7 +53,7 @@ export async function getDashboard(input: infiniteScroll) {
     by: ['recipeId'],
     where: {
       recipeId: {
-        in: results.map(({ id }) => id)
+        in: results.map(({ id }: { id: string }) => id)
       }
     },
     _count: true
@@ -75,13 +76,13 @@ export async function getDashboard(input: infiniteScroll) {
   return {
     recipes: results.map(el => {
       let { id } = el;
-      let rating = ratings.find(({ recipeId }) => (recipeId === id)) || undefined;
-      let review = reviews.find(({ recipeId }) => (recipeId === id)) || undefined;
+      let rating = ratings.find(({ recipeId }: { recipeId: string }) => (recipeId === id)) || undefined;
+      let review = reviews.find(({ recipeId }: { recipeId: string }) => (recipeId === id)) || undefined;
       return { ...el, rating, review }
     }),
     lastCursor: cursor,
     hasNextPage: nextPage.length > 0,
-  }
+  };
 };
 
 interface userFeed {
@@ -160,7 +161,7 @@ export async function getDashboardUsers(input: userFeed) {
         },
         {
           id: {
-            notIn: connections.map(({ id }) => id)
+            notIn: connections.map(({ id }: { id: string }) => id)
           }
         }
       ],
@@ -214,7 +215,7 @@ export async function getRecipeNotifications(input: recipeNotificationsFeed) {
   return prisma.recipe.findMany({
     where: {
       authorId: {
-        in: connections.map(({ id }) => id)
+        in: connections.map(({ id }: { id: string }) => id)
       }
     },
     orderBy: {

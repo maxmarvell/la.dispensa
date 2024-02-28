@@ -1,8 +1,13 @@
 import { FastifyRequest } from "fastify/types/request"
 import { FastifyReply } from "fastify"
 import { CreateIterationCommentInput, CreateIterationInput, CreateManyIterationIngredientsInput, CreateManyIterationInstructionInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput } from "./test.kitchen.schema"
-import { createIteration, createIterationComment, createIterationInstruction, createIterationingredient, deleteIterationIngredient, deleteIterationInstruction, getIterationComments, getIterationInstance, getIterations, ingredientParams, instructionParams, updateIteration, updateIterationIngredient, updateIterationInstruction } from "./test.kitchen.service"
+import { createIteration, createIterationComment, createIterationInstruction, createIterationingredient, deleteIteration, deleteIterationIngredient, deleteIterationInstruction, getIterationComments, getIterationInstance, getIterations, ingredientParams, updateIteration, updateIterationIngredient, updateIterationInstruction } from "./test.kitchen.service"
 
+
+export interface instructionParams {
+  step: string,
+  iterationId: string,
+};
 
 export async function getIterationsHandler(
   request: FastifyRequest<{
@@ -56,10 +61,28 @@ export async function createIterationHandler(
   } catch (error) {
     console.log(error);
     return reply.code(401);
-  }
+  };
+};
 
-}
 
+export async function deleteIterationHandler(
+  request: FastifyRequest<{
+    Params: {
+      iterationId: string
+    }
+  }>,
+  reply: FastifyReply
+) {
+  const { iterationId } = request.params;
+
+  try {
+    await deleteIteration({ iterationId });
+    return reply.code(204).send()
+  } catch (error) {
+    console.log(error);
+    return reply.code(404).send(error)
+  };
+};
 
 // Ingredients
 
@@ -171,14 +194,21 @@ export async function createManyIterationInstructionsHandler(
 
 export async function updateIterationInstructionHandler(
   request: FastifyRequest<{
-    Params: instructionParams,
+    Params: {
+      iterationId: string,
+      step: string
+    },
     Body: UpdateIterationInstructionInput,
   }>,
   reply: FastifyReply
 ) {
+
+  const { step, iterationId } = request.params;
+
   try {
     const result = await updateIterationInstruction({
-      ...request.params,
+      iterationId,
+      step: parseInt(step as string),
       ...request.body
     });
     return result;
@@ -200,7 +230,10 @@ export async function deleteIterationInstructionHandler(
   const { iterationId, step } = request.params;
 
   try {
-    const result = await deleteIterationInstruction({ iterationId, step });
+    const result = await deleteIterationInstruction({
+      iterationId,
+      step: parseInt(step as string)
+    });
     return result;
   } catch (error) {
     console.log(error);
@@ -210,7 +243,6 @@ export async function deleteIterationInstructionHandler(
 
 
 // Comments
-
 
 export async function getCommentsHandler(
   request: FastifyRequest<{
@@ -254,6 +286,3 @@ export async function createIterationCommentHandler(
     return reply.code(401).send(error);
   };
 };
-
-
-

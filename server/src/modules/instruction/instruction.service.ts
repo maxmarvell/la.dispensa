@@ -26,7 +26,7 @@ export async function getInstructions(recipeId: string) {
   const components = await prisma.recipe.findMany({
     where: {
       id: {
-        in: componentIds.map(({ id }) => id)
+        in: componentIds.map(({ id }: { id: string }) => id)
       }
     },
     select: {
@@ -105,9 +105,14 @@ export async function updateInstruction(input: UpdateInstructionInput & Instruct
   });
 };
 
+interface updateReturnType {
+  recipeId: string,
+  step: number,
+}
+
 export async function deleteInstruction({ step, recipeId }: InstructionURLParams) {
 
-  const instructionsToUpdate = await prisma.instruction.findMany({
+  const instructionsToUpdate: updateReturnType[] = await prisma.instruction.findMany({
     select: {
       step: true,
       recipeId: true,
@@ -129,7 +134,6 @@ export async function deleteInstruction({ step, recipeId }: InstructionURLParams
   });
 
   await Promise.all(instructionsToUpdate.map((instruction) => {
-    console.log(instruction)
     return new Promise(resolve => resolve(prisma.instruction.update({
       where: {
         InstructionId: {

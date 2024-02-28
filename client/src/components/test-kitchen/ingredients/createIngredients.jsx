@@ -1,11 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createManyIterationIngredients } from "../../../api/test-kitchen";
 import { useMutation } from "@tanstack/react-query";
+
 import * as light from '../../../assets/icons/light';
 import * as dark from '../../../assets/icons/dark';
 
+import { useParams } from "react-router-dom";
+import AuthContext from "../../../context/auth";
+import SocketContext from "../../../context/socket";
+
+const CREATE_INGREDIENT_CHANNEL = import.meta.env.VITE_CREATE_INGREDIENT_CHANNEL;
+
 const measureSelections = [
-  { name: 'g', value: 'G' },
+  { value: 'G', name: 'g' },
   { value: 'KG', name: 'kg' },
   { value: 'CUP', name: 'cup' },
   { value: 'ML', name: 'mL' },
@@ -65,6 +72,10 @@ const Field = ({ state, setNewIngredients }) => {
 export const CreateIngredients = ({ iteration, setNodes }) => {
 
   const { id: iterationId } = iteration;
+  const { recipeId } = useParams();
+  const { user: { id: userId } } = useContext(AuthContext);
+
+  const { socket } = useContext(SocketContext);
 
   // Allow users to be able to add ingredients
   // Use state for the new input fields
@@ -104,6 +115,14 @@ export const CreateIngredients = ({ iteration, setNodes }) => {
         return { ...rest, data };
       }
     })));
+
+    // emit the change
+    socket?.emit(CREATE_INGREDIENT_CHANNEL, {
+      newIngredients,
+      iterationId,
+      recipeId,
+      userId,
+    });
   };
 
   // Reset Form onClick away

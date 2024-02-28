@@ -53,7 +53,7 @@ export async function findRecipes(input: queryRecipesInterface) {
           },
           {
             authorId: {
-              in: connections.map(({ id }) => id)
+              in: connections.map(({ id }: { id: string }) => id)
             }
           }
         ]

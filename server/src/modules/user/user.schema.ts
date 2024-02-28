@@ -56,11 +56,55 @@ const changePasswordSchema = z.object({
   })
 })
 
+// utility
+const findConnectionSchema = z.object({
+  connectedWithId: z.string(),
+  connectedById: z.string(),
+  accepted: z.boolean(),
+  createdOn: z.date().nullable(),
+  connectedWith: z.object({
+    username: z.string(),
+    id: z.string(),
+    image: z.string().nullable(),
+  }),
+  connectedBy: z.object({
+    username: z.string(),
+    id: z.string(),
+    image: z.string().nullable(),
+  })
+});
+
+const findProfileRecipeSchema = z.object({
+  author: z.object({
+    username: z.string(),
+    id: z.string(),
+  }),
+  editors: z.array(
+    z.object({
+      user: z.object({
+        username: z.string(),
+        id: z.string(),
+      }),
+      recipeId: z.string(),
+      userId: z.string(),
+    })
+  ),
+  id: z.string(),
+  createdOn: z.date().nullable(),
+  updatedAt: z.date().nullable(),
+  image: z.string().nullable(),
+  public: z.boolean().nullable(),
+});
+
 export type CreateUserInput = z.infer<typeof createUserSchema>
 
 export type LoginInput = z.infer<typeof loginSchema>
 
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>
+
+export type FindConnectionResponse = z.infer<typeof findConnectionSchema>
+
+export type FindProfileRecipeResponse = z.infer<typeof findProfileRecipeSchema>
 
 
 export const { schemas: userSchemas, $ref } = buildJsonSchemas({

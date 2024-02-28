@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { deleteIterationIngredient, updateIterationIngredient } from "../../../api/test-kitchen";
 import { useMutation } from "@tanstack/react-query";
+import SocketContext from "../../../context/socket";
+import { useParams } from "react-router-dom";
+import AuthContext from "../../../context/auth";
+
+const DELETE_INGREDIENT_CHANNEL = import.meta.env.VITE_DELETE_INGREDIENT_CHANNEL;
+const UPDATE_INGREDIENT_CHANNEL = import.meta.env.VITE_UPDATE_INGREDIENT_CHANNEL;
 
 const measureSelections = [
   { name: 'g', value: 'G' },
@@ -22,6 +28,12 @@ const Field = ({ data, setNodes, setCurrentIngredients, setSelectOptions }) => {
   // Initialise state for input change
   const [ingredient, setIngredient] = useState(unit ? data : rest);
 
+  // retrieve the active socket
+  const { socket } = useContext(SocketContext);
+
+  const { recipeId } = useParams();
+
+  const { user: { id: userId } } = useContext(AuthContext);
 
   // Delete the selected iterations ingredient field
   const { mutateAsync: deleteMutation } = useMutation({
@@ -37,7 +49,7 @@ const Field = ({ data, setNodes, setCurrentIngredients, setSelectOptions }) => {
   const handleUpdate = async () => {
 
     // Wait to update the ingredient
-    await updateMutation({ ingredientId, iterationId, input: ingredient });
+    let updatedIngredient = await updateMutation({ ingredientId, iterationId, input: ingredient });
 
     // Update the global test-kitchen state
     setNodes((prev) => (prev.map(({ data, ...rest }) => {
@@ -53,9 +65,15 @@ const Field = ({ data, setNodes, setCurrentIngredients, setSelectOptions }) => {
     setCurrentIngredients(prev => prev.filter(el => el.ingredientId !== ingredientId));
 
     // Re-add the option
-    setSelectOptions(prev => [...prev, ingredient]);
-  }
+    setSelectOptions(prev => [...prev, updatedIngredient]);
 
+    socket?.emit(UPDATE_INGREDIENT_CHANNEL, {
+      updatedIngredient,
+      iterationId,
+      userId,
+      recipeId,
+    });
+  };
 
   const handleDelete = async () => {
 
@@ -74,6 +92,14 @@ const Field = ({ data, setNodes, setCurrentIngredients, setSelectOptions }) => {
 
     // Remove the modification form
     setCurrentIngredients(prev => prev.filter(el => el.ingredientId !== ingredientId));
+
+    // emit the corresponding change
+    socket?.emit(DELETE_INGREDIENT_CHANNEL, {
+      ingredientId,
+      iterationId,
+      userId,
+      recipeId,
+    });
   }
 
 

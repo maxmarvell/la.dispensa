@@ -1,9 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createManyIterationInstruction } from "../../../api/test-kitchen";
+import { useParams } from "react-router-dom";
 
-import * as dark from "../../../assets/icons/dark"
-import * as light from "../../../assets/icons/light"
+import * as dark from "../../../assets/icons/dark";
+import * as light from "../../../assets/icons/light";
+import SocketContext from "../../../context/socket";
+import AuthContext from "../../../context/auth";
+
+const CREATE_INSTRUCTION_CHANNEL = import.meta.env.VITE_CREATE_INSTRUCTION_CHANNEL
+
 
 const Field = ({ instruction, setNewInstructions }) => {
 
@@ -191,6 +197,12 @@ export const CreatePreparations = ({ instructions, iterationId, setNodes }) => {
   // form fields for new instructions
   const [newInstructions, setNewInstructions] = useState([]);
 
+  const { socket } = useContext(SocketContext);
+
+  const { user: { id: userId } } = useContext(AuthContext);
+
+  const { recipeId } = useParams();
+
   // If no instructions have been added already default to one empty field
   useEffect(() => {
     setNewInstructions((instructions?.length === 0) ? [{
@@ -228,6 +240,14 @@ export const CreatePreparations = ({ instructions, iterationId, setNodes }) => {
           return { ...rest, data };
         }
       })));
+
+      // emit the change
+      socket?.emit(CREATE_INSTRUCTION_CHANNEL, {
+        recipeId,
+        userId,
+        newInstructions: results,
+        iterationId
+      });
     }
   };
 

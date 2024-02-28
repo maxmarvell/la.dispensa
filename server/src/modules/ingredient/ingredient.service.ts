@@ -21,7 +21,7 @@ export async function getIngredients({ recipeId }: { recipeId: string }) {
   const components = await prisma.component.findMany({
     where: {
       componentId: {
-        in: componentIds.map(({ id }) => id)
+        in: componentIds.map(({ id }: { id: string }) => id)
       }
     },
     include: {

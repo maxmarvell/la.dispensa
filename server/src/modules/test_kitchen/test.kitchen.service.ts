@@ -1,6 +1,6 @@
 import prisma from "../../utils/prisma"
-import { CreateIterationInput, CreateIterationIngredientInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput, CreateIterationCommentInput, CreateIterationInstructionInput } from "./test.kitchen.schema";
-import { $Enums } from "@prisma/client";
+import { CreateIterationInput, CreateIterationIngredientInput, UpdateIterationIngredientInput, UpdateIterationInput, UpdateIterationInstructionInput, CreateIterationCommentInput, CreateIterationInstructionInput, IterationInstructionCompositeKey } from "./test.kitchen.schema";
+import { ParentIterationInstruction, ParentRecipeInstruction, FindIterationResponse } from "./test.kitchen.schema";
 
 export async function getIterations(recipeId: string) {
   return prisma.iteration.findMany({
@@ -24,6 +24,9 @@ export async function getIterations(recipeId: string) {
         }
       },
       instructions: {
+        orderBy: {
+          step: "asc"
+        },
         include: {
           timeAndTemperature: true,
         }
@@ -83,7 +86,7 @@ export async function createIteration(input: CreateIterationInput) {
 
 
   if (parentId) {
-    let parentInstructions = await prisma.instructionIteration.findMany({
+    let parentInstructions: ParentIterationInstruction[] = await prisma.instructionIteration.findMany({
       where: {
         iterationId: parentId,
       },
@@ -171,7 +174,7 @@ export async function createIteration(input: CreateIterationInput) {
 
   // Parent instructions are either the OG recipe or the parent iteration
   // Only take fields with temperature and time fields
-  let parentInstructions = await prisma.instruction.findMany({
+  let parentInstructions: ParentRecipeInstruction[] = await prisma.instruction.findMany({
     where: {
       recipeId,
     },
@@ -199,7 +202,7 @@ export async function createIteration(input: CreateIterationInput) {
   );
 
   // Nested creation of the iteration and the ingredient fields
-  const iteration = await prisma.iteration.create({
+  const iteration: FindIterationResponse = await prisma.iteration.create({
     data: {
       ...rest,
       recipeId,
@@ -267,6 +270,14 @@ export async function updateIteration(input: UpdateIterationInput & { iterationI
   })
 };
 
+export async function deleteIteration({ iterationId }: { iterationId: string }) {
+  return prisma.iteration.delete({
+    where: {
+      id: iterationId
+    }
+  });
+};
+
 // Ingredients
 
 export interface ingredientParams {
@@ -288,8 +299,6 @@ export async function updateIterationIngredient(input: UpdateIterationIngredient
 
   const { ingredientId, iterationId, ...rest } = input;
 
-  console.log(ingredientId, iterationId)
-
   return prisma.ingredientIteration.update({
     where: {
       RecipeIngredientId: {
@@ -299,6 +308,9 @@ export async function updateIterationIngredient(input: UpdateIterationIngredient
     },
     data: {
       ...rest
+    },
+    include: {
+      ingredient: true
     }
   });
 };
@@ -333,11 +345,6 @@ export async function createIterationingredient(input: CreateIterationIngredient
 
 // Instructions
 
-export interface instructionParams {
-  step: string,
-  iterationId: string,
-};
-
 export async function createIterationInstruction(input: CreateIterationInstructionInput & { iterationId: string }) {
 
   const { timeAndTemperature, ...data } = input;
@@ -356,7 +363,7 @@ export async function createIterationInstruction(input: CreateIterationInstructi
   });
 };
 
-export async function updateIterationInstruction(input: UpdateIterationInstructionInput & instructionParams) {
+export async function updateIterationInstruction(input: UpdateIterationInstructionInput & IterationInstructionCompositeKey) {
 
   const { step, iterationId, ...data } = input;
   const { timeAndTemperature, ...rest } = data;
@@ -364,7 +371,7 @@ export async function updateIterationInstruction(input: UpdateIterationInstructi
   return prisma.instructionIteration.update({
     where: {
       InstructionId: {
-        step: Number(step),
+        step: step,
         iterationId
       }
     },
@@ -382,11 +389,11 @@ export async function updateIterationInstruction(input: UpdateIterationInstructi
   });
 };
 
-export async function deleteIterationInstruction(input: instructionParams) {
+export async function deleteIterationInstruction(input: IterationInstructionCompositeKey) {
 
   const { step, iterationId } = input;
 
-  const instructionsToUpdate = await prisma.instructionIteration.findMany({
+  const instructionsToUpdate: IterationInstructionCompositeKey[] = await prisma.instructionIteration.findMany({
     select: {
       step: true,
       iterationId: true,
@@ -394,7 +401,7 @@ export async function deleteIterationInstruction(input: instructionParams) {
     where: {
       iterationId,
       step: {
-        gt: parseInt(step as string)
+        gt: Number(step)
       }
     }
   });
@@ -403,7 +410,7 @@ export async function deleteIterationInstruction(input: instructionParams) {
     where: {
       InstructionId: {
         iterationId,
-        step: parseInt(step as string),
+        step: Number(step),
       }
     }
   });
@@ -430,8 +437,6 @@ export async function deleteIterationInstruction(input: instructionParams) {
 // Comments
 
 export async function getIterationComments({ iterationId }: { iterationId: string }) {
-
-  console.log(iterationId)
   return prisma.comment.findMany({
     where: {
       iterationId

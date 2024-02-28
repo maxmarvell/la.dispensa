@@ -1,18 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 
 // APIs
 import { updateIterationInstruction, removeIterationInstruction } from "../../../api/test-kitchen";
 
-// Components
+// assets
 import * as dark from "../../../assets/icons/dark";
 import * as light from "../../../assets/icons/light";
+
+// contexts
+import AuthContext from "../../../context/auth";
+import SocketContext from "../../../context/socket";
+
+// channels
+const UPDATE_INSTRUCTION_CHANNEL = import.meta.env.VITE_UPDATE_INSTRUCTION_CHANNEL
+const DELETE_INSTRUCTION_CHANNEL = import.meta.env.VITE_DELETE_INSTRUCTION_CHANNEL
 
 const UpdateField = ({ instruction, setNodes }) => {
 
   // Extract relavent information with instruction
   const { step, ...data } = instruction;
   const { iterationId, timeAndTemperature, ...rest } = data;
+
+  const { recipeId } = useParams();
+  const { user: { id: userId } } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   // Set the instruction input field
   const [instructionInput, setInput] = useState(timeAndTemperature ? data : rest);
@@ -111,6 +124,14 @@ const UpdateField = ({ instruction, setNodes }) => {
           return { ...rest, data };
         }
       })));
+
+      // emit the change
+      socket?.emit(DELETE_INSTRUCTION_CHANNEL, {
+        iterationId, 
+        step,
+        recipeId,
+        userId,
+      })
     };
   };
 
@@ -136,31 +157,39 @@ const UpdateField = ({ instruction, setNodes }) => {
 
   // Handler for update
   const handleUpdate = async () => {
-    let result = await updateMutation({
+    let instruction = await updateMutation({
       step,
       iterationId,
       input: instructionInput
     });
-    if (result) {
+
+    if (instruction) {
       setEditing(false);
+
+      console.log(instruction)
 
       // Update the global test-kitchen state
       setNodes((prev) => (prev.map(({ data, ...rest }) => {
         if (data.id === iterationId) {
           let { instructions } = data;
           return {
-            ...rest, data: {
-              ...data, instructions: instructions.map(el => el.step === step ? {
-                ...instructionInput,
-                step,
-                iterationId
-              } : el)
+            ...rest,
+            data:
+            {
+              ...data, instructions: instructions.map(el => el.step === step ? instruction : el)
             }
           };
         } else {
           return { ...rest, data };
         }
       })));
+
+      socket?.emit(UPDATE_INSTRUCTION_CHANNEL, {
+        instruction,
+        recipeId,
+        iterationId,
+        userId
+      });
     };
   };
 

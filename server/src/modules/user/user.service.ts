@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { CreateUserInput } from "./user.schema";
+import { CreateUserInput, FindConnectionResponse, FindProfileRecipeResponse } from "./user.schema";
 import { hashPassword } from "../../utils/hash";
 
 export async function createUser(input: CreateUserInput) {
@@ -81,7 +81,7 @@ interface connectionInput {
 };
 
 export async function getConnections(userId: string) {
-  const connections = await prisma.connection.findMany({
+  const connections: FindConnectionResponse[] = await prisma.connection.findMany({
     where: {
       OR: [
         {
@@ -112,7 +112,7 @@ export async function getConnections(userId: string) {
   });
 
   return connections.map(({ connectedById, connectedWithId, connectedBy, connectedWith }) => (
-    connectedById === userId ? {...connectedWith} : {...connectedBy}
+    connectedById === userId ? { ...connectedWith } : { ...connectedBy }
   ));
 };
 
@@ -178,7 +178,7 @@ export async function getConnectionRequests(userId: string) {
 
 export async function findGalleryRecipes({ userId }: { userId: string }) {
 
-  let recipes = await prisma.recipe.findMany({
+  let recipes: FindProfileRecipeResponse[] = await prisma.recipe.findMany({
     where: {
       authorId: userId,
       public: true,
@@ -221,7 +221,7 @@ export async function findGalleryRecipes({ userId }: { userId: string }) {
   // Adding the average rating field to return type of recipes
   return recipes.map(el => {
     let { id } = el;
-    let rating = ratings.find(({ recipeId }) => (recipeId === id)) || undefined;
+    let rating = ratings.find(({ recipeId }: { recipeId: string }) => (recipeId === id)) || undefined;
     return { ...el, rating }
   });
 };

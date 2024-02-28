@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createIterationCommentHandler, createIterationHandler, createManyIterationIngredientHandler, createManyIterationInstructionsHandler, deleteIterationIngredientHandler, deleteIterationInstructionHandler, getCommentsHandler, getIterationInstanceHandler, getIterationsHandler, updateIterationHandler, updateIterationIngredientHandler, updateIterationInstructionHandler } from "./test.kitchen.controller";
+import { createIterationCommentHandler, createIterationHandler, createManyIterationIngredientHandler, createManyIterationInstructionsHandler, deleteIterationHandler, deleteIterationIngredientHandler, deleteIterationInstructionHandler, getCommentsHandler, getIterationInstanceHandler, getIterationsHandler, updateIterationHandler, updateIterationIngredientHandler, updateIterationInstructionHandler } from "./test.kitchen.controller";
 import { $ref } from "./test.kitchen.schema";
 
 
@@ -8,10 +8,6 @@ async function iterationRoutes(server: FastifyInstance) {
   server.get('/', {
     onRequest: [server.authenticate]
   }, getIterationsHandler);
-
-  server.get('/:iterationId', {
-    onRequest: [server.authenticate]
-  }, getIterationInstanceHandler);
 
   server.post('/', {
     schema: {
@@ -22,7 +18,11 @@ async function iterationRoutes(server: FastifyInstance) {
     },
     onRequest: [server.authenticate]
   }, createIterationHandler);
-  
+
+  server.get('/:iterationId', {
+    onRequest: [server.authenticate]
+  }, getIterationInstanceHandler);
+
   server.patch('/:iterationId/', {
     schema: {
       body: $ref('updateIterationSchema'),
@@ -33,13 +33,17 @@ async function iterationRoutes(server: FastifyInstance) {
     onRequest: [server.authenticate]
   }, updateIterationHandler);
 
+  server.delete('/:iterationId/', {
+    onRequest: [server.authenticate]
+  }, deleteIterationHandler);
+
   server.post('/:iterationId/ingredients/', {
     schema: {
       body: $ref('createManyIterationIngredientsSchema'),
       response: {
         201: $ref('createManyIterationIngredientsResponseSchema')
       }
-    }, 
+    },
     onRequest: [server.authenticate]
   }, createManyIterationIngredientHandler);
 
@@ -89,7 +93,7 @@ async function iterationRoutes(server: FastifyInstance) {
       body: $ref('createIterationCommentSchema')
     }
   }, createIterationCommentHandler);
-  
+
 }
 
 export default iterationRoutes
