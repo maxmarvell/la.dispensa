@@ -13,7 +13,7 @@ const AggregateRating = () => {
     queryFn: () => getAggregatedRating({ recipeId })
   })
 
-  const _avg = aggregatedRating?._avg?.value.toPrecision(2) || 0.0;
+  const _avg = aggregatedRating?._avg?.value?.toPrecision(2) || 0.0;
   const _count = aggregatedRating?._count;
 
   return (
