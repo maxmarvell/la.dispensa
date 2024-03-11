@@ -1,13 +1,15 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 
 // pages
+import RootLayout from "@/pages/main/components/layout";
+import DashboardLayout from "@/pages/dashboard/components/layout";
+import { Profile } from "@/pages/profile/components";
+
 import ErrorPage from "../pages/ErrorPage";
-import Root from "../pages/Root";
 import Login from "../pages/auth/Login";
-import Dashboard from "../pages/Dashboard";
-import Profile from "../pages/Profile";
+
 import Logout from "../pages/auth/Logout";
-import Recipes from "../pages/Recipes";
+import Recipes from "@/pages/recipes/components";
 import Register from "../pages/auth/Register";
 
 // routes
@@ -21,9 +23,7 @@ import { ProtectedRoutes } from "./utility/ProtectedRoutes";
 
 export const AppRouter = createBrowserRouter(
   createRoutesFromElements(
-    <Route
-      path='/'
-    >
+    <>
       <Route
         path='/login'
         element={<Login />}
@@ -34,11 +34,11 @@ export const AppRouter = createBrowserRouter(
       />
       <Route
         path='/'
-        element={<Root />}
+        element={<RootLayout />}
         errorElement={<ErrorPage />}
       >
         <Route errorElement={<ErrorPage />}>
-          <Route index element={<Dashboard />}></Route>
+          <Route index element={<DashboardLayout />}></Route>
           <Route
             element={<RecipeRouteAuth />}
           >
@@ -48,9 +48,9 @@ export const AppRouter = createBrowserRouter(
             />
           </Route>
           <Route
-              path='/recipes'
-              element={<Recipes />}
-            />
+            path='/recipes'
+            element={<Recipes />}
+          />
           <Route element={<ProtectedRoutes />}>
             <Route
               path='/logout'
@@ -66,8 +66,8 @@ export const AppRouter = createBrowserRouter(
             />
           </Route>
         </Route>
-      </Route>
 
-    </Route>
+      </Route>
+    </>
   )
 );

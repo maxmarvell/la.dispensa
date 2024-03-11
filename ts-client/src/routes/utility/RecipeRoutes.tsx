@@ -1,31 +1,26 @@
 import { useContext } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-
-// context
-import AuthContext from "../../context/auth";
 
 // services
-import { getRecipe } from "../../api/recipe";
-import { getConnections } from "../../api/user";
+import { useRecipe } from "@/services/hooks/recipe/useRecipe";
+import { useConnections } from "@/services/hooks/connections/useConnections";
+import AuthContext from "@/services/contexts/authContext";
 
 // types
-import { AuthContextType } from "../../@types/context";
+import { AuthContextType } from "@/services/contexts/models";
 
 export const RecipeRouteAuth = () => {
 
+  // get recipe id and current user
   const { recipeId } = useParams();
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  const { data: recipe, isLoading: recipeLoading } = useQuery({
-    queryKey: ["recipe", recipeId],
-    queryFn: () => getRecipe({ recipeId })
-  });
+  if (!recipeId) throw new Error("id of recipe is required!")
 
-  const { data: connections, isLoading: connectionsLoading } = useQuery({
-    queryKey: ["my-connections", user],
-    queryFn: () => getConnections()
-  });
+  const { getRecipeById } = useRecipe();
+  const { data: recipe, isLoading: recipeLoading } = getRecipeById({ recipeId })
+
+  const { getConnections: { data: connections, isLoading: connectionsLoading } } = useConnections({ userId: user?.id });
 
   if (recipeLoading) {
     return (

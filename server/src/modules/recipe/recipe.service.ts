@@ -126,7 +126,13 @@ export async function findUniqueRecipe(RecipeId: string) {
     },
     include: {
       tags: true,
-      author: true,
+      author: {
+        select: {
+          id: true,
+          username: true,
+          image: true
+        }
+      },
       ingredients: {
         include: {
           ingredient: true

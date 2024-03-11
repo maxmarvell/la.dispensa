@@ -1,12 +1,18 @@
 import { useContext, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import AuthContext from "../../context/auth"
+
+// services
+import AuthContext from "@/services/contexts/authContext";
+
+// assets
 import LoginBanner from "../../assets/display/loginBanner.jpeg"
 import LoginBanner2 from "../../assets/display/loginBanner2.jpeg"
-import * as light from '../../assets/icons/light'
-import { AuthContextType } from "../../@types/context";
 
-export default function Login() {
+// types
+import { AuthContextType } from "@/services/contexts/models";
+import { IconArrowBackUp, IconHome } from "@tabler/icons-react";
+
+export const Login = () => {
 
   const { state } = useLocation();
 
@@ -48,13 +54,13 @@ export default function Login() {
           className={`p-1 border-2 bg-slate-950 border-slate-950`}
           onClick={() => navigate(-1)}
         >
-          <img src={light.RefundBack} alt="go back" />
+          <IconArrowBackUp />
         </button>
         <button
           className={`p-1 border-2 bg-slate-950 border-slate-950`}
           onClick={() => navigate('/')}
         >
-          <img src={light.Home} alt="go back" />
+          <IconHome />
         </button>
       </div>
       <form
@@ -106,4 +112,6 @@ export default function Login() {
       </form>
     </div>
   )
-}
+};
+
+export default Login;

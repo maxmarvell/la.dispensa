@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 
 // components
-import Index from "../pages/test-kitchen/Index";
-import TestKitchen from "../pages/test-kitchen/TestKitchen";
+import TestKitchen from "@/pages/test-kitchen/components";
+import IterationFlow from "@/pages/test-kitchen/components/iteration-flow";
 
 // authorisation
 import { ProtectTestKitchenRoutes } from "./utility/ProtectTestKitchenRoutes";
@@ -11,14 +11,14 @@ export const TestKitchenRouter = () => (
   <Routes>
     <Route
       path='/'
-      element={<Index />}
+      element={<TestKitchen />}
     >
       <Route
         element={<ProtectTestKitchenRoutes />}
       >
         <Route
           path='/:recipeId'
-          element={<TestKitchen />}
+          element={<IterationFlow />}
         />
       </Route>
     </Route>

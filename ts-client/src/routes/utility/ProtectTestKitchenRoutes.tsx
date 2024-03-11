@@ -1,10 +1,14 @@
 import { useContext } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getEditors, getRecipe } from "../../api/recipe";
-import { SocketProvider } from "../../context/socket";
-import AuthContext from "../../context/auth";
-import { AuthContextType } from "../../@types/context";
+
+// services
+import AuthContext from "@/services/contexts/authContext";
+import { useRecipe } from "@/services/hooks/recipe/useRecipe";
+import { SocketProvider } from "@/services/contexts/socketContext";
+
+// types
+import { AuthContextType } from "@/services/contexts/models";
+import { useEditor } from "@/pages/recipe/recipe-permissions/hooks/useEditor";
 
 export const ProtectTestKitchenRoutes = () => {
 
@@ -12,15 +16,10 @@ export const ProtectTestKitchenRoutes = () => {
 
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  const { data: recipe, isLoading: recipeLoading } = useQuery({
-    queryKey: ["recipe", recipeId],
-    queryFn: () => getRecipe({ recipeId })
-  })
+  const { getRecipeById } = useRecipe();
+  const { data: recipe, isLoading: recipeLoading } = getRecipeById({ recipeId })
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["editors", user],
-    queryFn: () => getEditors({ recipeId })
-  });
+  const { getEditors: { data, isLoading } } = useEditor({ recipeId })
 
   if (isLoading) {
     return (
@@ -36,7 +35,7 @@ export const ProtectTestKitchenRoutes = () => {
 
   // check if the current user is an editor of the author of the recipe
   const hasAccess = data?.map(el => el.id).includes(user?.id || "") || recipe?.authorId === user?.id;
-  console.log(hasAccess)
+
   return true ? (
     <SocketProvider>
       <Outlet />

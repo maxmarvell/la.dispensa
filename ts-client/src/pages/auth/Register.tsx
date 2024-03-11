@@ -1,12 +1,13 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../context/auth";
 import LoginBanner from "../../assets/display/loginBanner.jpeg"
 import LoginBanner2 from "../../assets/display/loginBanner2.jpeg"
 import * as light from '../../assets/icons/light'
-import { AuthContextType } from "../../@types/context";
 
-export default function Register() {
+import AuthContext from "@/services/contexts/authContext";
+import { AuthContextType } from "@/services/contexts/models";
+
+export const Register = () => {
 
   const navigate = useNavigate();
 
@@ -94,3 +95,5 @@ export default function Register() {
     </div>
   )
 };
+
+export default Register;

@@ -1,9 +1,10 @@
 import { useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import AuthContext from "../../context/auth";
-import { AuthContextType } from "../../@types/context";
 
-export default function Logout() {
+import AuthContext from "@/services/contexts/authContext";
+import { AuthContextType } from "@/services/contexts/models";
+
+export const Logout = () => {
 
   const { logoutUser } = useContext(AuthContext) as AuthContextType;
 
@@ -11,4 +12,6 @@ export default function Logout() {
     logoutUser()
   }, []);
   return <Navigate to="/login" />
-}
+};
+
+export default Logout;
