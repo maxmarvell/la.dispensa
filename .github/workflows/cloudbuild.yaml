@@ -7,7 +7,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./server
+    working-directory: ./websocket
 
 jobs:
   deploy:
@@ -24,10 +24,10 @@ jobs:
           key: ${{ secrets.DROPLET_PRIVATE_KEY }}
           script_stop: true
           script: |
-            export UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }}
+            export REDIS_ENDPOINT=${{ secrets.REDIS_ENDPOINT }}
             export CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
-            cd chat-tutorial
+            cd la.dispensa
             git pull
-            cd server
+            cd websocket
             docker-compose down
-            docker-compose --project-name chat up -d --build 
+            docker-compose --project-name la.dispensa up -d --build 
