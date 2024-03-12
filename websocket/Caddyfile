@@ -2,7 +2,8 @@
   debug
 }
 
-api.live.la-dispensa.onrender.com {
+
+138.68.163.219 {
   reverse_proxy test-kitchen-app-1:3002 test-kitchen-app-2:4000 test-kitchen-app-3:5001 {
     header_down Strict-Transport-Security max-age=31536000
   }
