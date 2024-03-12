@@ -66,7 +66,7 @@ export default function iterationNode({ data, selected } : IterationNodeProps) {
               </div>
               <IconArrowNarrowRight />
               <div className='text-ellipsis truncate'>
-                <span>{el.child.quantity}{el.child.unit}</span>
+                <span>{el.child?.quantity}{el.child?.unit}</span>
                 <span className='capitalize'> {el.parent.ingredient.name}</span>
               </div>
             </li>
