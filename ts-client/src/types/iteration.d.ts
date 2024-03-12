@@ -20,17 +20,17 @@ export interface BaseCommentType {
 }
 
 export interface IterationCommentType {
-  id: string,
-  text: string,
-  createdOn: Date,
-  iterationId: string,
-  userId: string,
+  id: string
+  text: string
+  createdOn: Date
+  iterationId: string
+  userId: string
   user: UserType
 };
 
 export interface IterationType extends BaseIterationType {
-  parentIngredients: BaseIngredientType<RequireAtLeastOne<{ recipeId?: string, iterationId?: string }, 'recipeId' | 'iterationId'>>[],
-  parentInstructions: BaseInstructionType<RequireAtLeastOne<{ recipeId?: string, iterationId?: string }, 'recipeId' | 'iterationId'>>[],
-  ingredients: IterationIngredientType[],
-  instructions: IterationInstructionType[],
-};
+  parentIngredients: BaseIngredientType<RequireAtLeastOne<{ recipeId?: string, iterationId?: string }, 'recipeId' | 'iterationId'>>[]
+  parentInstructions: BaseInstructionType<RequireAtLeastOne<{ recipeId?: string, iterationId?: string }, 'recipeId' | 'iterationId'>>[]
+  ingredients: IterationIngredientType[]
+  instructions: IterationInstructionType[]
+}

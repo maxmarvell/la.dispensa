@@ -69,7 +69,7 @@ const IterationFlow = () => {
   const { createIteration, deleteIteration } = useIteration()
 
   // set the node and edge states, defaults to empty array
-  const [nodes, setNodes, onNodesChange] = useNodesState(data?.initialNodes || []);
+  const [nodes, setNodes, onNodesChange] = useNodesState<IterationType>(data?.initialNodes || []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(data?.initialEdges || []);
 
   useEffect(() => {

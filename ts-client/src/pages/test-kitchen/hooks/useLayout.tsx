@@ -5,6 +5,9 @@ import axiosInstance from "@/services/axios";
 import { UseLayoutProps, } from "../models";
 import { IterationType } from "@/types/iteration";
 
+interface TreeIterationType extends IterationType {
+  parentId: string
+}
 
 export const useLayout = ({ recipeId }: UseLayoutProps) => {
 
@@ -23,13 +26,11 @@ export const useLayout = ({ recipeId }: UseLayoutProps) => {
         iterations.filter((el: any) => (el.parentId === null)).forEach((node: any) => node.parentId = "root");
         iterations.push({ id: "root", parentId: null })
 
-        console.log(iterations)
+        const root = stratify<TreeIterationType>()
+          .id((d) => d.id)
+          .parentId((d) => d.parentId)(iterations);
 
-        const root = stratify<IterationType>()
-          .id((d: any) => d.id)
-          .parentId((d: any) => d.parentId)(iterations);
-
-        const g = tree<IterationType>();
+        const g = tree<TreeIterationType>();
         const layout = g.nodeSize([150 * 2, 200 * 2])(root);
 
         const initialEdges = layout
@@ -39,7 +40,7 @@ export const useLayout = ({ recipeId }: UseLayoutProps) => {
               id: `${node.id}-${child.id}`,
               source: `${node.id}`,
               target: `${child.id}`
-            }))).flat(Infinity).filter(Boolean);
+            })) || []).reduce((accumulator, value) => accumulator.concat(value), []).filter(Boolean);
 
         const initialNodes = layout
           .descendants()

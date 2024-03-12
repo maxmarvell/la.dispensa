@@ -74,6 +74,10 @@ export type IterationFeedbackProps = {
   iteration: IterationType
 }
 
+export type IterationRatingProps = {
+  iteration: IterationType
+}
+
 export type CommentsProps = {
   iteration: IterationType
 }

@@ -14,7 +14,7 @@ export const RecipeSearch = ({ title, setTitle }: RecipeSearchComponentProps) =>
 
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  const { createRecipe } = useRecipe({});
+  const { createRecipe } = useRecipe();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
