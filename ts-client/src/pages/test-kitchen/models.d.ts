@@ -34,6 +34,7 @@ export type IterationProps = {
 export type IterationInstructionProps = {
   instructions: IterationInstructionType[]
   setNodes: React.Dispatch<React.SetStateAction<Node<IterationType, string | undefined>[]>>
+  iterationId: string
 }
 
 export type IterationInstructionFieldProps = {
@@ -58,8 +59,7 @@ export type NewIterationInstructionFieldProps = {
 export type IterationIngredientFieldProps = {
   data: IterationIngredientType
   setNodes: React.Dispatch<React.SetStateAction<Node<IterationType, string | undefined>[]>>
-  setCurrentIngredients: React.Dispatch<React.SetStateAction<IterationIngredientType[]>>
-  setSelectOptions: React.Dispatch<React.SetStateAction<IterationIngredientType[]>>
+  setSelectedIngredient: React.Dispatch<React.SetStateAction<IterationIngredientType | null>>
 }
 
 export type CreateIterationIngredientFieldProps = {

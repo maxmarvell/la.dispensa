@@ -3,6 +3,15 @@
   font-family: 'Roboto', sans-serif;
 }
 
+.fixed-body {
+  position: fixed !important
+}
+
+#root {
+  height: 100vh;
+  min-width: 100vw;
+}
+
 .drag-drop {
   height: 100% !important;
 }

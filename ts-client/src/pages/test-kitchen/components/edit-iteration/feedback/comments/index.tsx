@@ -88,7 +88,7 @@ const CommentWrap = ({ comment }: CommentWrapProps) => {
 
   return (
     <div className="flex items-center py-3 first:pt-0 last:pb-0">
-      <Link to={`/profile/${id}`} className="aspect-square min-w-fit">
+      <Link to={`/profile/${id}`} className="aspect-square max-w-12 rounded-full overflow-hidden">
         <Avatar>
           <AvatarImage src={image} />
           <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>

@@ -27,9 +27,10 @@ export const useIngredient = ({ recipeId }: UseIngredientProps) => {
     mutationFn: async ({ input }: CreateIngredientsProps) => {
       try {
         const { data } = await axiosInstance.post(`/api/ingredients/`,
-          {
-            input
-          },
+        input.map(el => {
+          el.recipeId = recipeId
+          return el
+        }),
           {
             headers: { 'Content-Type': 'application/json' },
           }
@@ -38,7 +39,10 @@ export const useIngredient = ({ recipeId }: UseIngredientProps) => {
       } catch (error) {
         console.error(error)
       }
-    }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredients', recipeId] });
+    },
   });
 
   const removeIngredient = useMutation({
@@ -63,9 +67,7 @@ export const useIngredient = ({ recipeId }: UseIngredientProps) => {
     mutationFn: async ({ ingredientId, input }: UpdateIngredientProps) => {
       try {
         const { data } = await axiosInstance.patch(`/api/ingredients/${recipeId}/${ingredientId}/`,
-          {
-            ...input
-          },
+          input,
           {
             headers: { 'Content-Type': 'application/json' },
           },

@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query"
+import { useQuery, keepPreviousData, useMutation, useQueryClient } from "@tanstack/react-query"
 import axiosInstance from "@/services/axios";
 
 // types
@@ -19,6 +19,8 @@ export const useComment = ({ iterationId }: UseCommentProps) => {
     placeholderData: keepPreviousData
   });
 
+  const queryClient = useQueryClient();
+
   const createComment = useMutation({
     mutationFn: async ({ text }: CreateCommentProps) => {
       try {
@@ -34,6 +36,9 @@ export const useComment = ({ iterationId }: UseCommentProps) => {
       } catch (error) {
         console.error(error);
       };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", iterationId]})
     }
   })
 

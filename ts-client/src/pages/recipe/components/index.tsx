@@ -76,7 +76,7 @@ export const Recipe = () => {
         null
       ) : (
         <section
-          className="pl-24 pr-64 py-10 divide-y-2 divide-black"
+          className="pl-5 lg:px-24 pr-10 py-10 divide-y-2 divide-black"
         >
           <Rating />
           <CreateReview />
@@ -84,7 +84,7 @@ export const Recipe = () => {
       )}
       <section
         ref={reviewsRef}
-        className="pl-24 py-10 min-h-screen pr-64"
+        className="pl-5 lg:pl-24 py-10 min-h-screen pr-10 lg:pr-64"
       >
         <div className="text-2xl font-bold flex space-x-5">
           <span>Reviews (1500)</span>
@@ -99,7 +99,7 @@ export const Recipe = () => {
       </section>
       {isAuthor ? (
         <section
-          className="pl-24 py-10 pr-10"
+          className="pl-5 lg:pl-24 py-10 pr-10"
         >
           <div className="text-2xl font-bold flex space-x-5">
             <span>Admin Controls</span>

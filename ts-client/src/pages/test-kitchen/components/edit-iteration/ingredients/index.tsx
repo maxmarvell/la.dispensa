@@ -5,7 +5,7 @@ import { IterationProps } from "@/pages/test-kitchen/models";
 
 const Ingredients = ({ iteration, setNodes } : IterationProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col divide-y">
       <ModifyIngredients iteration={iteration} setNodes={setNodes} />
       <CreateIngredients iteration={iteration} setNodes={setNodes} />
     </div>

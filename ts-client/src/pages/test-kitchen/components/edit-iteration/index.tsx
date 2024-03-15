@@ -1,9 +1,9 @@
-import { useState } from "react"
-
 // components
 import Feedback from "./feedback";
 import Ingredients from "./ingredients";
 import Instructions from "./preparations";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DrawerHeader } from "@/components/ui/drawer";
 
 // services
 import { useIteration } from "../../hooks/useIteration";
@@ -33,82 +33,44 @@ export const EditIteration = ({ iteration, setNodes }: IterationProps) => {
     }));
   };
 
-  const [display, setDisplay] = useState<string>('ingredients')
-
-  function renderSwitch(display: string) {
-    switch (display) {
-      case 'ingredients':
-        return (
-          <Ingredients
-            iteration={iteration}
-            setNodes={setNodes}
-          />
-        );
-      case 'instructions':
-        return (
-          <Instructions
-            iteration={iteration}
-            setNodes={setNodes}
-          />
-        );
-      case 'comments':
-        return (
-          <Feedback
-            iteration={iteration}
-          />
-        );
-      case 'auth':
-        return (
-          <div></div>
-        )
-    }
-  }
-
   return (
-    <>
-      <div className='text-lg font-bold flex border-b-2 border-slate-950'>
-        #
-        <input type='text'
-          onBlur={() => updateIteration({
-            input: { tag },
-            iterationId,
-          })}
-          onChange={e => changeDescriptionHandler(e.target.value)}
-          value={tag || ""}
-          placeholder='add tag here'
-          className='bg-transparent uppercase border-none grow text-lg font-bold focus:outline-none p-0 pl-1 overflow-hidden'
-        />
+    <Tabs defaultValue="ingredients" className="w-full">
+      <DrawerHeader className="p-0 absolute top-0 right-5 left-5 overflow-hidden z-50 bg-slate-50">
+        <div className='text-lg font-bold flex border-b-2 border-slate-950'>
+          #
+          <input type='text'
+            onBlur={() => updateIteration({
+              input: { tag },
+              iterationId,
+            })}
+            onChange={e => changeDescriptionHandler(e.target.value)}
+            value={tag || ""}
+            placeholder='add tag here'
+            className='bg-transparent uppercase border-none grow text-lg font-bold focus:outline-none p-0 pl-1 overflow-hidden'
+          />
+        </div>
+        <TabsList className="flex justify-evenly space-x-5 py-2">
+          <TabsTrigger value="ingredients" className="grow">Ingredients</TabsTrigger>
+          <TabsTrigger value="instructions" className="grow">Instructions</TabsTrigger>
+          <TabsTrigger value="comments" className="grow">Comments</TabsTrigger>
+          <TabsTrigger value="author" className="grow">Author</TabsTrigger>
+        </TabsList>
+      </DrawerHeader>
+      <div className="flex flex-col pt-16 overflow-y-scroll">
+        <TabsContent value="ingredients"><Ingredients
+          iteration={iteration}
+          setNodes={setNodes}
+        /></TabsContent>
+        <TabsContent value="instructions"><Instructions
+          iteration={iteration}
+          setNodes={setNodes}
+        /></TabsContent>
+        <TabsContent value="comments"><Feedback
+          iteration={iteration}
+        /></TabsContent>
+        <TabsContent value="author"><div></div></TabsContent>
       </div>
-      <div className="flex justify-evenly space-x-5 py-2 border-b-2 border-slate-950">
-        <button
-          onClick={() => setDisplay('ingredients')}
-          className={`border-b ${display === 'ingredients' ? 'border-slate-950' : 'border-transparent'}`}
-        >
-          Ingredients
-        </button>
-        <button
-          onClick={() => setDisplay('instructions')}
-          className={`border-b ${display === 'instructions' ? 'border-slate-950' : 'border-transparent'}`}
-        >
-          Instructions
-        </button>
-        <button
-          onClick={() => setDisplay('comments')}
-          className={`border-b ${display === 'comments' ? 'border-slate-950' : 'border-transparent'}`}
-        >
-          Comments
-        </button>
-        <button
-          onClick={() => setDisplay('auth')}
-          className={`border-b ${display === 'auth' ? 'border-slate-950' : 'border-transparent'}`}
-        >
-          Author
-        </button>
-      </div>
-      <div className="flex flex-col pt-2 overflow-y-auto">
-        {renderSwitch(display)}
-      </div>
-    </>
+    </Tabs>
   );
 };
 

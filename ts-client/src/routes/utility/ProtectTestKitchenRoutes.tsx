@@ -34,7 +34,7 @@ export const ProtectTestKitchenRoutes = () => {
   };
 
   // check if the current user is an editor of the author of the recipe
-  const hasAccess = data?.map(el => el.id).includes(user?.id || "") || recipe?.authorId === user?.id;
+  const hasAccess = data?.map(el => el.userId).includes(user?.id || "") || recipe?.authorId === user?.id;
 
   return hasAccess ? (
     <SocketProvider>

@@ -16,5 +16,5 @@ export interface NewIngredientInputType {
   ingredient: {
     name: string
   }
-  index: number
+  id?: string
 }

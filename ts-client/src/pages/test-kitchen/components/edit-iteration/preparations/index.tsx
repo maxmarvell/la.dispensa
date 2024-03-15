@@ -21,7 +21,7 @@ const Instructions = ({ iteration, setNodes }: IterationProps) => {
 
   return (
     <div className="flex flex-col divide-y divide-black">
-      <UpdatePreparations instructions={instructions} setNodes={setNodes} />
+      <UpdatePreparations instructions={instructions} iterationId={id} setNodes={setNodes} />
       <CreatePreparations instructions={instructions} setNodes={setNodes} iterationId={id} />
     </div>
   );

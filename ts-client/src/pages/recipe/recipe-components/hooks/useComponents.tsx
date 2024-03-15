@@ -22,7 +22,7 @@ export const useComponents = ({ recipeId }: UseComponentsProps) => {
   const take = 12;
 
   const queryNewComponents = ({ authorId, title, page }: QueryNewComponentsProps) => useQuery({
-    queryKey: ['componentSearch', recipeId, authorId, title, page],
+    queryKey: ["components", recipeId, "componentSearch", authorId, title, page],
     queryFn: async (): QueryNewComponentsReturnType => {
       try {
         const { data } = await axiosInstance.get(`/api/recipes/${recipeId}/availComponents?` + new URLSearchParams({
@@ -58,7 +58,7 @@ export const useComponents = ({ recipeId }: UseComponentsProps) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['componentSearch, components'] })
+      queryClient.invalidateQueries({ queryKey: ["components", recipeId] })
     }
   })
 
@@ -75,7 +75,7 @@ export const useComponents = ({ recipeId }: UseComponentsProps) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['componentSearch, components'] })
+      queryClient.invalidateQueries({ queryKey: ["components", recipeId] })
     }
   })
 

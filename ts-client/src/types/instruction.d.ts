@@ -10,3 +10,10 @@ export interface BaseInstructionType {
   step: number
   timeAndTemperature?: TimeAndTemperatureType
 }
+
+export interface NewInstructionInputType {
+  description: string
+  step: number
+  timeAndTemperature?: TimeAndTemperatureType
+  id?: string
+}

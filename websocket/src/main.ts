@@ -8,7 +8,7 @@ import { randomUUID } from 'crypto';
 
 dotenv.config()
 
-const PORT = parseInt(process.env.PORT || "3000", 10);
+const PORT = parseInt(process.env.PORT || "3001", 10);
 const HOST = process.env.HOST || "0.0.0.0";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 const REDIS_ENDPOINT = process.env.REDIS_ENDPOINT;

@@ -25,11 +25,16 @@ export const useInstruction = ({ recipeId }: UseInstructionProps) => {
 
   const createInstructions = useMutation({
     mutationFn: async ({ input }: CreateManyInstructionProps) => {
+      console.log(input.map(el => {
+        el.recipeId = recipeId
+        return el
+      }))
       try {
         const instructions = await axiosInstance.post(`/api/instructions/`,
-          {
-            input
-          },
+        input.map(el => {
+          el.recipeId = recipeId
+          return el
+        }),
           {
             headers: { 'Content-Type': 'application/json' },
           }
@@ -48,9 +53,7 @@ export const useInstruction = ({ recipeId }: UseInstructionProps) => {
     mutationFn: async ({ input, step }: UpdateInstructionProps) => {
       try {
         const { data } = await axiosInstance.patch(`/api/instructions/${recipeId}/${step}`,
-          {
-            input
-          },
+          input,
           {
             headers: { 'Content-Type': 'application/json' },
           }

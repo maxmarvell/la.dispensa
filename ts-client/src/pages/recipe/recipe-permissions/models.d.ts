@@ -10,7 +10,11 @@ export type UseEditorProps = {
   recipeId?: string
 }
 
-export type GetEditorsReturnType = Promise<BaseUserType[] | undefined>
+export type GetEditorsReturnType = Promise<{
+  recipeId: string
+  userId: string
+  user: BaseUserType
+}[] | undefined>
 
 export type MutateEditorProps = {
   userId: string

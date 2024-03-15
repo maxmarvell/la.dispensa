@@ -4,14 +4,12 @@ import { UseIterationInstructionProps, CreateManyIterationInstructionProps, Upda
 
 export const useIterationInstruction = ({ iterationId }: UseIterationInstructionProps) => {
 
-  if (!iterationId) throw new Error("id of recipe is required!")
+  if (!iterationId) throw new Error("id of iteration is required!")
 
   const createInstructions = async ({ input }: CreateManyIterationInstructionProps) => {
     try {
       const { data } = await axiosInstance.post(`/api/iterations/${iterationId}/instructions/`,
-        {
-          input
-        },
+        input,
         {
           headers: { 'Content-Type': 'application/json' },
         }
@@ -24,9 +22,9 @@ export const useIterationInstruction = ({ iterationId }: UseIterationInstruction
 
   const updateInstruction = async ({ input, step }: UpdateIterationInstructionProps) => {
     try {
-      const { data } = await axiosInstance.patch(`/api/iterations/${iterationId}/instructions/${step}`,
+      const { data } = await axiosInstance.patch(`/api/iterations/${iterationId}/instructions/${step}/`,
         {
-          input
+          ...input
         },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -40,7 +38,7 @@ export const useIterationInstruction = ({ iterationId }: UseIterationInstruction
 
   const removeInstruction = async ({ step }: RemoveIterationInstructionProps) => {
     try {
-      const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/instructions/${step}`,
+      const { data } = await axiosInstance.delete(`/api/iterations/${iterationId}/instructions/${step}/`,
         {
           headers: { 'Content-Type': 'application/json' },
         }

@@ -9,9 +9,7 @@ export const useIterationIngredient = ({ iterationId }: UseIterationIngredientPr
   const createIngredients = async ({ input }: CreateManyIterationIngredientProps) => {
     try {
       const { data } = await axiosInstance.post(`/api/iterations/${iterationId}/ingredients/`,
-        {
-          input
-        },
+        input,
         {
           headers: { 'Content-Type': 'application/json' },
         }

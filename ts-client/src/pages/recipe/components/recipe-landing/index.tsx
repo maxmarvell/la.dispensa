@@ -18,6 +18,8 @@ import { useUpdateRecipe } from "../../hooks/useUpdateRecipe";
 // types
 import { AuthContextType } from "@/services/contexts/models";
 import { RecipeLandingProps } from "../../models";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 
 const fileTypes = ["JPG", "PNG", "GIF", "JPEG"];
 
@@ -120,12 +122,11 @@ export const Profile = ({ reviewsRef, recipeRef }: RecipeLandingProps) => {
           null
         )}
       </div>
-      <div className="h-full lg:w-1/2 relative">
-        <img
-          src={recipe?.image}
-          alt={`display photo - ${recipe?.title}`}
-          className={`w-full ${recipe?.image ? "object-cover h-full" : "mt-52"}`}
-        />
+      <div className="h-1/2 lg:h-full lg:w-1/2 relative">
+        <Avatar>
+          <AvatarImage src={recipe?.image}/>
+          <AvatarFallback>{recipe?.title}</AvatarFallback>
+        </Avatar>
         {editing && (
           <div
             className="absolute top-0 left-0 h-full w-full

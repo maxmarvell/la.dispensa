@@ -1,5 +1,5 @@
 import "reactflow/dist/style.css";
-import ReactFlow, { Controls, Background, useNodesState, useEdgesState, useReactFlow, ReactFlowProvider } from "reactflow";
+import ReactFlow, { Controls, Background, useNodesState, useEdgesState, useReactFlow, ReactFlowProvider, useKeyPress } from "reactflow";
 import { useCallback, useRef, useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 
@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import recipeNode from "../recipe-node";
 import iterationNode from "../iteration-node";
 import EditIteration from "../edit-iteration";
+import { Drawer } from "vaul";
 
 // services
 import { useRecipe } from "@/services/hooks/recipe/useRecipe";
@@ -57,7 +58,7 @@ const IterationFlow = () => {
   const { user } = useContext(AuthContext) as AuthContextType;
   const userId = user?.id
 
-  const [connectionCount, setConnectionCount] = useState(0);
+  const [_, setConnectionCount] = useState(0);
   const connectingNodeId = useRef<string | null>(null);
 
   const { getRecipeById } = useRecipe();
@@ -99,6 +100,7 @@ const IterationFlow = () => {
     });
 
     socket?.on(NODE_CREATE_CHANNEL, ({ newEdge, newNode, userId: emitterId, recipeId: emittedRecipeId }: NodeCreateMessageType): undefined => {
+
       // exit if emitterId is the same as the user
       if (emitterId === userId) return;
       if (recipeId !== emittedRecipeId) return;
@@ -241,6 +243,15 @@ const IterationFlow = () => {
 
   }, [socket]);
 
+  const drawerRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    document.body.classList.add("fixed-body");
+
+    return function cleanup() {
+      document.body.classList.remove("fixed-body")
+    }
+  }, []);
 
   // handle the node drag or select and emit
   function nodeChangeHandler(e: any) {
@@ -278,6 +289,21 @@ const IterationFlow = () => {
   const onClickNode = useCallback((_: any, element: any) => {
     setClickedId(element.id)
   }, [])
+
+  /*
+    spacePressed is a hook checking for if user presses space bar,
+    where space is pressed we want to pull up the drawer so that
+    users can edit the iteration id
+  */
+
+  const spacePressed = useKeyPress('Space');
+
+  useEffect(() => {
+    if (drawerRef.current && spacePressed && clickedId && clickedId !== "root") {
+      drawerRef.current.click()
+      document.body.classList.add('fixed-body');
+    }
+  }, [spacePressed])
 
   // when clicking the pane the focused node is unfocused
   const onClickPane = useCallback(() => {
@@ -343,6 +369,7 @@ const IterationFlow = () => {
           newEdge,
           newNode,
           userId,
+          recipeId
         });
       };
     },
@@ -364,7 +391,6 @@ const IterationFlow = () => {
 
       // for each deleted node emit a deletion
       deleted.map(({ id }: { id: string }) => {
-        console.log(id, userId)
         socket?.emit(NODE_DELETE_CHANNEL, {
           iterationId: id,
           userId,
@@ -381,35 +407,46 @@ const IterationFlow = () => {
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
-      <ReactFlow
-        nodes={nodes}
-        onNodesChange={nodeChangeHandler}
-        edges={edges}
-        onEdgesChange={onEdgesChange}
-        onPaneClick={onClickPane}
-        onConnectStart={onConnectStart}
-        onConnectEnd={onConnectEnd}
-        onNodesDelete={onNodesDelete}
-        nodeTypes={nodeTypes}
-        onNodeClick={onClickNode}
-        onNodeDragStart={onClickNode}
-        minZoom={0.01}
-        maxZoom={10}
-        fitView
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
-      {clickedId ? (
-        <div className="bg-slate-50 text-slate-950 w-[32rem] shadow-lg p-2 px-5 h-full flex flex-col text-xs">
-          <EditIteration
-            iteration={nodes.find(({ id }) => id === clickedId)?.data || {} as IterationType}
-            setNodes={setNodes}
-          />
-          <button>Number users connected: {connectionCount}</button>
-        </div>
-      ) : null}
+    <div className="lg:h-screen h-full relative">
+      <Drawer.Root direction="right">
+        <ReactFlow
+          nodes={nodes}
+          onNodesChange={nodeChangeHandler}
+          edges={edges}
+          onEdgesChange={onEdgesChange}
+          onPaneClick={onClickPane}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
+          onNodesDelete={onNodesDelete}
+          nodeTypes={nodeTypes}
+          onNodeClick={onClickNode}
+          onNodeDragStart={onClickNode}
+          minZoom={0.01}
+          maxZoom={10}
+          // className="fixed inset-0"
+          fitView
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
+        <Drawer.Trigger asChild ref={drawerRef}>
+          <button />
+        </Drawer.Trigger>
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-90" />
+          <Drawer.Content className="flex flex-col h-full w-fit absolute top-12 lg:top-0 bottom-0 right-0 outline-none">
+            {clickedId ? (
+              <div className="bg-slate-50 text-slate-950 w-[32rem] shadow-lg p-2 px-5 h-full flex flex-col text-xs overflow-y-scroll">
+                <EditIteration
+                  iteration={nodes.find(({ id }) => id === clickedId)?.data || {} as IterationType}
+                  setNodes={setNodes}
+                />
+              </div>
+            ) : null}
+          </Drawer.Content>
+        </Drawer.Portal>
+
+      </Drawer.Root>
     </div>
   )
 }

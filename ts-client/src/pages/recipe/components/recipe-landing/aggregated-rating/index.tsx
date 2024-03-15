@@ -9,7 +9,7 @@ export const AggregateRating = () => {
 
   const { data: aggregatedRating } = useAggregatedRating({ recipeId })
 
-  const _avg = Math.round(aggregatedRating?._avg?.value || 0 * 100) / 100;
+  const _avg = Math.round((aggregatedRating?._avg?.value || 0) * 100) / 100;
   const _count = aggregatedRating?._count;
 
   return (

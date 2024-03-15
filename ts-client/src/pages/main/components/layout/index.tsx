@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <>
       <NavigationBar />
-      <div className="pt-12 lg:pt-0 lg:ml-44 lg:h-screen">
+      <div className="pt-12 h-full lg:pt-0 lg:ml-44">
         <ScrollRestoration />
         <Outlet />
       </div>

@@ -16,10 +16,10 @@ export const TestKitchen = () => {
   const [search, setSearch] = useState("");
   const [_, setSelected] = useState<string | null>(null);
 
-  const { data } = useSearchTestKitchen({ userId, title: search })
+  const { data } = useSearchTestKitchen({ userId, title: search });
 
   return (
-    <div className="h-full relative">
+    <div className="lg:w-screen h-full relative">
       <Outlet />
       <div className="absolute top-10 left-10 p-5 border w-64 flex flex-col bg-slate-50">
         <input
