@@ -49,7 +49,6 @@ export const UpdatePreparations = ({ instructions, iterationId, setNodes }: Iter
     };
   }));
 
-
   // handle set temperature field
   const setTimeAndTemperature = ({ timeAndTemperature, step }: { timeAndTemperature?: TimeAndTemperatureType, step: number }) => setNodes(prev => prev.map(({ data, ...rest }) => {
     if (data.id === iterationId) {

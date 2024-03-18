@@ -92,10 +92,7 @@ export const CreateIngredients = ({ iteration, setNodes }: IterationProps) => {
               ingredient={el}
               setIngredient={{
                 nameChange: ({ name }: { name: string }) => {
-                  setNewIngredients(prev => prev.map(_el => {
-                    console.log(el.id === _el.id ? { ..._el, ingredient: { name } } : _el)
-                    return el.id === _el.id ? { ..._el, ingredient: { name } } : _el
-                  }))
+                  setNewIngredients(prev => prev.map(_el => el.id === _el.id ? { ..._el, ingredient: { name } } : _el))
                 },
                 quantityChange: ({ quantity }: { quantity: number }) => {
                   setNewIngredients(prev => prev.map(_el => (

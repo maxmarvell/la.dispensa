@@ -24,6 +24,7 @@ type IngredientInputProps = {
 }
 
 export const IngredientInput = ({ ingredient, setIngredient, disabled }: IngredientInputProps) => {
+
   return (
     <>
       <Input

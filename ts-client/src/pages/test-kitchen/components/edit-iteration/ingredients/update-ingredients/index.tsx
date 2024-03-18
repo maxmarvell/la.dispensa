@@ -41,7 +41,7 @@ export const ModifyIngredients = ({ iteration, setNodes }: IterationProps) => {
       setIngredient(ingredient)
       setSelected(ingredient.ingredientId)
     };
-  }
+  };
 
   const { socket } = useContext(SocketContext) as SocketContextType;
 

@@ -77,7 +77,7 @@ export const Ingredients = () => {
 
   return (
     <div className="divide-y text-sm">
-      <div>
+      <div className="space-y-1">
         <UpdateIngredients />
         <CreateIngredients />
       </div>

@@ -56,7 +56,7 @@ export const Preparations = () => {
   // retrieve the recipe and extract the author id
   const { getRecipeById } = useRecipe();
   const { data: recipe } = getRecipeById({ recipeId });
-  
+
   const authorId = recipe?.authorId;
 
   // get the instructions and components for this recipe id
@@ -91,21 +91,23 @@ export const Preparations = () => {
 
   return (
     <div className="divide-y text-sm">
-      <div>
+      <div className="space-y-3 pb-3">
         <UpdatePreparations />
         <CreatePreparations />
       </div>
-      {components?.map(({ instructions, title }, index) => (
-        <div className="pb-1 pt-1 last:pb-0" key={index}>
-          <div className="italic text-lg">For the {title}</div>
-          {instructions.map((instruction, index) => (
-            <Field
-              key={index}
-              instruction={instruction}
-            />
-          ))}
-        </div >
-      ))}
+      <div className="pt-3">
+        {components?.map(({ instructions, title }, index) => (
+          <div className="pb-1 pt-1 last:pb-0" key={index}>
+            <div className="italic text-lg">For the {title}</div>
+            {instructions.map((instruction, index) => (
+              <Field
+                key={index}
+                instruction={instruction}
+              />
+            ))}
+          </div >
+        ))}
+      </div>
     </div>
   );
 };

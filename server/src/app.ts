@@ -2,7 +2,6 @@ import { JWT } from '@fastify/jwt';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import * as Modules from './modules/index';
 import dotenv from 'dotenv';
-import { randomUUID } from 'crypto';
 
 dotenv.config()
 
