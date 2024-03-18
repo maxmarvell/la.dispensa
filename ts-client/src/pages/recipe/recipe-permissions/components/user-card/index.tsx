@@ -15,7 +15,7 @@ export const Card = ({ user, setSelectedUser, selectedUser }: UserCardProps) => 
 
   const { getEditors: { data: editors } } = useEditor({ recipeId });
 
-  const editor = editors?.map(({ id }) => id)?.includes(user.id);
+  const editor = editors?.map(({ userId }) => userId)?.includes(user.id);
 
   const selected = user === selectedUser;
 

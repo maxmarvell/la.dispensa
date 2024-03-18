@@ -29,7 +29,7 @@ export const Permissions = () => {
 
   const [input, setInput] = useState('')
   const canPermit = input === selectedUser?.username;
-  const editor = data?.map(({ id }) => id)?.includes(selectedUser?.id || "");
+  const editor = data?.map(({ userId }) => userId)?.includes(selectedUser?.id || "");
 
   const handleAddEditor = async () => {
     if (!selectedUser) return;
